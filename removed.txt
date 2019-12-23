@@ -1,0 +1,82 @@
+	// remove attribute's prefix
+	// use "xj.WithAttrPrefix("") xj.WithContentPrefix("")" instead
+	
+	// match, _ := regexp.MatchString("p[a-z]+ch", "peach")
+	// fmt.Println(match)
+
+	// base := `"%s[0-9A-Za-z_.-]+": [[{"0-9tfn-]`
+	// reAttrXML, _ := regexp.Compile(fmt.Sprintf(base, "-"))
+	// reContXML, _ := regexp.Compile(fmt.Sprintf(base, "#"))
+
+	// ----------------------------------- //
+
+    // L := len(jsonfmt)
+	// lsAttrPos := reAttrXML.FindAllStringIndex(jsonfmt, -1)
+	// lsContPos := reContXML.FindAllStringIndex(jsonfmt, -1)
+
+	// for i, item := range lsAttrPos {
+	// 	lsAttrPos[i] = []int{item[0], item[1] - 3}
+	// }
+	// for i, item := range lsContPos {
+	// 	lsContPos[i] = []int{item[0], item[1] - 3}
+	// }
+	// // fmt.Println(lsAttrPos)
+	// // fmt.Println(lsContPos)
+
+	// lsPos := append(lsAttrPos, lsContPos...)
+	// // fmt.Println(lsPos)
+	// sort.SliceStable(lsPos, func(i, j int) bool {
+	// 	return lsPos[i][0] < lsPos[j][0]
+	// })
+	// // fmt.Println(lsPos)
+
+	// fields := []string{}
+	// for _, item := range lsPos {
+	// 	field := jsonfmt[item[0]:item[1]]
+	// 	field = strings.Replace(field, `"-`, `"`, 1)
+	// 	field = strings.Replace(field, `"#`, `"`, 1)
+	// 	fields = append(fields, field)
+	// }
+	// // fmt.Println(fields)
+
+	// remainders := []string{}
+	// interval := func(p0, p1 []int) []int {
+	// 	if p0 == nil {
+	// 		return []int{0, p1[0]}
+	// 	}
+	// 	if p1 == nil {
+	// 		return []int{p0[1], L}
+	// 	}
+	// 	return []int{p0[1], p1[0]}
+	// }
+
+	// for i, item := range lsPos {
+	// 	if i == 0 {
+	// 		p := interval(nil, item)
+	// 		rem := jsonfmt[p[0]:p[1]]
+	// 		remainders = append(remainders, rem)
+	// 	} else if i == len(lsPos)-1 {
+	// 		p := interval(lsPos[i-1], item)
+	// 		rem := jsonfmt[p[0]:p[1]]
+	// 		remainders = append(remainders, rem)
+	// 		p = interval(item, nil)
+	// 		rem = jsonfmt[p[0]:p[1]]
+	// 		remainders = append(remainders, rem)
+	// 	} else {
+	// 		p := interval(lsPos[i-1], item)
+	// 		rem := jsonfmt[p[0]:p[1]]
+	// 		remainders = append(remainders, rem)
+	// 	}
+	// }
+
+	// combo := make([]string, len(fields)+len(remainders))
+	// for i := 0; i < len(combo); i++ {
+	// 	idx := i / 2
+	// 	if i%2 == 0 {
+	// 		combo[i] = remainders[idx]
+	// 	} else {
+	// 		combo[i] = fields[idx]
+	// 	}
+	// }
+
+	// fmt.Println(strings.Join(combo, ""))

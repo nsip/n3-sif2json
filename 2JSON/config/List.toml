@@ -1,0 +1,16 @@
+Path = "./config/List.toml"
+PathAbs = "/home/qing/Desktop/n3-sif2json/2JSON/config/List.toml"
+Sep = "~"
+
+[PurchaseOrder]
+  L1 = "PurchasingItems"
+  L2 = "PurchasingItems~PurchasingItem~ExpenseAccounts"
+  L3 = "EmployeePersonalRefId"
+
+[Test]
+  L1 = "PurchasingItems"
+  L2 = "PurchasingItems~PurchasingItem~ExpenseAccounts"
+  L3 = "EmployeePersonalRefId"
+
+[Test1]
+  L1 = "ListPath1"
