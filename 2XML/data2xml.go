@@ -7,8 +7,8 @@ import (
 	"github.com/clbanning/mxj"
 )
 
-func json2xml(jsonpath string) {
-	jsonBytes, err := ioutil.ReadFile(jsonpath)
+func json2xml(jsonPath, xmlPath string) {
+	jsonBytes, err := ioutil.ReadFile(jsonPath)
 	var f interface{}
 	if err = json.Unmarshal(jsonBytes, &f); err != nil {
 		panic("1")
@@ -29,7 +29,7 @@ func json2xml(jsonpath string) {
 	// if b, err = xml.Marshal(&f1); err != nil {
 	// 	panic("2")
 	// }
-	ioutil.WriteFile("../data/test1.xml", []byte(xmlstr), 0666)
+	ioutil.WriteFile(xmlPath, []byte(xmlstr), 0666)
 
 	// return
 }

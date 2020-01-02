@@ -27,6 +27,7 @@ type Prefix struct {
 type List struct {
 	Path          string
 	PathAbs       string
+	JQDir         string
 	Sep           string
 	PurchaseOrder struct {
 		L1 string
@@ -44,6 +45,7 @@ type List struct {
 }
 
 var (
+	// toml file name must be identical to config struct definition name
 	lsCfg = []interface{}{
 		&General{},
 		&Prefix{},

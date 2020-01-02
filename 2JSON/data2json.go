@@ -20,7 +20,7 @@ func replDigCont(json string) string {
 	// }
 }
 
-func xml2json(xmlPath string) {
+func xml2json(xmlPath, jsonPath string) {
 
 	b, _ := ioutil.ReadFile(xmlPath)
 	xmlstr := string(b)
@@ -44,5 +44,5 @@ func xml2json(xmlPath string) {
 	fPln(jsonfmt)
 	jsonfmt = replDigCont(jsonfmt)
 	fPln(jsonfmt)
-	ioutil.WriteFile("../data/test.json", []byte(jsonfmt), 0666)
+	ioutil.WriteFile(jsonPath, []byte(jsonfmt), 0666)
 }

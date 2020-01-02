@@ -11,7 +11,8 @@ func TestConfig(t *testing.T) {
 	}
 	if cfg := NewCfg("./config/List.toml"); cfg != nil {
 		cfg := cfg.(*List)
-		fPln(cfg.PurchaseOrder)
+		fPln(*cfg)
+		// fPln(cfg.PurchaseOrder)
 	}
 	if cfg := NewCfg("./config/Prefix.toml"); cfg != nil {
 		cfg := cfg.(*Prefix)

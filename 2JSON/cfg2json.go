@@ -123,22 +123,22 @@ func MakeJSON(m map[string]interface{}) string {
 }
 
 // YieldJSONListAttr4OneCfg :
-func YieldJSONListAttr4OneCfg(obj, sep, outdir, jsonval string) {
-	if outdir[len(outdir)-1] != '/' {
-		outdir += "/"
+func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
+	if outDir[len(outDir)-1] != '/' {
+		outDir += "/"
 	}
-	path := outdir + obj + "/"
+	path := outDir + obj + "/"
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		os.MkdirAll(path, os.ModePerm)
 	}
 	for lvl := 1; lvl < 100; lvl++ {
 		if LAs, valid := GetLAttrs(obj, sep, lvl); valid {
-			mm := MakeMap(LAs, sep, jsonval)
+			mm := MakeMap(LAs, sep, jsonVal)
 			if mm == nil || len(mm) == 0 {
 				continue
 			}
 			// jsonstr := MakeJSON(mm)
-			jsonstr := pp.FmtJSONStr(MakeJSON(mm), "../preprocess/utils") // format jsonstr
+			jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr
 			ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonstr), 0666)
 		} else {
 			break
@@ -147,12 +147,22 @@ func YieldJSONListAttr4OneCfg(obj, sep, outdir, jsonval string) {
 }
 
 // YieldJSONListAttrCfg :
-func YieldJSONListAttrCfg(cfgPath, outDir, jsonval string) {
+func YieldJSONListAttrCfg(cfgPath, outDir, jsonVal string) {
 	if cfg := NewCfg(cfgPath); cfg != nil {
 		cfg := cfg.(*List)
+
+		if cfg.Sep == "" {
+			panic("Config-[Sep] loaded error")
+		}
+		if cfg.JQDir == "" {
+			panic("Config-[JQDir] loaded error")
+		}
+
 		InitAllListAttrPaths(*cfg, cfg.Sep) // Init Global Maps
 		for _, obj := range GetAllObjects() {
-			YieldJSONListAttr4OneCfg(obj, cfg.Sep, outDir, jsonval)
+			YieldJSONListAttr4OneCfg(obj, cfg.Sep, outDir, jsonVal, cfg.JQDir)
 		}
+	} else {
+		panic("ListAttribute Configuration File Couldn't Be Loaded")
 	}
 }
