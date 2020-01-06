@@ -15,16 +15,17 @@ type General struct {
 	ErrLog  string
 }
 
-// Prefix : toml
-type Prefix struct {
+// XML2JSON : toml
+type XML2JSON struct {
 	Path          string
 	PathAbs       string
+	JQDir         string
 	AttrPrefix    string
 	ContentPrefix string
 }
 
-// List : toml
-type List struct {
+// Path2JSON : toml
+type Path2JSON struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
@@ -48,8 +49,8 @@ var (
 	// toml file name must be identical to config struct definition name
 	lsCfg = []interface{}{
 		&General{},
-		&Prefix{},
-		&List{},
+		&XML2JSON{},
+		&Path2JSON{},
 	}
 )
 

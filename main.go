@@ -1,14 +1,16 @@
-package main
+package cvt2json
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io/ioutil"
 	"regexp"
 	"strings"
 
-	pp "./preprocess"
 	xj "github.com/basgys/goxml2json"
+	cmn "github.com/cdutwhu/json-util/common"
+	pp "github.com/cdutwhu/json-util/preprocess"
 	"github.com/clbanning/mxj"
 )
 
@@ -34,9 +36,7 @@ func main() {
 		//xj.WithAttrPrefix(""),
 		xj.WithContentPrefix("="),
 	)
-	if err != nil {
-		panic("That's embarrassing...")
-	}
+	cmn.FailOnErr("%v", err)
 
 	fmt.Println(jsonbuf.String())
 	// {"hello": "world"}
@@ -50,9 +50,7 @@ func main() {
 
 	// convert back to xml
 	var f interface{}
-	if err = json.Unmarshal([]byte(jsonfmt), &f); err != nil {
-		panic("1")
-	}
+	cmn.FailOnErr("%v", json.Unmarshal([]byte(jsonfmt), &f))
 
 	fmt.Println(" --------------- ")
 	fmt.Printf("%v", f)
@@ -71,9 +69,9 @@ func main() {
 	xmlstr = re1.ReplaceAllString(xmlstr, "")
 	xmlstr = re2.ReplaceAllString(xmlstr, "")
 
-	// if b, err = xml.Marshal(&f); err != nil {
-	// 	panic("2")
-	// }
+	b, err = xml.Marshal(&f)
+	cmn.FailOnErr("%v", err)
+
 	ioutil.WriteFile("test1.xml", []byte(xmlstr), 0666)
 
 	return

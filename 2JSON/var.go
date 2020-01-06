@@ -10,6 +10,7 @@ var (
 	fPln        = fmt.Println
 	fSp         = fmt.Sprint
 	fSf         = fmt.Sprintf
+	fEf         = fmt.Errorf
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
 	sCount      = strings.Count

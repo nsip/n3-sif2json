@@ -9,13 +9,12 @@ func TestConfig(t *testing.T) {
 		cfg := cfg.(*General)
 		fPln(*cfg)
 	}
-	if cfg := NewCfg("./config/List.toml"); cfg != nil {
-		cfg := cfg.(*List)
+	if cfg := NewCfg("./config/Path2JSON.toml"); cfg != nil {
+		cfg := cfg.(*Path2JSON)
 		fPln(*cfg)
-		// fPln(cfg.PurchaseOrder)
 	}
-	if cfg := NewCfg("./config/Prefix.toml"); cfg != nil {
-		cfg := cfg.(*Prefix)
+	if cfg := NewCfg("./config/XML2JSON.toml"); cfg != nil {
+		cfg := cfg.(*XML2JSON)
 		fPln(*cfg)
 	}
 }

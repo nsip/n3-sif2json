@@ -23,5 +23,5 @@ func TestOthers(t *testing.T) {
 }
 
 func TestMakeJSON(t *testing.T) {
-	YieldJSONListAttrCfg("./config/List.toml", "../SIFListDesc", "[]")
+	YieldJSONListAttrCfg("./config/Path2JSON.toml", "../SIFListDesc", "[]")
 }

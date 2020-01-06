@@ -1,4 +1,4 @@
-package main
+package cvt2json
 
 import "testing"
 

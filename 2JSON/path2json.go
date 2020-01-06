@@ -7,7 +7,8 @@ import (
 	"reflect"
 	"sort"
 
-	pp "../preprocess"
+	cmn "github.com/cdutwhu/json-util/common"
+	pp "github.com/cdutwhu/json-util/preprocess"
 	"github.com/peterbourgon/mergemap"
 )
 
@@ -116,10 +117,9 @@ func MakeMap(paths []string, sep, valsymbol string) map[string]interface{} {
 
 // MakeJSON :
 func MakeJSON(m map[string]interface{}) string {
-	if jsonbytes, e := json.Marshal(m); e == nil {
-		return string(jsonbytes)
-	}
-	panic("MakeJSON Fatal")
+	jsonbytes, e := json.Marshal(m)
+	cmn.FailOnErr("MakeJSON Fatal: %v", e)
+	return string(jsonbytes)
 }
 
 // YieldJSONListAttr4OneCfg :
@@ -148,21 +148,13 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 
 // YieldJSONListAttrCfg :
 func YieldJSONListAttrCfg(cfgPath, outDir, jsonVal string) {
-	if cfg := NewCfg(cfgPath); cfg != nil {
-		cfg := cfg.(*List)
-
-		if cfg.Sep == "" {
-			panic("Config-[Sep] loaded error")
-		}
-		if cfg.JQDir == "" {
-			panic("Config-[JQDir] loaded error")
-		}
-
-		InitAllListAttrPaths(*cfg, cfg.Sep) // Init Global Maps
-		for _, obj := range GetAllObjects() {
-			YieldJSONListAttr4OneCfg(obj, cfg.Sep, outDir, jsonVal, cfg.JQDir)
-		}
-	} else {
-		panic("ListAttribute Configuration File Couldn't Be Loaded")
+	cfg := NewCfg(cfgPath)
+	cmn.FailOnCondition(cfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
+	cfgList := cfg.(*Path2JSON)
+	cmn.FailOnCondition(cfgList.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnCondition(cfgList.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	InitAllListAttrPaths(*cfgList, cfgList.Sep) // Init Global Maps
+	for _, obj := range GetAllObjects() {
+		YieldJSONListAttr4OneCfg(obj, cfgList.Sep, outDir, jsonVal, cfgList.JQDir)
 	}
 }

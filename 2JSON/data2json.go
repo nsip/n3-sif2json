@@ -3,8 +3,9 @@ package cvt2json
 import (
 	"io/ioutil"
 
-	pp "../preprocess"
 	xj "github.com/basgys/goxml2json"
+	cmn "github.com/cdutwhu/json-util/common"
+	pp "github.com/cdutwhu/json-util/preprocess"
 )
 
 func replDigCont(json string) string {
@@ -20,7 +21,11 @@ func replDigCont(json string) string {
 	// }
 }
 
-func xml2json(xmlPath, jsonPath string) {
+func xml2json(cfgPath, xmlPath, jsonPath string) {
+
+	cfg := NewCfg(cfgPath)
+	cmn.FailOnCondition(cfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
+	cfgPrefix := cfg.(*XML2JSON)
 
 	b, _ := ioutil.ReadFile(xmlPath)
 	xmlstr := string(b)
@@ -34,13 +39,11 @@ func xml2json(xmlPath, jsonPath string) {
 		// xj.WithAttrPrefix("-"),
 		// xj.WithContentPrefix("#"),
 	)
-	if err != nil {
-		panic("That's embarrassing...")
-	}
+	cmn.FailOnErr("That's embarrassing... %v", err)
 
 	jsonfmt := jsonBuf.String()
 	fPln(jsonfmt)
-	jsonfmt = pp.FmtJSONStr(jsonfmt, "../preprocess/utils")
+	jsonfmt = pp.FmtJSONStr(jsonfmt, cfgPrefix.JQDir)
 	fPln(jsonfmt)
 	jsonfmt = replDigCont(jsonfmt)
 	fPln(jsonfmt)
