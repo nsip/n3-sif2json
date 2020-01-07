@@ -7,6 +7,7 @@ Sep = "~"
   L1 = "PurchasingItems"
   L2 = "PurchasingItems~PurchasingItem~ExpenseAccounts"
   L3 = "EmployeePersonalRefId"
+  L4 = "FormNumber"
 
 [Test]
   L1 = "PurchasingItems"

@@ -34,6 +34,7 @@ type Path2JSON struct {
 		L1 string
 		L2 string
 		L3 string
+		L4 string
 	}
 	Test struct {
 		L1 string
@@ -53,6 +54,8 @@ var (
 		&Path2JSON{},
 	}
 )
+
+// ------------------------------------------------- //
 
 // NewCfg :
 func NewCfg(cfgPaths ...string) interface{} {
