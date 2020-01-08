@@ -4,15 +4,7 @@ JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
 Sep = "~"
 
 [PurchaseOrder]
-  L1 = "PurchasingItems"
-  L2 = "PurchasingItems~PurchasingItem~ExpenseAccounts"
-  L3 = "EmployeePersonalRefId"
-  L4 = "FormNumber"
+  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem~ExpenseAccounts", "EmployeePersonalRefId", "FormNumber"]
 
 [Test]
-  L1 = "PurchasingItems"
-  L2 = "PurchasingItems~PurchasingItem~ExpenseAccounts"
-  L3 = "EmployeePersonalRefId"
-
-[Test1]
-  L1 = "ListPath1"
+  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem~ExpenseAccounts", "EmployeePersonalRefId"]

@@ -8,6 +8,7 @@ import (
 
 var (
 	fPln        = fmt.Println
+	fPf         = fmt.Printf
 	fSp         = fmt.Sprint
 	fSf         = fmt.Sprintf
 	fEf         = fmt.Errorf
@@ -27,9 +28,9 @@ var (
 )
 
 var (
-	lsObjects       = []string{}
-	mObjLAttrs      = map[string][]string{}
-	mObjMLenOfLAttr = map[string]int{}
+	lsObjects         = []string{}
+	mObjLAttrs        = map[string][]string{}
+	mObjMaxLenOfLAttr = map[string]int{}
 )
 
 var (

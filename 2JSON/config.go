@@ -31,18 +31,10 @@ type Path2JSON struct {
 	JQDir         string
 	Sep           string
 	PurchaseOrder struct {
-		L1 string
-		L2 string
-		L3 string
-		L4 string
+		ListAttrs []string
 	}
 	Test struct {
-		L1 string
-		L2 string
-		L3 string
-	}
-	Test1 struct {
-		L1 string
+		ListAttrs []string
 	}
 }
 

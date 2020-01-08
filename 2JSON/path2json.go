@@ -12,9 +12,37 @@ import (
 	"github.com/peterbourgon/mergemap"
 )
 
-// GetAllObjects :
-func GetAllObjects() []string {
-	return append([]string{}, lsObjects...)
+// initListAttrPaths :
+func initListAttrPaths(objListCfg interface{}, name, sep string) {
+	// nameType := reflect.TypeOf(objListCfg).Name()
+	value := reflect.ValueOf(objListCfg)
+	nField := value.NumField()
+
+	// for [ListAttrs] version,
+	// [nField] should be 1 as all paths have been wrapped into [ListAttrs] Array
+	for i := 0; i < nField; i++ {
+
+		// [L1], [L2], [L3] ... version
+		// # path := name + sep + fSp(value.Field(i).Interface())
+		// path := fSp(value.Field(i).Interface())
+		// mObjLAttrs[name] = append(mObjLAttrs[name], path)
+		// if n := sCount(path, sep) + 1; mObjMaxLenOfLAttr[name] < n {
+		// 	mObjMaxLenOfLAttr[name] = n
+		// }
+
+		// [ListAttrs] version
+		lsPath := fSp(value.Field(i).Interface())
+		lsPath = lsPath[1 : len(lsPath)-1]
+		mObjLAttrs[name] = append(mObjLAttrs[name], sSplit(lsPath, " ")...)
+		for _, path := range mObjLAttrs[name] {
+			if n := sCount(path, sep) + 1; mObjMaxLenOfLAttr[name] < n {
+				mObjMaxLenOfLAttr[name] = n
+			}
+		}
+	}
+	sort.SliceStable(mObjLAttrs[name], func(i, j int) bool {
+		return sCount(mObjLAttrs[name][i], sep) < sCount(mObjLAttrs[name][j], sep)
+	})
 }
 
 // InitAllListAttrPaths :
@@ -32,23 +60,9 @@ func InitAllListAttrPaths(cfg interface{}, sep string) {
 	}
 }
 
-// initListAttrPaths :
-func initListAttrPaths(objListCfg interface{}, name, sep string) {
-	// nameType := reflect.TypeOf(objListCfg).Name()
-	value := reflect.ValueOf(objListCfg)
-	nField := value.NumField()
-	for i := 0; i < nField; i++ {
-		// path := name + sep + fSp(value.Field(i).Interface())
-		path := fSp(value.Field(i).Interface())
-		mObjLAttrs[name] = append(mObjLAttrs[name], path)
-
-		if n := sCount(path, sep) + 1; mObjMLenOfLAttr[name] < n {
-			mObjMLenOfLAttr[name] = n
-		}
-	}
-	sort.SliceStable(mObjLAttrs[name], func(i, j int) bool {
-		return sCount(mObjLAttrs[name][i], sep) < sCount(mObjLAttrs[name][j], sep)
-	})
+// GetAllObjects :
+func GetAllObjects() []string {
+	return append([]string{}, lsObjects...)
 }
 
 // GetAllLAttrs :
@@ -62,7 +76,7 @@ func GetAllLAttrs(obj, sep string) (LAs []string) {
 
 // GetLAttrs :
 func GetLAttrs(obj, sep string, lvl int) (LAs []string, valid bool) {
-	if lvl > mObjMLenOfLAttr[obj] {
+	if lvl > mObjMaxLenOfLAttr[obj] {
 		return nil, false
 	}
 	for _, la := range mObjLAttrs[obj] {
@@ -73,7 +87,7 @@ func GetLAttrs(obj, sep string, lvl int) (LAs []string, valid bool) {
 	return LAs, true
 }
 
-// -------------------------------------------- //
+// -------------------------------------------------- //
 
 // MakeBasicMap :
 func MakeBasicMap(field string, value interface{}) map[string]interface{} {
