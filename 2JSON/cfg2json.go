@@ -164,7 +164,7 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 func YieldJSONListAttrCfg(cfgPath, outDir, jsonVal string) {
 	cfg := NewCfg(cfgPath)
 	cmn.FailOnCondition(cfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
-	cfgList := cfg.(*Path2JSON)
+	cfgList := cfg.(*Cfg2JSON)
 	cmn.FailOnCondition(cfgList.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 	cmn.FailOnCondition(cfgList.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 	InitAllListAttrPaths(*cfgList, cfgList.Sep) // Init Global Maps

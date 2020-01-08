@@ -77,7 +77,7 @@ func xml2json(cfgPath, xmlPath, jsonPath string) {
 	// Digital string to number
 	json := replaceDigCont(jsonBuf.String(), cfgXML2JSON.JQDir)
 
-	// List Attributes Modify
+	// List Attributes Modification
 	lsAttrRule := getEachFileContent("../ListAttr/PurchaseOrder", "json", 1, 2, 3, 4, 5)
 	json = enforceListAttr(json, cfgXML2JSON.JQDir, lsAttrRule...)
 

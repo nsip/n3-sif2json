@@ -8,6 +8,8 @@ import (
 	"github.com/burntsushi/toml"
 )
 
+// !!! toml file name must be identical to config struct definition name !!!
+
 // General : toml
 type General struct {
 	Path    string
@@ -24,8 +26,8 @@ type XML2JSON struct {
 	ContentPrefix string
 }
 
-// Path2JSON : toml
-type Path2JSON struct {
+// Cfg2JSON : toml
+type Cfg2JSON struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
@@ -43,7 +45,7 @@ var (
 	lsCfg = []interface{}{
 		&General{},
 		&XML2JSON{},
-		&Path2JSON{},
+		&Cfg2JSON{},
 	}
 )
 
