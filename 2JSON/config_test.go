@@ -5,18 +5,13 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	if cfg := NewCfg("./config/General.toml"); cfg != nil {
-		cfg := cfg.(*General)
-		fPln(*cfg)
-	}
-	fPln()
-	if cfg := NewCfg("./config/Cfg2JSON.toml"); cfg != nil {
-		cfg := cfg.(*Cfg2JSON)
+	if cfg := NewCfg("./config/cfg2json.toml"); cfg != nil {
+		cfg := cfg.(*cfg2json)
 		fPf("%+v\n", *cfg)
 	}
 	fPln()
-	if cfg := NewCfg("./config/XML2JSON.toml"); cfg != nil {
-		cfg := cfg.(*XML2JSON)
-		fPln(*cfg)
+	if cfg := NewCfg("./config/sif2json.toml"); cfg != nil {
+		cfg := cfg.(*sif2json)
+		fPf("%+v\n", *cfg)
 	}
 }

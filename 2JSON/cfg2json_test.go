@@ -11,12 +11,11 @@ func TestMakeMap(t *testing.T) {
 	m4 := MakeOneMap("PurchaseOrder~PurchasingItems1", "~", "[]")
 	mm := MergeMaps(m1, m2, m3, m4)
 	fPln(mm)
-	fPln()
 }
 
 func TestOthers(t *testing.T) {
 
-	cfg := NewCfg("./config/Cfg2JSON.toml").(*Cfg2JSON)
+	cfg := NewCfg("./config/cfg2json.toml").(*cfg2json)
 	InitAllListAttrPaths(*cfg, cfg.Sep) // Init Global Maps
 	fPln(GetAllObjects())
 
@@ -31,5 +30,5 @@ func TestOthers(t *testing.T) {
 }
 
 func TestMakeJSON(t *testing.T) {
-	YieldJSONListAttrCfg("./config/Cfg2JSON.toml", "../ListAttr", "[]")
+	YieldJSONListAttrCfg("./config/cfg2json.toml", "[]")
 }

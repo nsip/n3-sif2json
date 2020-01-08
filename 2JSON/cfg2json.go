@@ -161,14 +161,14 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 }
 
 // YieldJSONListAttrCfg :
-func YieldJSONListAttrCfg(cfgPath, outDir, jsonVal string) {
-	cfg := NewCfg(cfgPath)
-	cmn.FailOnCondition(cfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
-	cfgList := cfg.(*Cfg2JSON)
-	cmn.FailOnCondition(cfgList.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnCondition(cfgList.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
-	InitAllListAttrPaths(*cfgList, cfgList.Sep) // Init Global Maps
+func YieldJSONListAttrCfg(cfgPath, jsonVal string) {
+	ICfg := NewCfg(cfgPath)
+	cmn.FailOnCondition(ICfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
+	cfg := ICfg.(*cfg2json)
+	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	InitAllListAttrPaths(*cfg, cfg.Sep) // Init Global Maps
 	for _, obj := range GetAllObjects() {
-		YieldJSONListAttr4OneCfg(obj, cfgList.Sep, outDir, jsonVal, cfgList.JQDir)
+		YieldJSONListAttr4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir)
 	}
 }

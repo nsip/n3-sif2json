@@ -55,17 +55,21 @@ func enforceListAttr(json, jqDir string, lsJSON4ListAttr ...string) string {
 	return json
 }
 
-func xml2json(cfgPath, xmlPath, jsonPath string) {
-	cfg := NewCfg(cfgPath)
-	cmn.FailOnCondition(cfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
-	cfgXML2JSON := cfg.(*XML2JSON)
+// SIF2JSON :
+func SIF2JSON(cfgPath, xmlPath, jsonPath string) {
+	ICfg := NewCfg(cfgPath)
+	cmn.FailOnCondition(ICfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
+	cfg := ICfg.(*sif2json)
 
 	bytesXML, err := ioutil.ReadFile(xmlPath)
 	cmn.FailOnErr("%v", err)
 	// fPln(string(bytesXML))
 
+	xml := string(bytesXML)
+	obj := xmlroot(xml)
+
 	// xml is an io.Reader
-	xmlReader := sNewReader(string(bytesXML))
+	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
 		xmlReader,
 		xj.WithTypeConverter(xj.Float, xj.Int, xj.Bool, xj.Null),
@@ -75,11 +79,11 @@ func xml2json(cfgPath, xmlPath, jsonPath string) {
 	cmn.FailOnErr("That's embarrassing... %v", err)
 
 	// Digital string to number
-	json := replaceDigCont(jsonBuf.String(), cfgXML2JSON.JQDir)
+	json := replaceDigCont(jsonBuf.String(), cfg.JQDir)
 
 	// List Attributes Modification
-	lsAttrRule := getEachFileContent("../ListAttr/PurchaseOrder", "json", 1, 2, 3, 4, 5)
-	json = enforceListAttr(json, cfgXML2JSON.JQDir, lsAttrRule...)
+	lsAttrRule := getEachFileContent(cfg.CfgJSONDir+obj, "json", 1, 2, 3, 4, 5)
+	json = enforceListAttr(json, cfg.JQDir, lsAttrRule...)
 
 	ioutil.WriteFile(jsonPath, []byte(json), 0666)
 }

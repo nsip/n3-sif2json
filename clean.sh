@@ -1,7 +1,6 @@
 #!/bin/bash
 
-rm -rf ./ListAttr
-rm -f ./data/*.json
-rm -f ./data/test1.xml
-rm -f ./data/test2.xml
-rm -rf ./2JSON/data
+shopt -s extglob
+
+rm -rf ./2JSON/data/
+rm -rf ./data/!(test.xml)

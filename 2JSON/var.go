@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -14,6 +16,7 @@ var (
 	fEf         = fmt.Errorf
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
+	sTrim       = strings.Trim
 	sCount      = strings.Count
 	sReplaceAll = strings.ReplaceAll
 	sSplit      = strings.Split
@@ -50,5 +53,28 @@ var (
 			m[str] = modstr
 		}
 		return m
+	}
+
+	xmlroot = func(xml string) (root string) {
+		xml = sTrim(xml, " \t\n")
+		start, end := 0, 0
+		for i := len(xml) - 1; i >= 0; i-- {
+			switch xml[i] {
+			case '>':
+				end = i
+			case '/':
+				start = i + 1
+			}
+			if start != 0 && end != 0 {
+				break
+			}
+		}
+		root = xml[start:end]
+
+		// check, flag (?s) let . includes "NewLine"
+		re1 := regexp.MustCompile(fSf(`(?s)^<%s .+</%s>$`, root, root))
+		re2 := regexp.MustCompile(fSf(`(?s)^<%s>.+</%s>$`, root, root))
+		cmn.FailOnCondition(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", fEf("Invalid XML"))
+		return
 	}
 )

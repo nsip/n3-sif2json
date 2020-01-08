@@ -10,28 +10,12 @@ import (
 
 // !!! toml file name must be identical to config struct definition name !!!
 
-// General : toml
-type General struct {
-	Path    string
-	PathAbs string
-	ErrLog  string
-}
-
-// XML2JSON : toml
-type XML2JSON struct {
-	Path          string
-	PathAbs       string
-	JQDir         string
-	AttrPrefix    string
-	ContentPrefix string
-}
-
-// Cfg2JSON : toml
-type Cfg2JSON struct {
+type cfg2json struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
 	Sep           string
+	CfgJSONOutDir string
 	PurchaseOrder struct {
 		ListAttrs []string
 	}
@@ -40,12 +24,20 @@ type Cfg2JSON struct {
 	}
 }
 
+type sif2json struct {
+	Path          string
+	PathAbs       string
+	JQDir         string
+	AttrPrefix    string
+	ContentPrefix string
+	CfgJSONDir    string
+}
+
 var (
 	// toml file name must be identical to config struct definition name
 	lsCfg = []interface{}{
-		&General{},
-		&XML2JSON{},
-		&Cfg2JSON{},
+		&cfg2json{},
+		&sif2json{},
 	}
 )
 
