@@ -142,9 +142,13 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 		outDir += "/"
 	}
 	path := outDir + obj + "/"
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		os.MkdirAll(path, os.ModePerm)
-	}
+
+	// delete all obsolete json files when new config-json files are coming
+	os.RemoveAll(path)
+	os.MkdirAll(path, os.ModePerm)
+	// if _, err := os.Stat(path); os.IsNotExist(err) {
+	// 	os.MkdirAll(path, os.ModePerm)
+	// }
 	for lvl := 1; lvl < 100; lvl++ {
 		if LAs, valid := GetLAttrs(obj, sep, lvl); valid {
 			mm := MakeMap(LAs, sep, jsonVal)

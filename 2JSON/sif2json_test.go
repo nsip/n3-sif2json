@@ -15,7 +15,7 @@ func TestXMLRoot(t *testing.T) {
 }
 
 func TestGetEachFileContent(t *testing.T) {
-	fPln(getEachFileContent("../ListAttr/PurchaseOrder", "json", 1, 2, 3, 4, 5))
+	fPln(getEachFileContent("../data/ListAttributes/PurchaseOrder", "json", cmn.Iter2Slc(10)...))
 }
 
 func TestSIF2JSON(t *testing.T) {

@@ -49,7 +49,7 @@ func getEachFileContent(dir, ext string, indices ...int) (rt []string) {
 // lsJSON4ListAttr must be from low Level to high level
 func enforceListAttr(json, jqDir string, lsJSON4ListAttr ...string) string {
 	for _, jsoncfg := range lsJSON4ListAttr {
-		maskroot, _ := jkv.NewJKV(json, "").Unfold(0, jkv.NewJKV(jsoncfg, ""))
+		maskroot, _ := jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
 		json = pp.FmtJSONStr(maskroot, jqDir)
 	}
 	return json
@@ -82,7 +82,7 @@ func SIF2JSON(cfgPath, xmlPath, jsonPath string) {
 	json := replaceDigCont(jsonBuf.String(), cfg.JQDir)
 
 	// List Attributes Modification
-	lsAttrRule := getEachFileContent(cfg.CfgJSONDir+obj, "json", 1, 2, 3, 4, 5)
+	lsAttrRule := getEachFileContent(cfg.CfgJSONDir+obj, "json", cmn.Iter2Slc(10)...)
 	json = enforceListAttr(json, cfg.JQDir, lsAttrRule...)
 
 	ioutil.WriteFile(jsonPath, []byte(json), 0666)
