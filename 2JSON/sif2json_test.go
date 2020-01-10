@@ -7,6 +7,12 @@ import (
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
+func TestJSONRoot(t *testing.T) {
+	bytes, err := ioutil.ReadFile("../data/test.json")
+	cmn.FailOnErr("%v", err)
+	fPln(jsonroot(string(bytes)))
+}
+
 func TestXMLRoot(t *testing.T) {
 	bytes, err := ioutil.ReadFile("../data/test.xml")
 	cmn.FailOnErr("%v", err)

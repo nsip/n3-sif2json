@@ -1,6 +1,7 @@
 package cvt2json
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -76,5 +77,14 @@ var (
 		re2 := regexp.MustCompile(fSf(`(?s)^<%s>.+</%s>$`, root, root))
 		cmn.FailOnCondition(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", fEf("Invalid XML"))
 		return
+	}
+
+	jsonroot = func(jsonstr string) string {
+		x := make(map[string]interface{})
+		cmn.FailOnErr("%v", json.Unmarshal([]byte(jsonstr), &x))
+		for k := range x {
+			return k
+		}
+		return ""
 	}
 )

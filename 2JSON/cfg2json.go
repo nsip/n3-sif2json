@@ -144,11 +144,11 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 	path := outDir + obj + "/"
 
 	// delete all obsolete json files when new config-json files are coming
-	os.RemoveAll(path)
-	os.MkdirAll(path, os.ModePerm)
-	// if _, err := os.Stat(path); os.IsNotExist(err) {
-	// 	os.MkdirAll(path, os.ModePerm)
-	// }
+	cmn.FailOnErr("%v", os.RemoveAll(path))
+	fPf("%s is removed\n", path)
+	cmn.FailOnErr("%v", os.MkdirAll(path, os.ModePerm))
+	fPf("%s is created\n", path)
+
 	for lvl := 1; lvl < 100; lvl++ {
 		if LAs, valid := GetLAttrs(obj, sep, lvl); valid {
 			mm := MakeMap(LAs, sep, jsonVal)
@@ -156,7 +156,7 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 				continue
 			}
 			// jsonstr := MakeJSON(mm)
-			jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr
+			jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( !! pp syscall doesn't work properly for parallel )
 			ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonstr), 0666)
 		} else {
 			break
@@ -172,7 +172,19 @@ func YieldJSONListAttrCfg(cfgPath, jsonVal string) {
 	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 	InitAllListAttrPaths(*cfg, cfg.Sep) // Init Global Maps
+
 	for _, obj := range GetAllObjects() {
 		YieldJSONListAttr4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir)
 	}
+
+	// lsObj := GetAllObjects()
+	// wg := sync.WaitGroup{}
+	// wg.Add(len(lsObj))
+	// for _, obj := range lsObj {
+	// 	go func(obj, sep, outDir, jsonVal, jqDir string) {
+	// 		defer wg.Done()
+	// 		YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir)
+	// 	}(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir)
+	// }
+	// wg.Wait()
 }

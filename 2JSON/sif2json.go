@@ -49,6 +49,8 @@ func getEachFileContent(dir, ext string, indices ...int) (rt []string) {
 // lsJSON4ListAttr must be from low Level to high level
 func enforceListAttr(json, jqDir string, lsJSON4ListAttr ...string) string {
 	for _, jsoncfg := range lsJSON4ListAttr {
+		// make sure [jsoncfg] is formatted
+		// jsoncfg = pp.FmtJSONStr(jsoncfg, jqDir)
 		maskroot, _ := jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
 		json = pp.FmtJSONStr(maskroot, jqDir)
 	}
@@ -56,7 +58,7 @@ func enforceListAttr(json, jqDir string, lsJSON4ListAttr ...string) string {
 }
 
 // SIF2JSON :
-func SIF2JSON(cfgPath, xmlPath, jsonPath string) {
+func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
 	ICfg := NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
 	cfg := ICfg.(*sif2json)
@@ -66,7 +68,10 @@ func SIF2JSON(cfgPath, xmlPath, jsonPath string) {
 	// fPln(string(bytesXML))
 
 	xml := string(bytesXML)
-	obj := xmlroot(xml)
+	obj := xmlroot(xml)    // infer object from xml root by default, use this object to search config json
+	if len(enforced) > 0 { // if object is provided, ignore default, use 1st provided object to search config json
+		obj = enforced[0]
+	}
 
 	// xml is an io.Reader
 	xmlReader := sNewReader(xml)

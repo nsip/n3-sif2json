@@ -5,7 +5,13 @@ Sep = "~"
 CfgJSONOutDir = "../data/ListAttributes/"
 
 [PurchaseOrder]
+  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem", "PurchasingItems~PurchasingItem~ExpenseAccounts"]
+
+[PurchasingItem]
+  ListAttrs = ["ExpenseAccounts"]
+
+[Test1]
   ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem~ExpenseAccounts"]
 
-[Test]
-  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem~ExpenseAccounts", "EmployeePersonalRefId"]
+[Test2]
+  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem~ExpenseAccounts"]

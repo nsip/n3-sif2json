@@ -16,10 +16,17 @@ type cfg2json struct {
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
+	// ------------------ //
 	PurchaseOrder struct {
 		ListAttrs []string
 	}
-	Test struct {
+	PurchasingItem struct {
+		ListAttrs []string
+	}
+	Test1 struct {
+		ListAttrs []string
+	}
+	Test2 struct {
 		ListAttrs []string
 	}
 }
