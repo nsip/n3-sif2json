@@ -156,7 +156,7 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 				continue
 			}
 			// jsonstr := MakeJSON(mm)
-			jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( !! pp syscall doesn't work properly for parallel )
+			jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( Only single thread use this line )
 			ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonstr), 0666)
 		} else {
 			break

@@ -67,13 +67,8 @@ func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
 	cmn.FailOnErr("%v", err)
 	// fPln(string(bytesXML))
 
-	xml := string(bytesXML)
-	obj := xmlroot(xml)    // infer object from xml root by default, use this object to search config json
-	if len(enforced) > 0 { // if object is provided, ignore default, use 1st provided object to search config json
-		obj = enforced[0]
-	}
-
 	// xml is an io.Reader
+	xml := string(bytesXML)
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
 		xmlReader,
@@ -87,6 +82,10 @@ func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
 	json := replaceDigCont(jsonBuf.String(), cfg.JQDir)
 
 	// List Attributes Modification
+	obj := xmlroot(xml)    // infer object from xml root by default, use this object to search config json
+	if len(enforced) > 0 { // if object is provided, ignore default, use 1st provided object to search config json
+		obj = enforced[0]
+	}
 	lsAttrRule := getEachFileContent(cfg.CfgJSONDir+obj, "json", cmn.Iter2Slc(10)...)
 	json = enforceListAttr(json, cfg.JQDir, lsAttrRule...)
 

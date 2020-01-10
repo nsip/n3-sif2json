@@ -1,17 +1,233 @@
 Path = "./config/cfg2json.toml"
 PathAbs = "/home/qing/go/src/github.com/nsip/n3-sif2json/2JSON/config/cfg2json.toml"
 JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
-Sep = "~"
+Sep = "/"
 CfgJSONOutDir = "../data/ListAttributes/"
 
+[AggregateStatisticInfo]
+  ListAttrs = ["ExclusionRules", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[SchoolPrograms]
+  ListAttrs = ["SchoolProgramList", "SchoolProgramList/Program/OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[SectionInfo]
+  ListAttrs = ["MediumOfInstruction/OtherCodeList", "LanguageOfInstruction/OtherCodeList", "LocationOfInstruction/OtherCodeList", "SchoolCourseInfoOverride/SubjectArea/OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[TimeTableCell]
+  ListAttrs = ["TeacherList", "RoomList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[WellbeingAppeal]
+  ListAttrs = ["DocumentList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[AGStatusReport]
+  ListAttrs = ["AGReportingObjectResponseList", "AGReportingObjectResponseList/AGReportingObjectResponse/AGRuleList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[CalendarSummary]
+  ListAttrs = ["YearLevels", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[FinancialAccount]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[FinancialQuestionnaireSubmission]
+  ListAttrs = ["FQReportingList", "FQReportingList/FQReporting/EntityContact/Address/StatisticalAreas", "FQReportingList/FQReporting/FQContextualQuestionList", "FQReportingList/FQReporting/FQItemList", "FQReportingList/FQReporting/AGRuleList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentActivityParticipation]
+  ListAttrs = ["RecognitionList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[GradingAssignmentScore]
+  ListAttrs = ["SubscoreList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentContactPersonal]
+  ListAttrs = ["OtherIdList", "PersonInfo/OtherNames", "PersonInfo/Demographics/CountriesOfCitizenship", "PersonInfo/Demographics/CountriesOfResidency", "PersonInfo/Demographics/EnglishProficiency/OtherCodeList", "PersonInfo/Demographics/LanguageList", "PersonInfo/Demographics/LanguageList/Language/OtherCodeList", "PersonInfo/Demographics/DwellingArrangement/OtherCodeList", "PersonInfo/Demographics/Religion/OtherCodeList", "PersonInfo/Demographics/ReligiousEventList", "PersonInfo/Demographics/VisaSubClassList", "PersonInfo/AddressList", "PersonInfo/AddressList/Address/StatisticalAreas", "PersonInfo/PhoneNumberList", "PersonInfo/EmailList", "PersonInfo/HouseholdContactInfoList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/AddressList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/AddressList/Address/StatisticalAreas", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/EmailList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/PhoneNumberList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[VendorInfo]
+  ListAttrs = ["ContactInfo/Address/StatisticalAreas", "ContactInfo/EmailList", "ContactInfo/PhoneNumberList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[LEAInfo]
+  ListAttrs = ["EducationAgencyType/OtherCodeList", "LEAContactList", "LEAContactList/LEAContact/ContactInfo/Address/StatisticalAreas", "LEAContactList/LEAContact/ContactInfo/EmailList", "LEAContactList/LEAContact/ContactInfo/PhoneNumberList", "PhoneNumberList", "AddressList", "AddressList/Address/StatisticalAreas", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[MarkValueInfo]
+  ListAttrs = ["YearLevels", "ValidLetterMarkList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[NAPEventStudentLink]
+  ListAttrs = ["TestDisruptionList", "Adjustment/PNPCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[NAPTest]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StaffPersonal]
+  ListAttrs = ["ElectronicIdList", "OtherIdList", "PersonInfo/OtherNames", "PersonInfo/Demographics/CountriesOfCitizenship", "PersonInfo/Demographics/CountriesOfResidency", "PersonInfo/Demographics/EnglishProficiency/OtherCodeList", "PersonInfo/Demographics/LanguageList", "PersonInfo/Demographics/LanguageList/Language/OtherCodeList", "PersonInfo/Demographics/DwellingArrangement/OtherCodeList", "PersonInfo/Demographics/Religion/OtherCodeList", "PersonInfo/Demographics/ReligiousEventList", "PersonInfo/Demographics/VisaSubClassList", "PersonInfo/AddressList", "PersonInfo/AddressList/Address/StatisticalAreas", "PersonInfo/PhoneNumberList", "PersonInfo/EmailList", "PersonInfo/HouseholdContactInfoList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/AddressList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/AddressList/Address/StatisticalAreas", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/EmailList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/PhoneNumberList", "MostRecent/NAPLANClassList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[TermInfo]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[WellbeingEvent]
+  ListAttrs = ["WellbeingEventCategoryList", "WellbeingEventCategoryList/WellbeingEventCategory/WellbeingEventSubCategoryList", "PersonInvolvementList", "FollowUpActionList", "DocumentList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[Identity]
+  ListAttrs = ["IdentityAssertions", "PasswordList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[Invoice]
+  ListAttrs = ["FinancialAccountRefIdList", "AccountCodeList", "PurchasingItems", "PurchasingItems/PurchasingItem/ExpenseAccounts", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[LearningStandardDocument]
+  ListAttrs = ["Organizations", "Authors", "SubjectAreas", "SubjectAreas/ACStrandSubjectArea/SubjectArea/OtherCodeList", "YearLevels", "RelatedLearningStandards", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[WellbeingPersonLink]
+  ListAttrs = ["FollowUpActionList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[LearningStandardItem]
+  ListAttrs = ["Resources", "PredecessorItems", "StatementCodes", "Statements", "YearLevels", "ACStrandSubjectArea/SubjectArea/OtherCodeList", "StandardIdentifier/ACStrandSubjectArea/SubjectArea/OtherCodeList", "StandardIdentifier/YearLevels", "StandardIdentifier/AlternateIdentificationCodes", "RelatedLearningStandardItems", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentGrade]
+  ListAttrs = ["Markers", "LearningArea/SubjectArea/OtherCodeList", "LearningStandardList", "GradingScoreList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentSectionEnrollment]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentPersonal]
+  ListAttrs = ["AlertMessages", "MedicalAlertMessages", "ElectronicIdList", "OtherIdList", "PersonInfo/OtherNames", "PersonInfo/Demographics/CountriesOfCitizenship", "PersonInfo/Demographics/CountriesOfResidency", "PersonInfo/Demographics/EnglishProficiency/OtherCodeList", "PersonInfo/Demographics/LanguageList", "PersonInfo/Demographics/LanguageList/Language/OtherCodeList", "PersonInfo/Demographics/DwellingArrangement/OtherCodeList", "PersonInfo/Demographics/Religion/OtherCodeList", "PersonInfo/Demographics/ReligiousEventList", "PersonInfo/Demographics/VisaSubClassList", "PersonInfo/AddressList", "PersonInfo/AddressList/Address/StatisticalAreas", "PersonInfo/PhoneNumberList", "PersonInfo/EmailList", "PersonInfo/HouseholdContactInfoList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/AddressList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/AddressList/Address/StatisticalAreas", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/EmailList", "PersonInfo/HouseholdContactInfoList/HouseholdContactInfo/PhoneNumberList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[AGAddressCollectionSubmission]
+  ListAttrs = ["AddressCollectionReportingList", "AddressCollectionReportingList/AddressCollectionReporting/EntityContact/Address/StatisticalAreas", "AddressCollectionReportingList/AddressCollectionReporting/AGContextualQuestionList", "AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList", "AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/StudentAddress/StatisticalAreas", "AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/ParentAddress/StatisticalAreas", "AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent2/ParentAddress/StatisticalAreas", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[AGGetRounds]
+  ListAttrs = ["AGRoundList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[LearningResource]
+  ListAttrs = ["Contacts", "Contacts/Contact/Address/StatisticalAreas", "YearLevels", "SubjectAreas", "SubjectAreas/ACStrandSubjectArea/SubjectArea/OtherCodeList", "MediaTypes", "Approvals", "Evaluations", "Components", "Components/Component/Strategies", "Components/Component/AssociatedObjects", "LearningStandards", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[NAPTestScoreSummary]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[ResourceUsage]
+  ListAttrs = ["ResourceReportColumnList", "ResourceReportLineList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[SessionInfo]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentAttendanceTimeList]
+  ListAttrs = ["AttendanceTimes", "AttendanceTimes/AttendanceTime/AttendanceCode/OtherCodeList", "PeriodAttendances", "PeriodAttendances/PeriodAttendance/AttendanceCode/OtherCodeList", "PeriodAttendances/PeriodAttendance/TeacherList", "PeriodAttendances/PeriodAttendance/RoomList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[NAPCodeFrame]
+  ListAttrs = ["TestletList", "TestletList/Testlet/TestItemList", "TestletList/Testlet/TestItemList/TestItem/TestItemContent/ItemSubstitutedForList", "TestletList/Testlet/TestItemList/TestItem/TestItemContent/ItemSubstitutedForList/SubstituteItem/PNPCodeList", "TestletList/Testlet/TestItemList/TestItem/TestItemContent/ContentDescriptionList", "TestletList/Testlet/TestItemList/TestItem/TestItemContent/StimulusList", "TestletList/Testlet/TestItemList/TestItem/TestItemContent/NAPWritingRubricList", "TestletList/Testlet/TestItemList/TestItem/TestItemContent/NAPWritingRubricList/NAPWritingRubric/ScoreList", "TestletList/Testlet/TestItemList/TestItem/TestItemContent/NAPWritingRubricList/NAPWritingRubric/ScoreList/Score/ScoreDescriptionList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentScoreJudgementAgainstStandard]
+  ListAttrs = ["LearningStandardList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentAttendanceSummary]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[GradingAssignment]
+  ListAttrs = ["StudentPersonalRefIdList", "SubAssignmentList", "RubricScoringGuide/ScoreList", "RubricScoringGuide/ScoreList/Score/ScoreDescriptionList", "PrerequisiteList", "LearningStandardList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[PersonPrivacyObligation]
+  ListAttrs = ["ApplicableLawList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[RoomInfo]
+  ListAttrs = ["StaffList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[ScheduledActivity]
+  ListAttrs = ["TeacherList", "RoomList", "AddressList", "AddressList/Address/StatisticalAreas", "StudentList", "TeachingGroupList", "YearLevels", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[SchoolInfo]
+  ListAttrs = ["OtherIdList", "SchoolFocusList", "SchoolEmailList", "PrincipalInfo/PhoneNumberList", "PrincipalInfo/EmailList", "SchoolContactList", "SchoolContactList/SchoolContact/ContactInfo/Address/StatisticalAreas", "SchoolContactList/SchoolContact/ContactInfo/EmailList", "SchoolContactList/SchoolContact/ContactInfo/PhoneNumberList", "AddressList", "AddressList/Address/StatisticalAreas", "PhoneNumberList", "YearLevels", "YearLevelEnrollmentList", "SchoolGroupList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StaffAssignment]
+  ListAttrs = ["StaffSubjectList", "StaffActivity/OtherCodeList", "YearLevels", "CalendarSummaryList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentActivityInfo]
+  ListAttrs = ["StudentActivityType/OtherCodeList", "YearLevels", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[SystemRole]
+  ListAttrs = ["SystemContextList", "SystemContextList/SystemContext/RoleList", "SystemContextList/SystemContext/RoleList/Role/RoleScopeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[TimeTableSubject]
+  ListAttrs = ["OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[WellbeingAlert]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[AggregateStatisticFact]
+  ListAttrs = ["Characteristics", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[Journal]
+  ListAttrs = ["JournalAdjustmentList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentDailyAttendance]
+  ListAttrs = ["AttendanceCode/OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[EquipmentInfo]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[AggregateCharacteristicInfo]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[NAPTestItem]
+  ListAttrs = ["TestItemContent/ItemSubstitutedForList", "TestItemContent/ItemSubstitutedForList/SubstituteItem/PNPCodeList", "TestItemContent/ContentDescriptionList", "TestItemContent/StimulusList", "TestItemContent/NAPWritingRubricList", "TestItemContent/NAPWritingRubricList/NAPWritingRubric/ScoreList", "TestItemContent/NAPWritingRubricList/NAPWritingRubric/ScoreList/Score/ScoreDescriptionList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[Activity]
+  ListAttrs = ["SoftwareRequirementList", "EssentialMaterials", "LearningObjectives", "LearningStandards", "SubjectArea/OtherCodeList", "Prerequisites", "Students", "SourceObjects", "LearningResources", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[PersonalisedPlan]
+  ListAttrs = ["DocumentList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentPeriodAttendance]
+  ListAttrs = ["AttendanceCode/OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[TimeTableContainer]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[WellbeingCharacteristic]
+  ListAttrs = ["SymptomList", "MedicationList", "DocumentList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[PersonPicture]
+  ListAttrs = ["PublishingPermissionList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
 [PurchaseOrder]
-  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem", "PurchasingItems~PurchasingItem~ExpenseAccounts"]
+  ListAttrs = ["PurchasingItems", "PurchasingItems/PurchasingItem/ExpenseAccounts", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
 
-[PurchasingItem]
-  ListAttrs = ["ExpenseAccounts"]
+[StudentContactRelationship]
+  ListAttrs = ["Relationship/OtherCodeList", "HouseholdList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
 
-[Test1]
-  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem~ExpenseAccounts"]
+[WellbeingResponse]
+  ListAttrs = ["PersonInvolvementList", "Suspension/WithdrawalTimeList", "PlanRequired/PlanRequiredList", "DocumentList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
 
-[Test2]
-  ListAttrs = ["PurchasingItems", "PurchasingItems~PurchasingItem~ExpenseAccounts"]
+[NAPTestlet]
+  ListAttrs = ["TestItemList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[PaymentReceipt]
+  ListAttrs = ["FinancialAccountRefIdList", "AccountCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[ResourceBooking]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[SchoolCourseInfo]
+  ListAttrs = ["SubjectAreaList", "SubjectAreaList/SubjectArea/OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentSchoolEnrollment]
+  ListAttrs = ["EntryType/OtherCodeList", "ExitStatus/OtherCodeList", "ExitType/OtherCodeList", "CatchmentStatus/OtherCodeList", "StudentSubjectChoiceList", "StudentSubjectChoiceList/StudentSubjectChoice/StudyDescription/OtherCodeList", "StudentGroupList", "PublishingPermissionList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[TeachingGroup]
+  ListAttrs = ["StudentList", "TeacherList", "TeachingGroupPeriodList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[TimeTable]
+  ListAttrs = ["TimeTableDayList", "TimeTableDayList/TimeTableDay/TimeTablePeriodList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[CalendarDate]
+  ListAttrs = ["CalendarDateType/OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[ChargedLocationInfo]
+  ListAttrs = ["AddressList", "AddressList/Address/StatisticalAreas", "PhoneNumberList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[Debtor]
+  ListAttrs = ["AddressList", "AddressList/Address/StatisticalAreas", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[NAPStudentResponseSet]
+  ListAttrs = ["DomainScore/PlausibleScaledValueList", "TestletList", "TestletList/Testlet/ItemResponseList", "TestletList/Testlet/ItemResponseList/ItemResponse/SubscoreList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[ScheduledActivityContainer]
+  ListAttrs = ["LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
+
+[StudentParticipation]
+  ListAttrs = ["ProgramFundingSources", "ProgramFundingSources/ProgramFundingSource/OtherCodeList", "ReferralSource/OtherCodeList", "ProgramStatus/OtherCodeList", "ProgramAvailability/OtherCodeList", "LocalCodeList", "SIF_Metadata/TimeElements", "SIF_Metadata/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/LifeCycle/Created/Creators", "SIF_Metadata/LifeCycle/ModificationHistory", "SIF_Metadata/LifeCycle/TimeElements", "SIF_Metadata/LifeCycle/TimeElements/TimeElement/SpanGaps", "SIF_Metadata/EducationFilter/LearningStandardItems", "SIF_ExtendedElements"]
