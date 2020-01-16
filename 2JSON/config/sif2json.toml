@@ -3,4 +3,6 @@ PathAbs = "/home/qing/go/src/github.com/nsip/n3-sif2json/2JSON/config/sif2json.t
 JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
 AttrPrefix = "-"
 ContentPrefix = "#"
-CfgJSONDir = "../data/ListAttributes/"
+CfgJSONDir4LIST = "../data/ListAttr/"
+CfgJSONDir4NUM = "../data/NumAttr/"
+CfgJSONDir4BOOL = "../data/BoolAttr/"

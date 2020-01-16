@@ -12,41 +12,33 @@ import (
 	"github.com/peterbourgon/mergemap"
 )
 
-// initListAttrPaths :
-func initListAttrPaths(objListCfg interface{}, name, sep string) {
-	// nameType := reflect.TypeOf(objListCfg).Name()
-	value := reflect.ValueOf(objListCfg)
+// initGlobalMaps :
+func initGlobalMaps(oneObjPathList interface{}, name, sep string) {
+	// nameType := reflect.TypeOf(oneObjPathList).Name()
+	value := reflect.ValueOf(oneObjPathList)
 	nField := value.NumField()
 
-	// for [ListAttrs] version,
-	// [nField] should be 1 as all paths have been wrapped into [ListAttrs] Array
+	// for [****] version,
+	// [nField] should be 1 as all paths have been wrapped into [****] Array
 	for i := 0; i < nField; i++ {
-
-		// [L1], [L2], [L3] ... version
-		// # path := name + sep + fSp(value.Field(i).Interface())
-		// path := fSp(value.Field(i).Interface())
-		// mObjLAttrs[name] = append(mObjLAttrs[name], path)
-		// if n := sCount(path, sep) + 1; mObjMaxLenOfLAttr[name] < n {
-		// 	mObjMaxLenOfLAttr[name] = n
-		// }
-
-		// [ListAttrs] version
+		// [****] version
 		lsPath := fSp(value.Field(i).Interface())
 		lsPath = lsPath[1 : len(lsPath)-1]
-		mObjLAttrs[name] = append(mObjLAttrs[name], sSplit(lsPath, " ")...)
-		for _, path := range mObjLAttrs[name] {
-			if n := sCount(path, sep) + 1; mObjMaxLenOfLAttr[name] < n {
-				mObjMaxLenOfLAttr[name] = n
+		mObjPaths[name] = append(mObjPaths[name], sSplit(lsPath, " ")...)
+		for _, path := range mObjPaths[name] {
+			if n := sCount(path, sep) + 1; mObjMaxLenOfPath[name] < n {
+				mObjMaxLenOfPath[name] = n
 			}
 		}
 	}
-	sort.SliceStable(mObjLAttrs[name], func(i, j int) bool {
-		return sCount(mObjLAttrs[name][i], sep) < sCount(mObjLAttrs[name][j], sep)
+	sort.SliceStable(mObjPaths[name], func(i, j int) bool {
+		return sCount(mObjPaths[name][i], sep) < sCount(mObjPaths[name][j], sep)
 	})
 }
 
-// InitAllListAttrPaths :
-func InitAllListAttrPaths(cfg interface{}, sep string) {
+// InitCfgBuf :
+func InitCfgBuf(cfg interface{}, sep string) {
+	clearBuf()
 	value := reflect.ValueOf(cfg)
 	nField, valType := value.NumField(), value.Type()
 	for i := 0; i < nField; i++ {
@@ -54,37 +46,37 @@ func InitAllListAttrPaths(cfg interface{}, sep string) {
 		// nameType := reflect.TypeOf(fVal.Interface()).Name()
 		// fPln(nameType)
 		if fVal.Kind() == reflect.Struct {
-			initListAttrPaths(fVal.Interface(), fValTyp.Name, sep)
+			initGlobalMaps(fVal.Interface(), fValTyp.Name, sep)
 			lsObjects = append(lsObjects, fValTyp.Name)
 		}
 	}
 }
 
-// GetAllObjects :
-func GetAllObjects() []string {
+// GetLoadedObjects :
+func GetLoadedObjects() []string {
 	return append([]string{}, lsObjects...)
 }
 
-// GetAllLAttrs :
-func GetAllLAttrs(obj, sep string) (LAs []string) {
-	for _, la := range mObjLAttrs[obj] {
-		// fPln(la)
-		LAs = append(LAs, obj+sep+la)
+// GetAllFullPaths :
+func GetAllFullPaths(obj, sep string) (paths []string) {
+	for _, path := range mObjPaths[obj] {
+		// fPln(path)
+		paths = append(paths, obj+sep+path)
 	}
 	return
 }
 
-// GetLAttrs :
-func GetLAttrs(obj, sep string, lvl int) (LAs []string, valid bool) {
-	if lvl > mObjMaxLenOfLAttr[obj] {
+// GetLvlFullPaths :
+func GetLvlFullPaths(obj, sep string, lvl int) (paths []string, valid bool) {
+	if lvl > mObjMaxLenOfPath[obj] {
 		return nil, false
 	}
-	for _, la := range mObjLAttrs[obj] {
-		if lvl == sCount(la, sep)+1 {
-			LAs = append(LAs, obj+sep+la)
+	for _, path := range mObjPaths[obj] {
+		if lvl == sCount(path, sep)+1 {
+			paths = append(paths, obj+sep+path)
 		}
 	}
-	return LAs, true
+	return paths, true
 }
 
 // -------------------------------------------------- //
@@ -136,8 +128,10 @@ func MakeJSON(m map[string]interface{}) string {
 	return string(jsonbytes)
 }
 
-// YieldJSONListAttr4OneCfg :
-func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
+// ----------------------------------------------- //
+
+// YieldJSON4OneCfg :
+func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized bool) {
 	if outDir[len(outDir)-1] != '/' {
 		outDir += "/"
 	}
@@ -149,42 +143,84 @@ func YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir string) {
 	cmn.FailOnErr("%v", os.MkdirAll(path, os.ModePerm))
 	fPf("%s is created\n", path)
 
-	for lvl := 1; lvl < 100; lvl++ {
-		if LAs, valid := GetLAttrs(obj, sep, lvl); valid {
-			mm := MakeMap(LAs, sep, jsonVal)
-			if mm == nil || len(mm) == 0 {
-				continue
+	if levelized {
+		for lvl := 1; lvl < 100; lvl++ {
+			if paths, valid := GetLvlFullPaths(obj, sep, lvl); valid {
+				mm := MakeMap(paths, sep, jsonVal)
+				if mm == nil || len(mm) == 0 {
+					continue
+				}
+				// jsonstr := MakeJSON(mm)
+				jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( Only single thread use this line )
+				ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonstr), 0666)
+			} else {
+				break
 			}
-			// jsonstr := MakeJSON(mm)
-			jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( Only single thread use this line )
-			ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonstr), 0666)
-		} else {
-			break
 		}
+	} else {
+		paths := GetAllFullPaths(obj, sep)
+		mm := MakeMap(paths, sep, jsonVal)
+		// jsonstr := MakeJSON(mm)
+		jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( Only single thread use this line )
+		ioutil.WriteFile(fSf("%s%s.json", path, obj), []byte(jsonstr), 0666)
 	}
 }
 
-// YieldJSONListAttrCfg :
-func YieldJSONListAttrCfg(cfgPath, jsonVal string) {
+// YieldCfgJSON4LIST :
+func YieldCfgJSON4LIST(cfgPath, jsonVal string) {
+
 	ICfg := NewCfg(cfgPath)
-	cmn.FailOnCondition(ICfg == nil, "%v", fEf("ListAttribute Configuration File Couldn't Be Loaded"))
-	cfg := ICfg.(*cfg2json)
+	cmn.FailOnCondition(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
+
+	cfg := ICfg.(*list2json)
 	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
-	InitAllListAttrPaths(*cfg, cfg.Sep) // Init Global Maps
 
-	for _, obj := range GetAllObjects() {
-		YieldJSONListAttr4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir)
+	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
+	for _, obj := range GetLoadedObjects() {
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, true)
 	}
 
-	// lsObj := GetAllObjects()
+	// lsObj := GetLoadedObjects()
 	// wg := sync.WaitGroup{}
 	// wg.Add(len(lsObj))
 	// for _, obj := range lsObj {
 	// 	go func(obj, sep, outDir, jsonVal, jqDir string) {
 	// 		defer wg.Done()
-	// 		YieldJSONListAttr4OneCfg(obj, sep, outDir, jsonVal, jqDir)
+	// 		YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir)
 	// 	}(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir)
 	// }
 	// wg.Wait()
+}
+
+// YieldCfgJSON4NUM :
+func YieldCfgJSON4NUM(cfgPath, jsonVal string) {
+
+	ICfg := NewCfg(cfgPath)
+	cmn.FailOnCondition(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
+
+	cfg := ICfg.(*num2json)
+	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+
+	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
+	for _, obj := range GetLoadedObjects() {
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false)
+	}
+}
+
+// YieldCfgJSON4BOOL :
+func YieldCfgJSON4BOOL(cfgPath, jsonVal string) {
+
+	ICfg := NewCfg(cfgPath)
+	cmn.FailOnCondition(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
+
+	cfg := ICfg.(*bool2json)
+	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+
+	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
+	for _, obj := range GetLoadedObjects() {
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false)
+	}
 }

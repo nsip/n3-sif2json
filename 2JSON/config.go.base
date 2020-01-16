@@ -10,29 +10,53 @@ import (
 
 // !!! toml file name must be identical to config struct definition name !!!
 
-type cfg2json struct {
+type list2json struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
 	// ----------------------------------------------------------- //
-	// AUTO-GEN //
+	// # AUTO-GEN: LIST # //
 }
 
-type sif2json struct {
+type num2json struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
-	AttrPrefix    string
-	ContentPrefix string
-	CfgJSONDir    string
+	Sep           string
+	CfgJSONOutDir string
+	// ----------------------------------------------------------- //
+	// # AUTO-GEN: NUMERIC # //
+}
+
+type bool2json struct {
+	Path          string
+	PathAbs       string
+	JQDir         string
+	Sep           string
+	CfgJSONOutDir string
+	// ----------------------------------------------------------- //
+	// # AUTO-GEN: BOOLEAN # //
+}
+
+type sif2json struct {
+	Path            string
+	PathAbs         string
+	JQDir           string
+	AttrPrefix      string
+	ContentPrefix   string
+	CfgJSONDir4LIST string
+	CfgJSONDir4NUM  string
+	CfgJSONDir4BOOL string
 }
 
 var (
 	// toml file name must be identical to config struct definition name
 	lsCfg = []interface{}{
-		&cfg2json{},
+		&list2json{},
+		&num2json{},
+		&bool2json{},
 		&sif2json{},
 	}
 )

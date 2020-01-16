@@ -5,8 +5,8 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	if cfg := NewCfg("./config/cfg2json.toml"); cfg != nil {
-		cfg := cfg.(*cfg2json)
+	if cfg := NewCfg("./config/list2json.toml"); cfg != nil {
+		cfg := cfg.(*list2json)
 		fPf("%+v\n", *cfg)
 	}
 	fPln()

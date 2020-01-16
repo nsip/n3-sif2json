@@ -32,9 +32,15 @@ var (
 )
 
 var (
-	lsObjects         = []string{}
-	mObjLAttrs        = map[string][]string{}
-	mObjMaxLenOfLAttr = map[string]int{}
+	lsObjects        = []string{}
+	mObjPaths        = map[string][]string{}
+	mObjMaxLenOfPath = map[string]int{}
+
+	clearBuf = func() {
+		lsObjects = []string{}
+		mObjPaths = map[string][]string{}
+		mObjMaxLenOfPath = map[string]int{}
+	}
 )
 
 var (

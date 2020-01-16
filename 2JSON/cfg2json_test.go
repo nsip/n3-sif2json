@@ -15,20 +15,22 @@ func TestMakeMap(t *testing.T) {
 
 func TestOthers(t *testing.T) {
 
-	cfg := NewCfg("./config/cfg2json.toml").(*cfg2json)
-	InitAllListAttrPaths(*cfg, cfg.Sep) // Init Global Maps
-	fPln(GetAllObjects())
+	cfg := NewCfg("./config/list2json.toml").(*list2json)
+	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
+	fPln(GetLoadedObjects())
 
 	obj := "PurchaseOrder"
-	YieldJSONListAttr4OneCfg(obj, cfg.Sep, "./data", "[]", cfg.JQDir)
-	fPln(GetAllLAttrs(obj, cfg.Sep))
+	YieldJSON4OneCfg(obj, cfg.Sep, "./data", "[]", cfg.JQDir, true)
+	fPln(GetAllFullPaths(obj, cfg.Sep))
 
-	if _, ok := mObjMaxLenOfLAttr[obj]; !ok {
+	if _, ok := mObjMaxLenOfPath[obj]; !ok {
 		fPln("Not Init")
 	}
-	fPln(mObjMaxLenOfLAttr[obj])
+	fPln(mObjMaxLenOfPath[obj])
 }
 
 func TestMakeJSON(t *testing.T) {
-	YieldJSONListAttrCfg("./config/cfg2json.toml", "[]")
+	YieldCfgJSON4LIST("./config/list2json.toml", "[]")
+	YieldCfgJSON4NUM("./config/num2json.toml", "(number)")
+	YieldCfgJSON4BOOL("./config/bool2json.toml", "(boolean)")
 }
