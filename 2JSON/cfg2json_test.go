@@ -20,7 +20,7 @@ func TestOthers(t *testing.T) {
 	fPln(GetLoadedObjects())
 
 	obj := "PurchaseOrder"
-	YieldJSON4OneCfg(obj, cfg.Sep, "./data", "[]", cfg.JQDir, true)
+	YieldJSON4OneCfg(obj, cfg.Sep, "./data", "[]", cfg.JQDir, true, false)
 	fPln(GetAllFullPaths(obj, cfg.Sep))
 
 	if _, ok := mObjMaxLenOfPath[obj]; !ok {
@@ -30,7 +30,7 @@ func TestOthers(t *testing.T) {
 }
 
 func TestMakeJSON(t *testing.T) {
-	YieldCfgJSON4LIST("./config/list2json.toml", "[]")
-	YieldCfgJSON4NUM("./config/num2json.toml", "(number)")
-	YieldCfgJSON4BOOL("./config/bool2json.toml", "(boolean)")
+	YieldCfgJSON4LIST("./config/list2json.toml", "[LIST]")
+	YieldCfgJSON4NUM("./config/num2json.toml", "(NUMERIC)")
+	YieldCfgJSON4BOOL("./config/bool2json.toml", "(BOOLEAN)")
 }

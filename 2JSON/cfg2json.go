@@ -131,7 +131,7 @@ func MakeJSON(m map[string]interface{}) string {
 // ----------------------------------------------- //
 
 // YieldJSON4OneCfg :
-func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized bool) {
+func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extContent bool) {
 	if outDir[len(outDir)-1] != '/' {
 		outDir += "/"
 	}
@@ -150,9 +150,9 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized bool) {
 				if mm == nil || len(mm) == 0 {
 					continue
 				}
-				// jsonstr := MakeJSON(mm)
-				jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( Only single thread use this line )
-				ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonstr), 0666)
+				jsonstr := MakeJSON(mm)
+				jsonfmt := pp.FmtJSONStr(jsonstr, jqDir) // format jsonstr ( Only single thread use this line )
+				ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonfmt), 0666)
 			} else {
 				break
 			}
@@ -160,9 +160,16 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized bool) {
 	} else {
 		paths := GetAllFullPaths(obj, sep)
 		mm := MakeMap(paths, sep, jsonVal)
-		// jsonstr := MakeJSON(mm)
-		jsonstr := pp.FmtJSONStr(MakeJSON(mm), jqDir) // format jsonstr ( Only single thread use this line )
-		ioutil.WriteFile(fSf("%s%s.json", path, obj), []byte(jsonstr), 0666)
+		jsonstr := MakeJSON(mm)
+		jsonfmt := pp.FmtJSONStr(jsonstr, jqDir) // format jsonstr ( Only single thread use this line )
+		ioutil.WriteFile(fSf("%s%s.json", path, obj), []byte(jsonfmt), 0666)
+
+		if extContent {
+			// extend jsonstr, such as xml->json '#content', "30" => { "#content": "30" }
+			jsonext := sReplaceAll(jsonstr, fSf(`"%s"`, jsonVal), fSf(`{"#content": "%s"}`, jsonVal))
+			jsonextfmt := pp.FmtJSONStr(jsonext, jqDir)
+			ioutil.WriteFile(fSf("%s%sExt.json", path, obj), []byte(jsonextfmt), 0666)
+		}
 	}
 }
 
@@ -178,7 +185,7 @@ func YieldCfgJSON4LIST(cfgPath, jsonVal string) {
 
 	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, true)
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, true, false)
 	}
 
 	// lsObj := GetLoadedObjects()
@@ -205,7 +212,7 @@ func YieldCfgJSON4NUM(cfgPath, jsonVal string) {
 
 	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false)
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false, true)
 	}
 }
 
@@ -221,6 +228,6 @@ func YieldCfgJSON4BOOL(cfgPath, jsonVal string) {
 
 	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false)
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false, true)
 	}
 }

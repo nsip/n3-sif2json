@@ -78,11 +78,37 @@ func GenTomlStruct(specTxtPath, goStructBasePath, tomlBasePath4LIST, tomlBasePat
 
 	// appears in ./2JSON/ .base files
 	const (
-		ReplSignTOML    = "# AUTO-GEN #"
-		ReplSignGO4LIST = "// # AUTO-GEN: LIST # //"
-		ReplSignGO4NUM  = "// # AUTO-GEN: NUMERIC # //"
-		ReplSignGO4BOOL = "// # AUTO-GEN: BOOLEAN # //"
+		SignTOML    = "# AUTO-GEN #"
+		SignGO4LIST = "// # AUTO-GEN: LIST # //"
+		SignGO4NUM  = "// # AUTO-GEN: NUMERIC # //"
+		SignGO4BOOL = "// # AUTO-GEN: BOOLEAN # //"
 	)
+
+	// Check [base] file Replace Marks //
+
+	bytes, err := ioutil.ReadFile(goStructBasePath)
+	cmn.FailOnErr("%v", err)
+	goStruct := string(bytes)
+	cmn.FailOnCondition(sCount(goStruct, SignGO4LIST) != 1, "%v", fEf("@config.go.base SignGO4LIST"))
+	cmn.FailOnCondition(sCount(goStruct, SignGO4NUM) != 1, "%v", fEf("@config.go.base SignGO4NUM"))
+	cmn.FailOnCondition(sCount(goStruct, SignGO4BOOL) != 1, "%v", fEf("@config.go.base SignGO4BOOL"))
+
+	bytes, err = ioutil.ReadFile(tomlBasePath4LIST)
+	cmn.FailOnErr("%v", err)
+	tomlLIST := string(bytes)
+	cmn.FailOnCondition(sCount(tomlLIST, SignTOML) != 1, "%v", fEf("@list2json.toml.base SignTOML"))
+
+	bytes, err = ioutil.ReadFile(tomlBasePath4NUM)
+	cmn.FailOnErr("%v", err)
+	tomlNUM := string(bytes)
+	cmn.FailOnCondition(sCount(tomlNUM, SignTOML) != 1, "%v", fEf("@num2json.toml.base SignTOML"))
+
+	bytes, err = ioutil.ReadFile(tomlBasePath4BOOL)
+	cmn.FailOnErr("%v", err)
+	tomlBOOL := string(bytes)
+	cmn.FailOnCondition(sCount(tomlBOOL, SignTOML) != 1, "%v", fEf("@bool2json.toml.base SignTOML"))
+
+	// ************************************** //
 
 	const (
 		SEP     = "/"
@@ -99,7 +125,7 @@ func GenTomlStruct(specTxtPath, goStructBasePath, tomlBasePath4LIST, tomlBasePat
 		boolPathGrp []string
 	)
 
-	bytes, err := ioutil.ReadFile(specTxtPath)
+	bytes, err = ioutil.ReadFile(specTxtPath)
 	cmn.FailOnErr("%v", err)
 	content := string(bytes)
 
@@ -124,51 +150,29 @@ func GenTomlStruct(specTxtPath, goStructBasePath, tomlBasePath4LIST, tomlBasePat
 
 	{
 		mListAttr := MapOfGrp(ObjGrp(SEP, listPathGrp...), SEP, listPathGrp...)
-		toml4List, goStruct4List := PrintGrp4Cfg(mListAttr, "LIST")
-
-		tb, err := ioutil.ReadFile(tomlBasePath4LIST)
-		cmn.FailOnErr("%v", err)
-		tomlOutPath := tomlBasePath4LIST[:len(tomlBasePath4LIST)-5]
-		toml := sReplace(string(tb), ReplSignTOML, toml4List, 1)
-		ioutil.WriteFile(tomlOutPath, []byte(toml), 0666)
-
-		st, err := ioutil.ReadFile(goStructBasePath)
-		cmn.FailOnErr("%v", err)
-		goOutPath := goStructBasePath[:len(goStructBasePath)-5] // for below input
-		goStruct4List = sReplace(string(st), ReplSignGO4LIST, goStruct4List, 1)
-		ioutil.WriteFile(goOutPath, []byte(goStruct4List), 0666)
-
-		// ------------------------------------ //
-
 		mNumAttr := MapOfGrp(ObjGrp(SEP, numPathGrp...), SEP, numPathGrp...)
-		toml4Num, goStruct4Num := PrintGrp4Cfg(mNumAttr, "NUMERIC")
-
-		tb, err = ioutil.ReadFile(tomlBasePath4NUM)
-		cmn.FailOnErr("%v", err)
-		tomlOutPath = tomlBasePath4NUM[:len(tomlBasePath4NUM)-5]
-		toml = sReplace(string(tb), ReplSignTOML, toml4Num, 1)
-		ioutil.WriteFile(tomlOutPath, []byte(toml), 0666)
-
-		st, err = ioutil.ReadFile(goOutPath) // read from previous go out path
-		cmn.FailOnErr("%v", err)
-		goStruct4Num = sReplace(string(st), ReplSignGO4NUM, goStruct4Num, 1)
-		ioutil.WriteFile(goOutPath, []byte(goStruct4Num), 0666)
-
-		// ------------------------------------ //
-
 		mBoolAttr := MapOfGrp(ObjGrp(SEP, boolPathGrp...), SEP, boolPathGrp...)
+
+		toml4List, goStruct4List := PrintGrp4Cfg(mListAttr, "LIST")
+		toml4Num, goStruct4Num := PrintGrp4Cfg(mNumAttr, "NUMERIC")
 		toml4Bool, goStruct4Bool := PrintGrp4Cfg(mBoolAttr, "BOOLEAN")
 
-		tb, err = ioutil.ReadFile(tomlBasePath4BOOL)
-		cmn.FailOnErr("%v", err)
-		tomlOutPath = tomlBasePath4BOOL[:len(tomlBasePath4BOOL)-5]
-		toml = sReplace(string(tb), ReplSignTOML, toml4Bool, 1)
-		ioutil.WriteFile(tomlOutPath, []byte(toml), 0666)
+		toml := sReplace(tomlLIST, SignTOML, toml4List, 1)
+		tomlOutPath := tomlBasePath4LIST[:len(tomlBasePath4LIST)-5] // remove ".base" ext-name
+		cmn.FailOnErr("%v", ioutil.WriteFile(tomlOutPath, []byte(toml), 0666))
 
-		st, err = ioutil.ReadFile(goOutPath) // read from previous go out path
-		cmn.FailOnErr("%v", err)
-		goStruct4Bool = sReplace(string(st), ReplSignGO4BOOL, goStruct4Bool, 1)
-		ioutil.WriteFile(goOutPath, []byte(goStruct4Bool), 0666)
+		toml = sReplace(tomlNUM, SignTOML, toml4Num, 1)
+		tomlOutPath = tomlBasePath4NUM[:len(tomlBasePath4NUM)-5] // remove ".base" ext-name
+		cmn.FailOnErr("%v", ioutil.WriteFile(tomlOutPath, []byte(toml), 0666))
 
+		toml = sReplace(tomlBOOL, SignTOML, toml4Bool, 1)
+		tomlOutPath = tomlBasePath4BOOL[:len(tomlBasePath4BOOL)-5] // remove ".base" ext-name
+		cmn.FailOnErr("%v", ioutil.WriteFile(tomlOutPath, []byte(toml), 0666))
+
+		goStruct = sReplace(goStruct, SignGO4LIST, goStruct4List, 1)
+		goStruct = sReplace(goStruct, SignGO4NUM, goStruct4Num, 1)
+		goStruct = sReplace(goStruct, SignGO4BOOL, goStruct4Bool, 1)
+		goOutPath := goStructBasePath[:len(goStructBasePath)-5] // for below INPUT
+		cmn.FailOnErr("%v", ioutil.WriteFile(goOutPath, []byte(goStruct), 0666))
 	}
 }
