@@ -73,7 +73,7 @@ func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
 		xmlReader,
-		// xj.WithTypeConverter(xj.Float, xj.Int, xj.Bool, xj.Null),
+		// xj.WithTypeConverter(xj.Float, xj.Int, xj.Bool, xj.Null), // convert to Numeric or Boolean By config
 		// xj.WithAttrPrefix("-"),
 		// xj.WithContentPrefix("#"),
 	)
@@ -84,13 +84,22 @@ func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
 	// Digital string to number
 	// json := replaceDigCont(json, cfg.JQDir)
 
-	// List Attributes Modification
+	// Attributes Modification
 	obj := xmlroot(xml)    // infer object from xml root by default, use this object to search config json
 	if len(enforced) > 0 { // if object is provided, ignore default, use 1st provided object to search config json
 		obj = enforced[0]
 	}
-	lsAttrRule := getEachFileContent(cfg.CfgJSONDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
-	json = enforceConfig(json, cfg.JQDir, lsAttrRule...)
+	// LIST
+	LISTRules := getEachFileContent(cfg.CfgJSONDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
+	json = enforceConfig(json, cfg.JQDir, LISTRules...)
+
+	// NUMERIC
+	NUMRules := getEachFileContent(cfg.CfgJSONDir4NUM+obj, "json", cmn.Iter2Slc(3)...)
+	json = enforceConfig(json, cfg.JQDir, NUMRules...)
+
+	// BOOLEAN
+	BOOLRules := getEachFileContent(cfg.CfgJSONDir4BOOL+obj, "json", cmn.Iter2Slc(3)...)
+	json = enforceConfig(json, cfg.JQDir, BOOLRules...)
 
 	ioutil.WriteFile(jsonPath, []byte(json), 0666)
 }

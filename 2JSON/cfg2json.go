@@ -162,19 +162,19 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extCon
 		mm := MakeMap(paths, sep, jsonVal)
 		jsonstr := MakeJSON(mm)
 		jsonfmt := pp.FmtJSONStr(jsonstr, jqDir) // format jsonstr ( Only single thread use this line )
-		ioutil.WriteFile(fSf("%s%s.json", path, obj), []byte(jsonfmt), 0666)
+		ioutil.WriteFile(fSf("%s0.json", path), []byte(jsonfmt), 0666)
 
 		if extContent {
 			// extend jsonstr, such as xml->json '#content', "30" => { "#content": "30" }
 			jsonext := sReplaceAll(jsonstr, fSf(`"%s"`, jsonVal), fSf(`{"#content": "%s"}`, jsonVal))
 			jsonextfmt := pp.FmtJSONStr(jsonext, jqDir)
-			ioutil.WriteFile(fSf("%s%sExt.json", path, obj), []byte(jsonextfmt), 0666)
+			ioutil.WriteFile(fSf("%s1.json", path), []byte(jsonextfmt), 0666)
 		}
 	}
 }
 
 // YieldCfgJSON4LIST :
-func YieldCfgJSON4LIST(cfgPath, jsonVal string) {
+func YieldCfgJSON4LIST(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
@@ -185,23 +185,23 @@ func YieldCfgJSON4LIST(cfgPath, jsonVal string) {
 
 	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, true, false)
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir, true, false)
 	}
 
 	// lsObj := GetLoadedObjects()
 	// wg := sync.WaitGroup{}
 	// wg.Add(len(lsObj))
 	// for _, obj := range lsObj {
-	// 	go func(obj, sep, outDir, jsonVal, jqDir string) {
+	// 	go func(obj, sep, outDir, cfg.CfgJSONValue, jqDir string) {
 	// 		defer wg.Done()
-	// 		YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir)
-	// 	}(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir)
+	// 		YieldJSON4OneCfg(obj, sep, outDir, cfg.CfgJSONValue, jqDir)
+	// 	}(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir)
 	// }
 	// wg.Wait()
 }
 
 // YieldCfgJSON4NUM :
-func YieldCfgJSON4NUM(cfgPath, jsonVal string) {
+func YieldCfgJSON4NUM(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
@@ -212,12 +212,12 @@ func YieldCfgJSON4NUM(cfgPath, jsonVal string) {
 
 	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false, true)
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir, false, true)
 	}
 }
 
 // YieldCfgJSON4BOOL :
-func YieldCfgJSON4BOOL(cfgPath, jsonVal string) {
+func YieldCfgJSON4BOOL(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
@@ -228,6 +228,6 @@ func YieldCfgJSON4BOOL(cfgPath, jsonVal string) {
 
 	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, jsonVal, cfg.JQDir, false, true)
+		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir, false, true)
 	}
 }

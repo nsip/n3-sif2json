@@ -16,6 +16,7 @@ type list2json struct {
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
+	CfgJSONValue  string
 	// ----------------------------------------------------------- //
 	// # AUTO-GEN: LIST # //
 }
@@ -26,6 +27,7 @@ type num2json struct {
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
+	CfgJSONValue  string
 	// ----------------------------------------------------------- //
 	// # AUTO-GEN: NUMERIC # //
 }
@@ -36,6 +38,7 @@ type bool2json struct {
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
+	CfgJSONValue  string
 	// ----------------------------------------------------------- //
 	// # AUTO-GEN: BOOLEAN # //
 }

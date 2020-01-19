@@ -30,7 +30,7 @@ func TestOthers(t *testing.T) {
 }
 
 func TestMakeJSON(t *testing.T) {
-	YieldCfgJSON4LIST("./config/list2json.toml", "[LIST]")
-	YieldCfgJSON4NUM("./config/num2json.toml", "(NUMERIC)")
-	YieldCfgJSON4BOOL("./config/bool2json.toml", "(BOOLEAN)")
+	YieldCfgJSON4LIST("./config/list2json.toml")
+	YieldCfgJSON4NUM("./config/num2json.toml")
+	YieldCfgJSON4BOOL("./config/bool2json.toml")
 }
