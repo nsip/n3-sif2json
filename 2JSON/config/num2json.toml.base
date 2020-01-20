@@ -1,8 +1,8 @@
 Path = "./config/cfg2json.toml"
 PathAbs = "/home/qing/go/src/github.com/nsip/n3-sif2json/2JSON/config/cfg2json.toml"
-JQDir = "/home/qmiao/go/src/github.com/cdutwhu/json-util/preprocess/utils"
+JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
 Sep = "/"
-CfgJSONOutDir = "../data/NumAttr/"
+CfgJSONOutDir = "./JSONCfg/NUMERIC/"
 CfgJSONValue = "(N)"
 
 # AUTO-GEN #

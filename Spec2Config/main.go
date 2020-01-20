@@ -64,7 +64,7 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 }
 
 func main() {
-	GenTomlStruct(
+	GenTomlAndStruct(
 		"./out.txt",
 		"../2JSON/config.go.base",
 		"../2JSON/config/list2json.toml.base",
@@ -73,8 +73,8 @@ func main() {
 	)
 }
 
-// GenTomlStruct :
-func GenTomlStruct(specTxtPath, goStructBasePath, tomlBasePath4LIST, tomlBasePath4NUM, tomlBasePath4BOOL string) {
+// GenTomlAndStruct :
+func GenTomlAndStruct(specTxtPath, goStructBasePath, tomlBasePath4LIST, tomlBasePath4NUM, tomlBasePath4BOOL string) {
 
 	// appears in ./2JSON/ .base files
 	const (
@@ -89,24 +89,24 @@ func GenTomlStruct(specTxtPath, goStructBasePath, tomlBasePath4LIST, tomlBasePat
 	bytes, err := ioutil.ReadFile(goStructBasePath)
 	cmn.FailOnErr("%v", err)
 	goStruct := string(bytes)
-	cmn.FailOnCondition(sCount(goStruct, SignGO4LIST) != 1, "%v", fEf("@config.go.base SignGO4LIST"))
-	cmn.FailOnCondition(sCount(goStruct, SignGO4NUM) != 1, "%v", fEf("@config.go.base SignGO4NUM"))
-	cmn.FailOnCondition(sCount(goStruct, SignGO4BOOL) != 1, "%v", fEf("@config.go.base SignGO4BOOL"))
+	cmn.FailOnCondition(sCount(goStruct, SignGO4LIST+"\n") != 1, "%v", fEf("@config.go.base SignGO4LIST"))
+	cmn.FailOnCondition(sCount(goStruct, SignGO4NUM+"\n") != 1, "%v", fEf("@config.go.base SignGO4NUM"))
+	cmn.FailOnCondition(sCount(goStruct, SignGO4BOOL+"\n") != 1, "%v", fEf("@config.go.base SignGO4BOOL"))
 
 	bytes, err = ioutil.ReadFile(tomlBasePath4LIST)
 	cmn.FailOnErr("%v", err)
 	tomlLIST := string(bytes)
-	cmn.FailOnCondition(sCount(tomlLIST, SignTOML) != 1, "%v", fEf("@list2json.toml.base SignTOML"))
+	cmn.FailOnCondition(sCount(tomlLIST, SignTOML+"\n") != 1, "%v", fEf("@list2json.toml.base SignTOML"))
 
 	bytes, err = ioutil.ReadFile(tomlBasePath4NUM)
 	cmn.FailOnErr("%v", err)
 	tomlNUM := string(bytes)
-	cmn.FailOnCondition(sCount(tomlNUM, SignTOML) != 1, "%v", fEf("@num2json.toml.base SignTOML"))
+	cmn.FailOnCondition(sCount(tomlNUM, SignTOML+"\n") != 1, "%v", fEf("@num2json.toml.base SignTOML"))
 
 	bytes, err = ioutil.ReadFile(tomlBasePath4BOOL)
 	cmn.FailOnErr("%v", err)
 	tomlBOOL := string(bytes)
-	cmn.FailOnCondition(sCount(tomlBOOL, SignTOML) != 1, "%v", fEf("@bool2json.toml.base SignTOML"))
+	cmn.FailOnCondition(sCount(tomlBOOL, SignTOML+"\n") != 1, "%v", fEf("@bool2json.toml.base SignTOML"))
 
 	// ************************************** //
 
