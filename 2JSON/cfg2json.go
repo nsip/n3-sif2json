@@ -9,6 +9,7 @@ import (
 
 	cmn "github.com/cdutwhu/json-util/common"
 	pp "github.com/cdutwhu/json-util/preprocess"
+	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 	"github.com/peterbourgon/mergemap"
 )
 
@@ -176,26 +177,26 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extCon
 // YieldCfgJSON4LIST :
 func YieldCfgJSON4LIST(cfgPath string) {
 
-	ICfg := NewCfg(cfgPath)
+	ICfg := cfg.NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
 
-	cfg := ICfg.(*list2json)
-	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	l2j := ICfg.(*cfg.List2JSON)
+	cmn.FailOnCondition(l2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnCondition(l2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
-	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
+	InitCfgBuf(*l2j, l2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir, true, false)
+		YieldJSON4OneCfg(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue, l2j.JQDir, true, false)
 	}
 
 	// lsObj := GetLoadedObjects()
 	// wg := sync.WaitGroup{}
 	// wg.Add(len(lsObj))
 	// for _, obj := range lsObj {
-	// 	go func(obj, sep, outDir, cfg.CfgJSONValue, jqDir string) {
+	// 	go func(obj, sep, outDir, l2j.CfgJSONValue, jqDir string) {
 	// 		defer wg.Done()
-	// 		YieldJSON4OneCfg(obj, sep, outDir, cfg.CfgJSONValue, jqDir)
-	// 	}(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir)
+	// 		YieldJSON4OneCfg(obj, sep, outDir, l2j.CfgJSONValue, jqDir)
+	// 	}(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue, l2j.JQDir)
 	// }
 	// wg.Wait()
 }
@@ -203,31 +204,31 @@ func YieldCfgJSON4LIST(cfgPath string) {
 // YieldCfgJSON4NUM :
 func YieldCfgJSON4NUM(cfgPath string) {
 
-	ICfg := NewCfg(cfgPath)
+	ICfg := cfg.NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
 
-	cfg := ICfg.(*num2json)
-	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	n2j := ICfg.(*cfg.Num2JSON)
+	cmn.FailOnCondition(n2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnCondition(n2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
-	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
+	InitCfgBuf(*n2j, n2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir, false, true)
+		YieldJSON4OneCfg(obj, n2j.Sep, n2j.CfgJSONOutDir, n2j.CfgJSONValue, n2j.JQDir, false, true)
 	}
 }
 
 // YieldCfgJSON4BOOL :
 func YieldCfgJSON4BOOL(cfgPath string) {
 
-	ICfg := NewCfg(cfgPath)
+	ICfg := cfg.NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
 
-	cfg := ICfg.(*bool2json)
-	cmn.FailOnCondition(cfg.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnCondition(cfg.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	b2j := ICfg.(*cfg.Bool2JSON)
+	cmn.FailOnCondition(b2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnCondition(b2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
-	InitCfgBuf(*cfg, cfg.Sep) // Init Global Maps
+	InitCfgBuf(*b2j, b2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, cfg.Sep, cfg.CfgJSONOutDir, cfg.CfgJSONValue, cfg.JQDir, false, true)
+		YieldJSON4OneCfg(obj, b2j.Sep, b2j.CfgJSONOutDir, b2j.CfgJSONValue, b2j.JQDir, false, true)
 	}
 }

@@ -3,5 +3,5 @@
 shopt -s extglob
 
 rm -rf ./2JSON/JSONCfg/*
-rm -f ./2JSON/config/bool2json.toml ./2JSON/config/list2json.toml ./2JSON/config/num2json.toml
+rm -f ./2JSON/config/Bool2JSON.toml ./2JSON/config/List2JSON.toml ./2JSON/config/Num2JSON.toml
 rm -rf ./data/!(Activity.xml)

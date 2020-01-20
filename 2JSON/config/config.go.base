@@ -1,4 +1,4 @@
-package cvt2json
+package cfg
 
 import (
 	"os"
@@ -10,7 +10,8 @@ import (
 
 // !!! toml file name must be identical to config struct definition name !!!
 
-type list2json struct {
+// List2JSON :
+type List2JSON struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
@@ -21,7 +22,8 @@ type list2json struct {
 	// # AUTO-GEN: LIST # //
 }
 
-type num2json struct {
+// Num2JSON :
+type Num2JSON struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
@@ -32,7 +34,8 @@ type num2json struct {
 	// # AUTO-GEN: NUMERIC # //
 }
 
-type bool2json struct {
+// Bool2JSON :
+type Bool2JSON struct {
 	Path          string
 	PathAbs       string
 	JQDir         string
@@ -43,7 +46,8 @@ type bool2json struct {
 	// # AUTO-GEN: BOOLEAN # //
 }
 
-type sif2json struct {
+// SIF2JSON :
+type SIF2JSON struct {
 	Path            string
 	PathAbs         string
 	JQDir           string
@@ -57,10 +61,10 @@ type sif2json struct {
 var (
 	// toml file name must be identical to config struct definition name
 	lsCfg = []interface{}{
-		&list2json{},
-		&num2json{},
-		&bool2json{},
-		&sif2json{},
+		&List2JSON{},
+		&Num2JSON{},
+		&Bool2JSON{},
+		&SIF2JSON{},
 	}
 )
 

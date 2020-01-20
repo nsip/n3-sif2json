@@ -25,5 +25,5 @@ func TestGetEachFileContent(t *testing.T) {
 }
 
 func TestSIF2JSON(t *testing.T) {
-	SIF2JSON("./config/sif2json.toml", "../data/Activity.xml", "../data/Activity.json")
+	SIF2JSON("./config/SIF2JSON.toml", "../data/Activity.xml", "../data/Activity.json")
 }

@@ -8,6 +8,7 @@ import (
 	cmn "github.com/cdutwhu/json-util/common"
 	jkv "github.com/cdutwhu/json-util/jkv"
 	pp "github.com/cdutwhu/json-util/preprocess"
+	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
 // func replaceDigCont(json, jqDir string) string {
@@ -60,9 +61,9 @@ func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
 
 // SIF2JSON :
 func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
-	ICfg := NewCfg(cfgPath)
+	ICfg := cfg.NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("sif2json.toml couldn't be Loaded"))
-	cfg := ICfg.(*sif2json)
+	s2j := ICfg.(*cfg.SIF2JSON)
 
 	bytesXML, err := ioutil.ReadFile(xmlPath)
 	cmn.FailOnErr("%v", err)
@@ -79,27 +80,28 @@ func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
 	)
 	cmn.FailOnErr("That's embarrassing... %v", err)
 
-	json := pp.FmtJSONStr(jsonBuf.String(), cfg.JQDir)
+	json := pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
 
 	// Digital string to number
-	// json := replaceDigCont(json, cfg.JQDir)
+	// json := replaceDigCont(json, s2j.JQDir)
 
 	// Attributes Modification
 	obj := xmlroot(xml)    // infer object from xml root by default, use this object to search config json
 	if len(enforced) > 0 { // if object is provided, ignore default, use 1st provided object to search config json
 		obj = enforced[0]
 	}
+
 	// LIST
-	LISTRules := getEachFileContent(cfg.CfgJSONDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
-	json = enforceConfig(json, cfg.JQDir, LISTRules...)
+	LISTRules := getEachFileContent(s2j.CfgJSONDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
+	json = enforceConfig(json, s2j.JQDir, LISTRules...)
 
 	// NUMERIC
-	NUMRules := getEachFileContent(cfg.CfgJSONDir4NUM+obj, "json", cmn.Iter2Slc(3)...)
-	json = enforceConfig(json, cfg.JQDir, NUMRules...)
+	NUMRules := getEachFileContent(s2j.CfgJSONDir4NUM+obj, "json", cmn.Iter2Slc(3)...)
+	json = enforceConfig(json, s2j.JQDir, NUMRules...)
 
 	// BOOLEAN
-	BOOLRules := getEachFileContent(cfg.CfgJSONDir4BOOL+obj, "json", cmn.Iter2Slc(3)...)
-	json = enforceConfig(json, cfg.JQDir, BOOLRules...)
+	BOOLRules := getEachFileContent(s2j.CfgJSONDir4BOOL+obj, "json", cmn.Iter2Slc(3)...)
+	json = enforceConfig(json, s2j.JQDir, BOOLRules...)
 
 	ioutil.WriteFile(jsonPath, []byte(json), 0666)
 }
