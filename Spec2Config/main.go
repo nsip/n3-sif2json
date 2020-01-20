@@ -58,7 +58,7 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 
 		// ------------------------- //
 		content = fmt.Sprintf("%s struct { %s []string }", obj, attr)
-		goStruct += content + "\n"
+		goStruct += content + "\n\t"
 	}
 	return
 }
@@ -96,17 +96,17 @@ func GenTomlAndStruct(specTxtPath, goStructBasePath, tomlBasePath4LIST, tomlBase
 	bytes, err = ioutil.ReadFile(tomlBasePath4LIST)
 	cmn.FailOnErr("%v", err)
 	tomlLIST := string(bytes)
-	cmn.FailOnCondition(sCount(tomlLIST, SignTOML+"\n") != 1, "%v", fEf("@list2json.toml.base SignTOML"))
+	cmn.FailOnCondition(sCount(tomlLIST, SignTOML) != 1, "%v", fEf("@list2json.toml.base SignTOML"))
 
 	bytes, err = ioutil.ReadFile(tomlBasePath4NUM)
 	cmn.FailOnErr("%v", err)
 	tomlNUM := string(bytes)
-	cmn.FailOnCondition(sCount(tomlNUM, SignTOML+"\n") != 1, "%v", fEf("@num2json.toml.base SignTOML"))
+	cmn.FailOnCondition(sCount(tomlNUM, SignTOML) != 1, "%v", fEf("@num2json.toml.base SignTOML"))
 
 	bytes, err = ioutil.ReadFile(tomlBasePath4BOOL)
 	cmn.FailOnErr("%v", err)
 	tomlBOOL := string(bytes)
-	cmn.FailOnCondition(sCount(tomlBOOL, SignTOML+"\n") != 1, "%v", fEf("@bool2json.toml.base SignTOML"))
+	cmn.FailOnCondition(sCount(tomlBOOL, SignTOML) != 1, "%v", fEf("@bool2json.toml.base SignTOML"))
 
 	// ************************************** //
 
