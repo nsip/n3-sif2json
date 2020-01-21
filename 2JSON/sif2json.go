@@ -59,49 +59,58 @@ func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
 	return json
 }
 
-// SIF2JSON :
-func SIF2JSON(cfgPath, xmlPath, jsonPath string, enforced ...string) {
+// SIF2JSON : if [SIFVer] is "", use config's DefaultSIFVer
+func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (json string) {
+	const (
+		SignSIFVer = "# SIFVER #"
+	)
+
 	ICfg := cfg.NewCfg(cfgPath)
-	cmn.FailOnCondition(ICfg == nil, "%v", fEf("sif2json.toml couldn't be Loaded"))
+	cmn.FailOnCondition(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
 	s2j := ICfg.(*cfg.SIF2JSON)
 
-	bytesXML, err := ioutil.ReadFile(xmlPath)
-	cmn.FailOnErr("%v", err)
-	// fPln(string(bytesXML))
+	cmn.FailOnCondition(sCount(s2j.SIFCfgDir4LIST, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnCondition(sCount(s2j.SIFCfgDir4NUM, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnCondition(sCount(s2j.SIFCfgDir4BOOL, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
 
-	// xml is an io.Reader
-	xml := string(bytesXML)
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
 		xmlReader,
-		// xj.WithTypeConverter(xj.Float, xj.Int, xj.Bool, xj.Null), // convert to Numeric or Boolean By config
+		// xj.WithTypeConverter(xj.Float, xj.Int, xj.Bool, xj.Null),
 		// xj.WithAttrPrefix("-"),
 		// xj.WithContentPrefix("#"),
 	)
 	cmn.FailOnErr("That's embarrassing... %v", err)
 
-	json := pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
+	json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
 
 	// Digital string to number
 	// json := replaceDigCont(json, s2j.JQDir)
 
 	// Attributes Modification
-	obj := xmlroot(xml)    // infer object from xml root by default, use this object to search config json
-	if len(enforced) > 0 { // if object is provided, ignore default, use 1st provided object to search config json
-		obj = enforced[0]
+	obj := xmlroot(xml)              // infer object from xml root by default, use this object to search config json
+	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
+		obj = subobj[0]
+	}
+
+	if SIFVer != "" {
+		s2j.DefaultSIFVer = SIFVer
 	}
 
 	// LIST
-	LISTRules := getEachFileContent(s2j.CfgJSONDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
+	s2j.SIFCfgDir4LIST = sReplaceAll(s2j.SIFCfgDir4LIST, SignSIFVer, s2j.DefaultSIFVer)
+	LISTRules := getEachFileContent(s2j.SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
 	json = enforceConfig(json, s2j.JQDir, LISTRules...)
 
 	// NUMERIC
-	NUMRules := getEachFileContent(s2j.CfgJSONDir4NUM+obj, "json", cmn.Iter2Slc(3)...)
+	s2j.SIFCfgDir4NUM = sReplaceAll(s2j.SIFCfgDir4NUM, SignSIFVer, s2j.DefaultSIFVer)
+	NUMRules := getEachFileContent(s2j.SIFCfgDir4NUM+obj, "json", cmn.Iter2Slc(2)...)
 	json = enforceConfig(json, s2j.JQDir, NUMRules...)
 
 	// BOOLEAN
-	BOOLRules := getEachFileContent(s2j.CfgJSONDir4BOOL+obj, "json", cmn.Iter2Slc(3)...)
+	s2j.SIFCfgDir4BOOL = sReplaceAll(s2j.SIFCfgDir4BOOL, SignSIFVer, s2j.DefaultSIFVer)
+	BOOLRules := getEachFileContent(s2j.SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
 	json = enforceConfig(json, s2j.JQDir, BOOLRules...)
 
-	ioutil.WriteFile(jsonPath, []byte(json), 0666)
+	return
 }

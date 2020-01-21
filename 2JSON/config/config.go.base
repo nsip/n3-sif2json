@@ -1,11 +1,19 @@
 package cfg
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 
 	"github.com/burntsushi/toml"
+)
+
+var (
+	fPf        = fmt.Printf
+	fPln       = fmt.Println
+	sHasSuffix = strings.HasSuffix
 )
 
 // !!! toml file name must be identical to config struct definition name !!!
@@ -48,14 +56,15 @@ type Bool2JSON struct {
 
 // SIF2JSON :
 type SIF2JSON struct {
-	Path            string
-	PathAbs         string
-	JQDir           string
-	AttrPrefix      string
-	ContentPrefix   string
-	CfgJSONDir4LIST string
-	CfgJSONDir4NUM  string
-	CfgJSONDir4BOOL string
+	Path           string
+	PathAbs        string
+	JQDir          string
+	AttrPrefix     string
+	ContentPrefix  string
+	DefaultSIFVer  string
+	SIFCfgDir4LIST string
+	SIFCfgDir4NUM  string
+	SIFCfgDir4BOOL string
 }
 
 var (
@@ -71,8 +80,8 @@ var (
 // ------------------------------------------------- //
 
 // NewCfg :
-func NewCfg(cfgPaths ...string) interface{} {
-	for _, f := range cfgPaths {
+func NewCfg(configs ...string) interface{} {
+	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
 			if abs, e := filepath.Abs(f); e == nil {
 				return set(f, abs)
