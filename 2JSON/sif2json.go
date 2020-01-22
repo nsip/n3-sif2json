@@ -25,7 +25,7 @@ import (
 // 	// }
 // }
 
-func getEachFileContent(dir, ext string, indices ...int) (rt []string) {
+func eachFileContent(dir, ext string, indices ...int) (rt []string) {
 	if dir[len(dir)-1] != '/' {
 		dir += "/"
 	}
@@ -60,7 +60,7 @@ func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
 }
 
 // SIF2JSON : if [SIFVer] is "", use config's DefaultSIFVer
-func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (json string) {
+func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (json, sv string, err error) {
 	const (
 		SignSIFVer = "# SIFVER #"
 	)
@@ -93,24 +93,37 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 		obj = subobj[0]
 	}
 
+	dft := "Default "
 	if SIFVer != "" {
 		s2j.DefaultSIFVer = SIFVer
+		dft = ""
 	}
 
-	// LIST
+	// SIFCfgDir Version Set
 	s2j.SIFCfgDir4LIST = sReplaceAll(s2j.SIFCfgDir4LIST, SignSIFVer, s2j.DefaultSIFVer)
-	LISTRules := getEachFileContent(s2j.SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
-	json = enforceConfig(json, s2j.JQDir, LISTRules...)
+	s2j.SIFCfgDir4NUM = sReplaceAll(s2j.SIFCfgDir4NUM, SignSIFVer, s2j.DefaultSIFVer)
+	s2j.SIFCfgDir4BOOL = sReplaceAll(s2j.SIFCfgDir4BOOL, SignSIFVer, s2j.DefaultSIFVer)
+
+	// Check SIFCfg Version Directory
+	svDir := cmn.RmTailFromLastN(s2j.SIFCfgDir4LIST, "/", 2)
+	if _, err := os.Stat(svDir); err == nil {
+		sv = cmn.RmHeadToLast(svDir, "/")
+	} else {
+		return "", "", fEf("%sSIF(%s) Spec-Cfg is Missing", dft, s2j.DefaultSIFVer)
+	}
+	// End Checking
+
+	// LIST
+	rules := eachFileContent(s2j.SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
+	json = enforceConfig(json, s2j.JQDir, rules...)
 
 	// NUMERIC
-	s2j.SIFCfgDir4NUM = sReplaceAll(s2j.SIFCfgDir4NUM, SignSIFVer, s2j.DefaultSIFVer)
-	NUMRules := getEachFileContent(s2j.SIFCfgDir4NUM+obj, "json", cmn.Iter2Slc(2)...)
-	json = enforceConfig(json, s2j.JQDir, NUMRules...)
+	rules = eachFileContent(s2j.SIFCfgDir4NUM+obj, "json", cmn.Iter2Slc(2)...)
+	json = enforceConfig(json, s2j.JQDir, rules...)
 
 	// BOOLEAN
-	s2j.SIFCfgDir4BOOL = sReplaceAll(s2j.SIFCfgDir4BOOL, SignSIFVer, s2j.DefaultSIFVer)
-	BOOLRules := getEachFileContent(s2j.SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
-	json = enforceConfig(json, s2j.JQDir, BOOLRules...)
+	rules = eachFileContent(s2j.SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
+	json = enforceConfig(json, s2j.JQDir, rules...)
 
 	return
 }

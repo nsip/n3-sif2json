@@ -20,13 +20,14 @@ func TestXMLRoot(t *testing.T) {
 	fPln(xmlroot(string(bytes)))
 }
 
-func TestGetEachFileContent(t *testing.T) {
-	fPln(getEachFileContent("../data/ListAttributes/PurchaseOrder", "json", cmn.Iter2Slc(10)...))
+func TestEachFileContent(t *testing.T) {
+	fPln(eachFileContent("../data/ListAttributes/PurchaseOrder", "json", cmn.Iter2Slc(10)...))
 }
 
 func TestSIF2JSON(t *testing.T) {
 	bytes, err := ioutil.ReadFile("../data/Activity.xml")
 	cmn.FailOnErr("%v", err)
-	json := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "0.0.1", false)
+	json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "0.0.1", false)
+	fPln(sv, err)
 	ioutil.WriteFile("../data/Activity.json", []byte(json), 0666)
 }

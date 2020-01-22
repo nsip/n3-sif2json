@@ -174,8 +174,8 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extCon
 	}
 }
 
-// YieldCfgJSON4LIST :
-func YieldCfgJSON4LIST(cfgPath string) {
+// YieldJSONBySIFList :
+func YieldJSONBySIFList(cfgPath string) {
 
 	ICfg := cfg.NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
@@ -201,8 +201,8 @@ func YieldCfgJSON4LIST(cfgPath string) {
 	// wg.Wait()
 }
 
-// YieldCfgJSON4NUM :
-func YieldCfgJSON4NUM(cfgPath string) {
+// YieldJSONBySIFNum :
+func YieldJSONBySIFNum(cfgPath string) {
 
 	ICfg := cfg.NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
@@ -217,8 +217,8 @@ func YieldCfgJSON4NUM(cfgPath string) {
 	}
 }
 
-// YieldCfgJSON4BOOL :
-func YieldCfgJSON4BOOL(cfgPath string) {
+// YieldJSONBySIFBool :
+func YieldJSONBySIFBool(cfgPath string) {
 
 	ICfg := cfg.NewCfg(cfgPath)
 	cmn.FailOnCondition(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
@@ -231,4 +231,11 @@ func YieldCfgJSON4BOOL(cfgPath string) {
 	for _, obj := range GetLoadedObjects() {
 		YieldJSON4OneCfg(obj, b2j.Sep, b2j.CfgJSONOutDir, b2j.CfgJSONValue, b2j.JQDir, false, true)
 	}
+}
+
+// YieldJSONBySIF :
+func YieldJSONBySIF(listCfgPath, numCfgPath, boolCfgPath string) {
+	YieldJSONBySIFList(listCfgPath)
+	YieldJSONBySIFNum(numCfgPath)
+	YieldJSONBySIFBool(boolCfgPath)
 }

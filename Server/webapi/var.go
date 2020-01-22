@@ -1,16 +1,19 @@
 package webapi
 
 import (
+	"encoding/xml"
 	"fmt"
 	"net/url"
 	"reflect"
+	"strings"
 	"sync"
 
 	glb "github.com/nsip/n3-sif2json/Server/global"
 )
 
 var (
-	fSf = fmt.Sprintf
+	fSf         = fmt.Sprintf
+	sReplaceAll = strings.ReplaceAll
 )
 
 var (
@@ -27,10 +30,15 @@ func initMutex() {
 
 type result struct {
 	Data  *string `json:"data"`
+	Info  string  `json:"info"`
 	Error string  `json:"error"`
 }
 
 // ---------------------------------------------- //
+
+func isValidXML(data []byte) bool {
+	return xml.Unmarshal(data, new(interface{})) == nil
+}
 
 // urlValues :
 func urlValues(values url.Values, params ...string) (ok bool, lsValues [][]string) {

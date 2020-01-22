@@ -1,5 +1,4 @@
-Path = "./config/config.toml"
-PathAbs = "/home/qing/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
+Path = "/home/qing/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
 ErrLog = "/home/qing/go/src/github.com/nsip/n3-sif2json/Server/config/error.log"
 
 [WebService]

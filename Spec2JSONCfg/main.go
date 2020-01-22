@@ -66,7 +66,7 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 func main() {
 	GenTomlAndStruct(
 		"./out.txt",
-		"0.0.1",
+		"0.0.2",
 		"../2JSON/config/config.go.base",
 		"../2JSON/config/List2JSON.toml.base",
 		"../2JSON/config/Num2JSON.toml.base",
@@ -83,7 +83,7 @@ func GenTomlAndStruct(SIFSpecPath, SIFVer, basePath4GO, basePath4LIST, basePath4
 		SignGO4LIST = "// # AUTO-GEN: LIST # //"
 		SignGO4NUM  = "// # AUTO-GEN: NUMERIC # //"
 		SignGO4BOOL = "// # AUTO-GEN: BOOLEAN # //"
-		SignSIFVer  = "# SIFVER #"
+		SignSIFVer  = "# SIF-VER #"
 	)
 
 	// Check [base] file Replace Marks //

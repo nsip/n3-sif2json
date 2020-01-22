@@ -11,7 +11,6 @@ import (
 // Config is toml
 type Config struct {
 	Path       string
-	PathAbs    string
 	ErrLog     string
 	WebService struct {
 		Port    int
@@ -42,7 +41,7 @@ func (cfg *Config) set() *Config {
 		// modify some to save
 		cfg.Path = f
 		if abs, e := filepath.Abs(f); e == nil {
-			cfg.PathAbs = abs
+			cfg.Path = abs
 		}
 		if eLog, e := filepath.Abs(cfg.ErrLog); e == nil {
 			cfg.ErrLog = eLog

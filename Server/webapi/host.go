@@ -40,7 +40,7 @@ func HostHTTPAsync() {
 		return c.String(http.StatusOK,
 			fSf("POST %-40s-> %s\n"+
 				"POST %-40s-> %s\n",
-				fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON",
+				fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
 				fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML) (Not IMPLEMENTED YET)"))
 	})
 
@@ -50,21 +50,33 @@ func HostHTTPAsync() {
 		mMtx[path].Lock()
 		glb.WDCheck()
 		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
-			sifver := ""
-			if ok, ver := url1Value(c.QueryParams(), 0, "sifver"); ok {
-				sifver = ver
+			if !isValidXML(bytes) {
+				goto ERR
 			}
-			json := cvt2json.SIF2JSON("../2JSON/config/SIF2JSON.toml", string(bytes), sifver, false)
-			// return c.JSON(http.StatusOK, result{
-			// 	Data:  &json,
-			// 	Error: "",
-			// })
-			// return c.JSON(http.StatusOK, json)
-			return c.String(http.StatusOK, json)
+			sv := ""
+			if ok, ver := url1Value(c.QueryParams(), 0, "sv"); ok {
+				sv = ver
+			}
+			json, svUsed, err := cvt2json.SIF2JSON("../2JSON/config/SIF2JSON.toml", string(bytes), sv, false)
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, result{
+					Data:  nil,
+					Info:  "",
+					Error: err.Error(),
+				})
+			}
+			return c.JSON(http.StatusOK, result{
+				Data:  &json,
+				Info:  svUsed,
+				Error: "",
+			})
+			// return c.String(http.StatusOK, json) // json string is already JSON String, so return String
 		}
+	ERR:
 		return c.JSON(http.StatusBadRequest, result{
 			Data:  nil,
-			Error: "SIF Data must be provided via Request BODY",
+			Info:  "",
+			Error: "SIF Data must be provided via Request BODY as Valid XML",
 		})
 	})
 

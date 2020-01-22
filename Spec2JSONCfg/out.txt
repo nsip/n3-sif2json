@@ -1,3 +1,4 @@
+
 OBJECT: Activity
 OBJECT: AggregateCharacteristicInfo
 OBJECT: AggregateStatisticFact

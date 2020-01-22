@@ -21,7 +21,6 @@ var (
 // List2JSON :
 type List2JSON struct {
 	Path          string
-	PathAbs       string
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
@@ -33,7 +32,6 @@ type List2JSON struct {
 // Num2JSON :
 type Num2JSON struct {
 	Path          string
-	PathAbs       string
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
@@ -45,7 +43,6 @@ type Num2JSON struct {
 // Bool2JSON :
 type Bool2JSON struct {
 	Path          string
-	PathAbs       string
 	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
@@ -57,7 +54,6 @@ type Bool2JSON struct {
 // SIF2JSON :
 type SIF2JSON struct {
 	Path           string
-	PathAbs        string
 	JQDir          string
 	AttrPrefix     string
 	ContentPrefix  string
@@ -96,8 +92,7 @@ func set(f, abs string) interface{} {
 		name := reflect.TypeOf(cfg).Elem().Name()
 		if sHasSuffix(f, "/"+name+".toml") {
 			if _, e := toml.DecodeFile(f, cfg); e == nil {
-				reflect.ValueOf(cfg).Elem().FieldByName("Path").SetString(f)
-				reflect.ValueOf(cfg).Elem().FieldByName("PathAbs").SetString(abs)
+				reflect.ValueOf(cfg).Elem().FieldByName("Path").SetString(abs)
 				save(f, cfg)
 				// modify for runtime
 				return cfg
