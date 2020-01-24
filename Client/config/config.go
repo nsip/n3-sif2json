@@ -1,20 +1,28 @@
 package cfg
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
 
 	"github.com/burntsushi/toml"
 )
 
+var (
+	fPln = fmt.Println
+)
+
 // Config is toml
 type Config struct {
-	Path       string
-	ELog       string
-	WebService struct {
-		Port    int
-		Version string
+	Path   string
+	ELog   string
+	Server struct {
+		Protocol string
+		IP       string
+		Port     int
+	}
+	Access struct {
+		Timeout int
 	}
 	Route struct {
 		ROOT     string
@@ -48,9 +56,7 @@ func (cfg *Config) set() *Config {
 		}
 		// save
 		cfg.save()
-		// modify BUT not save
-		ver := fSf("%s", cfg.WebService.Version)
-		return cfg.modCfg(map[string]string{"#v": ver}) // *** replace version *** //
+		return cfg
 	}
 	return nil
 }
@@ -60,18 +66,4 @@ func (cfg *Config) save() {
 		defer f.Close()
 		toml.NewEncoder(f).Encode(cfg)
 	}
-}
-
-func (cfg *Config) modCfg(mRepl map[string]string) *Config {
-	if mRepl == nil || len(mRepl) == 0 {
-		return cfg
-	}
-	nField := reflect.ValueOf(cfg.Route).NumField()
-	for i := 0; i < nField; i++ {
-		for key, value := range mRepl {
-			replaced := sReplaceAll(reflect.ValueOf(cfg.Route).Field(i).Interface().(string), key, value)
-			reflect.ValueOf(&cfg.Route).Elem().Field(i).SetString(replaced)
-		}
-	}
-	return cfg
 }

@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	cmn.FailOnCondition(!g.Init(), "%v", fmt.Errorf("Global Config Init Error"))
+	cmn.FailOnErrWhen(!g.Init(), "%v", fmt.Errorf("Global Config Init Error"))
 	log.Printf("Working on: [%v]", g.Cfg.WebService)
 	done := make(chan string)
 	go api.HostHTTPAsync()

@@ -178,11 +178,11 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extCon
 func YieldJSONBySIFList(cfgPath string) {
 
 	ICfg := cfg.NewCfg(cfgPath)
-	cmn.FailOnCondition(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
+	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
 
 	l2j := ICfg.(*cfg.List2JSON)
-	cmn.FailOnCondition(l2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnCondition(l2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	cmn.FailOnErrWhen(l2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnErrWhen(l2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
 	InitCfgBuf(*l2j, l2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
@@ -205,11 +205,11 @@ func YieldJSONBySIFList(cfgPath string) {
 func YieldJSONBySIFNum(cfgPath string) {
 
 	ICfg := cfg.NewCfg(cfgPath)
-	cmn.FailOnCondition(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
+	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
 
 	n2j := ICfg.(*cfg.Num2JSON)
-	cmn.FailOnCondition(n2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnCondition(n2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	cmn.FailOnErrWhen(n2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnErrWhen(n2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
 	InitCfgBuf(*n2j, n2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
@@ -221,11 +221,11 @@ func YieldJSONBySIFNum(cfgPath string) {
 func YieldJSONBySIFBool(cfgPath string) {
 
 	ICfg := cfg.NewCfg(cfgPath)
-	cmn.FailOnCondition(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
+	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
 
 	b2j := ICfg.(*cfg.Bool2JSON)
-	cmn.FailOnCondition(b2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnCondition(b2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
+	cmn.FailOnErrWhen(b2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	cmn.FailOnErrWhen(b2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
 	InitCfgBuf(*b2j, b2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
@@ -234,8 +234,8 @@ func YieldJSONBySIFBool(cfgPath string) {
 }
 
 // YieldJSONBySIF :
-func YieldJSONBySIF(listCfgPath, numCfgPath, boolCfgPath string) {
-	YieldJSONBySIFList(listCfgPath)
-	YieldJSONBySIFNum(numCfgPath)
-	YieldJSONBySIFBool(boolCfgPath)
+func YieldJSONBySIF(listCfg, numCfg, boolCfg string) {
+	YieldJSONBySIFList(listCfg)
+	YieldJSONBySIFNum(numCfg)
+	YieldJSONBySIFBool(boolCfg)
 }

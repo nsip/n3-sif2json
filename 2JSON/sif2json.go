@@ -66,12 +66,12 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	)
 
 	ICfg := cfg.NewCfg(cfgPath)
-	cmn.FailOnCondition(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
+	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
 	s2j := ICfg.(*cfg.SIF2JSON)
 
-	cmn.FailOnCondition(sCount(s2j.SIFCfgDir4LIST, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnCondition(sCount(s2j.SIFCfgDir4NUM, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnCondition(sCount(s2j.SIFCfgDir4BOOL, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4LIST, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4NUM, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4BOOL, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
 
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(

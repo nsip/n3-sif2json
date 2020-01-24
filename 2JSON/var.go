@@ -81,7 +81,7 @@ var (
 		// check, flag (?s) let . includes "NewLine"
 		re1 := regexp.MustCompile(fSf(`(?s)^<%s .+</%s>$`, root, root))
 		re2 := regexp.MustCompile(fSf(`(?s)^<%s>.+</%s>$`, root, root))
-		cmn.FailOnCondition(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", fEf("Invalid XML"))
+		cmn.FailOnErrWhen(!re1.MatchString(xml) && !re2.MatchString(xml), "%v", fEf("Invalid XML"))
 		return
 	}
 
