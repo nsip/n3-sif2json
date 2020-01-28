@@ -25,7 +25,7 @@ type Config struct {
 		Timeout int
 	}
 	Route struct {
-		ROOT     string
+		API      string
 		SIF2JSON string
 		JSON2SIF string
 	}
