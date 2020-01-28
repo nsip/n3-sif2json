@@ -40,9 +40,10 @@ func main() {
 		cmd.Parse(os.Args[2:])
 
 		switch os.Args[1] { // Config - Route - each Field
-		case "API":
-			// fPln("accessing ... " + url)
-			resp, err = http.Get(url)
+		// case "API":
+		// 	// fPln("accessing ... " + url)
+		// 	// resp, err = http.Get(url)
+		// 	goto QUIT
 
 		case "SIF2JSON":
 			if *svPtr != "" {
@@ -60,13 +61,13 @@ func main() {
 			cmn.FailOnErr("%v", fEf("JSON2SIF is not implemented"))
 
 		default:
-			if e := cmn.WarnOnErr("%v", fEf("Unknown Subcommand: %v", os.Args[1])); e != nil {
+			if e := cmn.WarnOnErr("%v", fEf("Unsupported Subcommand: %v", os.Args[1])); e != nil {
 				fPln(e.Error())
 				goto QUIT
 			}
 		}
 
-		cmn.FailOnErr("http fatal: %v", err)
+		cmn.FailOnErr("http access fatal: %v", err)
 		defer resp.Body.Close()
 		data, err = ioutil.ReadAll(resp.Body)
 		cmn.FailOnErr("resp Body fatal: %v", err)
