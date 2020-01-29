@@ -29,3 +29,15 @@ func json2xml(jsonPath, xmlPath string) {
 
 	ioutil.WriteFile(xmlPath, []byte(xmlstr), 0666)
 }
+
+// ----------------------------------------- //
+
+// Lookup Object From config.txt
+
+// Next
+
+// Check Exist
+
+// Print 1 Level
+
+//
