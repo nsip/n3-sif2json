@@ -14,4 +14,5 @@ var (
 	sSplit     = strings.Split
 	sReplace   = strings.Replace
 	sCount     = strings.Count
+	sTrim      = strings.Trim
 )

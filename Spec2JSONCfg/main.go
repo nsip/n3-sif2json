@@ -66,17 +66,16 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 func main() {
 	GenTomlAndStruct(
 		"./out.txt",
-		"0.0.1",
-		"../2JSON/config/",
 		"../2JSON/config/base-go/config",
 		"../2JSON/config/base-toml/List2JSON",
 		"../2JSON/config/base-toml/Num2JSON",
 		"../2JSON/config/base-toml/Bool2JSON",
+		"../2JSON/config/",
 	)
 }
 
 // GenTomlAndStruct :
-func GenTomlAndStruct(SIFSpecPath, SIFVer, outDir, baseGO, baseToml4LIST, baseToml4NUM, baseToml4BOOL string) {
+func GenTomlAndStruct(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4BOOL, outDir string) {
 
 	// appears in ./2JSON/ .base files
 	const (
@@ -118,6 +117,7 @@ func GenTomlAndStruct(SIFSpecPath, SIFVer, outDir, baseGO, baseToml4LIST, baseTo
 
 	const (
 		SEP     = "/"
+		VERSION = "VERSION: "
 		OBJECT  = "OBJECT: "
 		LIST    = "LIST: "
 		NUMERIC = "NUMERIC: "
@@ -135,16 +135,20 @@ func GenTomlAndStruct(SIFSpecPath, SIFVer, outDir, baseGO, baseToml4LIST, baseTo
 	cmn.FailOnErr("%v", err)
 	content := string(bytes)
 
+	SIFVer := ""
+
 	for _, line := range sSplit(content, "\n") {
 		switch {
+		case sHasPrefix(line, VERSION):
+			SIFVer = sTrim(line[len(VERSION):], " \t\r\n")
 		case sHasPrefix(line, OBJECT):
-			objGrp = append(objGrp, line[len(OBJECT):])
+			objGrp = append(objGrp, sTrim(line[len(OBJECT):], " \t\r\n"))
 		case sHasPrefix(line, LIST):
 			listPathGrp = append(listPathGrp, cmn.RmTailFromLast(line[len(LIST):], "/"))
 		case sHasPrefix(line, NUMERIC):
-			numPathGrp = append(numPathGrp, line[len(NUMERIC):])
+			numPathGrp = append(numPathGrp, sTrim(line[len(NUMERIC):], " \t\r\n"))
 		case sHasPrefix(line, BOOLEAN):
-			boolPathGrp = append(boolPathGrp, line[len(BOOLEAN):])
+			boolPathGrp = append(boolPathGrp, sTrim(line[len(BOOLEAN):], " \t\r\n"))
 		}
 	}
 
@@ -162,6 +166,9 @@ func GenTomlAndStruct(SIFSpecPath, SIFVer, outDir, baseGO, baseToml4LIST, baseTo
 		toml4List, goStruct4List := PrintGrp4Cfg(mListAttr, "LIST")
 		toml4Num, goStruct4Num := PrintGrp4Cfg(mNumAttr, "NUMERIC")
 		toml4Bool, goStruct4Bool := PrintGrp4Cfg(mBoolAttr, "BOOLEAN")
+
+		// fPln(SIFVer)
+		// cmn.FailOnErrWhen(SIFVer != "3.4.5X", "%v", fEf("why?"))
 
 		toml := sReplace(tomlLIST, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4List, 1)

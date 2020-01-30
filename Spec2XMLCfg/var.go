@@ -24,6 +24,6 @@ var (
 	mObjAttrs     = make(map[string][]string) // key: obj-type
 	mObjIdxOfAttr = make(map[string]int)      // key: obj-type
 	mOAType       = make(map[string]string)   // key: obj
-	mOAPrtLine    = make(map[string]int)      // key: obj
+	mOAPrtLn      = make(map[string]int)      // key: obj
 	objGrp        []string
 )
