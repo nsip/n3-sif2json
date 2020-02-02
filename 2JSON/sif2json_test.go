@@ -8,16 +8,16 @@ import (
 )
 
 func TestJSONRoot(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/test.json")
+	bytes, err := ioutil.ReadFile("../data/Activity.json")
 	cmn.FailOnErr("%v", err)
-	fPln(jsonroot(string(bytes)))
+	fPln(cmn.JSONRoot(string(bytes)))
 }
 
 func TestXMLRoot(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/test.xml")
+	bytes, err := ioutil.ReadFile("../data/Activity.xml")
 	cmn.FailOnErr("%v", err)
 	// fPln(string(bytes))
-	fPln(xmlroot(string(bytes)))
+	fPln(cmn.XMLRoot(string(bytes)))
 }
 
 func TestEachFileContent(t *testing.T) {

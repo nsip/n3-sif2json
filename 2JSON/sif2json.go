@@ -88,7 +88,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	// json := replaceDigCont(json, s2j.JQDir)
 
 	// Attributes Modification
-	obj := xmlroot(xml)              // infer object from xml root by default, use this object to search config json
+	obj := cmn.XMLRoot(xml)          // infer object from xml root by default, use this object to search config json
 	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
 		obj = subobj[0]
 	}

@@ -54,7 +54,7 @@ func PrintXML(paper, line, contentHolder string, iLine int, tag string) (string,
 // NextAttr is available
 func SortSimpleObject(xml, obj string, level int) (paper string) {
 	defer func() {
-		fPln(paper)
+		// fPln(paper)
 		resetPrt()
 	}()
 
@@ -210,10 +210,19 @@ func main() {
 	cmn.FailOnErr("%v", err)
 	// SortSimpleObject(string(bytes), "Evaluation", 1)
 
-	ScanOA(string(bytes))
+	// ScanOA(string(bytes))
+
+	ExtractOA(string(bytes))
 }
 
 // --------------------------------------- //
+
+// ExtractOA :
+func ExtractOA(xml string) {
+	root := cmn.XMLRoot(xml)
+	xml01 := SortSimpleObject(xml, root, 0)
+	fPln(xml01)
+}
 
 // ScanOA :
 func ScanOA(xml string) {
@@ -259,7 +268,14 @@ func ScanOA(xml string) {
 		}
 
 		oa := cmn.RmTailFromFirstAny(l[sl:], " ", ">")
-		mLvlOAs[lvl] = append(mLvlOAs[lvl], oa)
+		if lvlOAs := mLvlOAs[lvl]; len(lvlOAs) > 0 {
+			lastOA := lvlOAs[len(lvlOAs)-1]
+			if oa != lastOA {
+				mLvlOAs[lvl] = append(lvlOAs, oa)
+			}
+		} else {
+			mLvlOAs[lvl] = append(lvlOAs, oa)
+		}
 	}
 
 	for i := 0; i < maxLvl; i++ {

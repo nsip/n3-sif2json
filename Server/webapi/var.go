@@ -1,7 +1,6 @@
 package webapi
 
 import (
-	"encoding/xml"
 	"fmt"
 	"net/url"
 	"reflect"
@@ -35,10 +34,6 @@ type result struct {
 }
 
 // ---------------------------------------------- //
-
-func isValidXML(data []byte) bool {
-	return xml.Unmarshal(data, new(interface{})) == nil
-}
 
 // urlValues :
 func urlValues(values url.Values, params ...string) (ok bool, lsValues [][]string) {

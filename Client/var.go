@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/xml"
 	"fmt"
 	"reflect"
 	"strings"
@@ -16,10 +15,6 @@ var (
 	fEf   = fmt.Errorf
 	sJoin = strings.Join
 )
-
-func isValidXML(data []byte) bool {
-	return xml.Unmarshal(data, new(interface{})) == nil
-}
 
 var (
 	mFnURL = map[string]string{}

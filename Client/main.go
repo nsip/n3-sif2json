@@ -53,7 +53,7 @@ func main() {
 			cmn.FailOnErrWhen(*sifPtr == "", "%v", fEf("[-sif] must be provided"))
 			sif, err := ioutil.ReadFile(*sifPtr)
 			cmn.FailOnErr("%v: %v", err, "Is [-sif] provided correctly?")
-			cmn.FailOnErrWhen(!isValidXML(sif), "%v", fEf("sif is not valid XML file, abort"))
+			cmn.FailOnErrWhen(!cmn.IsXML(string(sif)), "%v", fEf("sif is not valid XML file, abort"))
 			sifName = filepath.Base(*sifPtr)
 			resp, err = http.Post(url, "application/json", bytes.NewBuffer(sif))
 

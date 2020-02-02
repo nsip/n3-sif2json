@@ -50,7 +50,7 @@ func HostHTTPAsync() {
 		mMtx[path].Lock()
 		glb.WDCheck()
 		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
-			if !isValidXML(bytes) {
+			if !cmn.IsXML(string(bytes)) {
 				goto ERR
 			}
 			sv := ""
