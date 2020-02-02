@@ -208,7 +208,7 @@ func main() {
 
 	bytes, err = ioutil.ReadFile("../data/Activity1.xml")
 	cmn.FailOnErr("%v", err)
-	// SortSimpleObject(string(bytes), "SoftwareRequirement", 2)
+	// SortSimpleObject(string(bytes), "Evaluation", 1)
 
 	ScanOA(string(bytes))
 }
@@ -217,9 +217,9 @@ func main() {
 
 // ScanOA :
 func ScanOA(xml string) {
-
 	var (
 		mLvlOAs = make(map[int][]string)
+		maxLvl  = -1
 	)
 
 	ss := sSplit(xml, "\n")
@@ -254,11 +254,15 @@ func ScanOA(xml string) {
 			continue
 		}
 
+		if lvl > maxLvl {
+			maxLvl = lvl
+		}
+
 		oa := cmn.RmTailFromFirstAny(l[sl:], " ", ">")
 		mLvlOAs[lvl] = append(mLvlOAs[lvl], oa)
 	}
 
-	for i := 0; i < 11; i++ {
+	for i := 0; i < maxLvl; i++ {
 		fPln(i, mLvlOAs[i])
 		for _, oa := range mLvlOAs[i] {
 			SortSimpleObject(xml, oa, i)
