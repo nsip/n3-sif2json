@@ -1,5 +1,5 @@
 Path = ""
-JQDir = "/home/qmiao/go/src/github.com/cdutwhu/json-util/preprocess/utils"
+JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
 Sep = "/"
 CfgJSONOutDir = "./SIFCfg/# SIF-VER #/BOOLEAN/"
 CfgJSONValue = "(B)"

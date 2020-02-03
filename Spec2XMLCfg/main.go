@@ -49,7 +49,7 @@ func PrintXML(paper, line, contentHolder string, iLine int, tag string) (string,
 	return paper + line + "\n", true
 }
 
-// SortSimpleObject : xml is 4 space formatted, level is obj's level
+// SortSimpleObject : xml is 4 space formatted, level is obj level
 // obj [level] = attribute [level-1]
 // NextAttr is available
 func SortSimpleObject(xml, obj string, level int) (paper string) {
@@ -183,9 +183,9 @@ func main() {
 
 	bytes, err := ioutil.ReadFile(SIFSpecPath)
 	cmn.FailOnErr("%v", err)
-	content := string(bytes)
+	specCont := string(bytes)
 
-	for _, line := range sSplit(content, "\n") {
+	for _, line := range sSplit(specCont, "\n") {
 		switch {
 		case sHasPrefix(line, OBJECT):
 			objGrp = append(objGrp, line[len(OBJECT):])
@@ -195,11 +195,11 @@ func main() {
 		}
 	}
 
+	InitMapOfObjAttrs(xpathGrp, SEP)
+
 	// for _, obj := range objGrp {
 	// 	fPln(obj, mObjAttrs[obj])
 	// }
-
-	InitMapOfObjAttrs(xpathGrp, SEP)
 
 	// value, end := NextAttr("SoftwareRequirement")
 	// for ; !end; value, end = NextAttr("SoftwareRequirement") {
@@ -208,80 +208,77 @@ func main() {
 
 	bytes, err = ioutil.ReadFile("../data/Activity1.xml")
 	cmn.FailOnErr("%v", err)
-	// SortSimpleObject(string(bytes), "Evaluation", 1)
+	sifCont := string(bytes)
+	// fPln(SortSimpleObject(sifCont, "Evaluation", 1))
+	// return
 
-	// ScanOA(string(bytes))
+	root := cmn.XMLRoot(sifCont)
+	ExtractOA(sifCont, root, "", 0)
 
-	ExtractOA(string(bytes))
+	// for k, v := range mIPathSubXML {
+	// 	fPln(k)
+	// 	fPln(v)
+	// 	fPln(mIPathSubMark[k])
+	// 	fPln("--------------------")
+	// }
+
+	// xmlobj := SortSimpleObject(sifCont, root, 0)
+	xmlobj := mIPathSubXML[root]
+
+AGAIN:
+	for k, subxml := range mIPathSubXML {
+		mark := mIPathSubMark[k]
+		xmlobj = sReplace(xmlobj, mark, subxml, 1)
+	}
+	if sContains(xmlobj, "...") {
+		goto AGAIN
+	}
+
+	fPln(xmlobj)
 }
 
 // --------------------------------------- //
 
 // ExtractOA :
-func ExtractOA(xml string) {
-	root := cmn.XMLRoot(xml)
-	xml01 := SortSimpleObject(xml, root, 0)
-	fPln(xml01)
-}
+func ExtractOA(xml, obj, parent string, lvl int) string {
+	S := mkIndent(lvl+1) + "<"
+	E := S + "/"
 
-// ScanOA :
-func ScanOA(xml string) {
-	var (
-		mLvlOAs = make(map[int][]string)
-		maxLvl  = -1
-	)
-
-	ss := sSplit(xml, "\n")
-	for _, l := range ss {
-		lvl, sl := 0, 0
+	lvlOAs := []string{}
+	xmlobj := sTrim(SortSimpleObject(xml, obj, lvl), "\n")
+	for _, l := range sSplit(xmlobj, "\n") {
+		sl := 0
 		switch {
-		case sHasPrefix(l, S0) && !sHasPrefix(l, E0):
-			lvl, sl = 0, len(S0)
-		case sHasPrefix(l, S1) && !sHasPrefix(l, E1):
-			lvl, sl = 1, len(S1)
-		case sHasPrefix(l, S2) && !sHasPrefix(l, E2):
-			lvl, sl = 2, len(S2)
-		case sHasPrefix(l, S3) && !sHasPrefix(l, E3):
-			lvl, sl = 3, len(S3)
-		case sHasPrefix(l, S4) && !sHasPrefix(l, E4):
-			lvl, sl = 4, len(S4)
-		case sHasPrefix(l, S5) && !sHasPrefix(l, E5):
-			lvl, sl = 5, len(S5)
-		case sHasPrefix(l, S6) && !sHasPrefix(l, E6):
-			lvl, sl = 6, len(S6)
-		case sHasPrefix(l, S7) && !sHasPrefix(l, E7):
-			lvl, sl = 7, len(S7)
-		case sHasPrefix(l, S8) && !sHasPrefix(l, E8):
-			lvl, sl = 8, len(S8)
-		case sHasPrefix(l, S9) && !sHasPrefix(l, E9):
-			lvl, sl = 9, len(S9)
-		case sHasPrefix(l, S10) && !sHasPrefix(l, E10):
-			lvl, sl = 10, len(S10)
-		case sHasPrefix(l, S11) && !sHasPrefix(l, E11):
-			lvl, sl = 11, len(S11)
+		case sHasPrefix(l, S) && !sHasPrefix(l, E) && sHasSuffix(l, "..."):
+			sl = len(S)
 		default:
 			continue
 		}
-
-		if lvl > maxLvl {
-			maxLvl = lvl
-		}
-
 		oa := cmn.RmTailFromFirstAny(l[sl:], " ", ">")
-		if lvlOAs := mLvlOAs[lvl]; len(lvlOAs) > 0 {
-			lastOA := lvlOAs[len(lvlOAs)-1]
-			if oa != lastOA {
-				mLvlOAs[lvl] = append(lvlOAs, oa)
-			}
-		} else {
-			mLvlOAs[lvl] = append(lvlOAs, oa)
+		if len(lvlOAs) == 0 {
+			lvlOAs = append(lvlOAs, oa)
+			continue
+		}
+		lastOA := lvlOAs[len(lvlOAs)-1]
+		if oa != lastOA {
+			lvlOAs = append(lvlOAs, oa)
 		}
 	}
 
-	for i := 0; i < maxLvl; i++ {
-		fPln(i, mLvlOAs[i])
-		for _, oa := range mLvlOAs[i] {
-			SortSimpleObject(xml, oa, i)
-		}
+	ipath := parent + "~" + obj
+	if parent == "" {
+		ipath = obj
 	}
+
+	mIPathSubXML[ipath] = xmlobj
+	xmlobjLn1 := sSplit(xmlobj, "\n")[0]
+
+	preBlank := mkIndent(sCount(ipath, "~"))
+	mIPathSubMark[ipath] = fSf("%s...\n%s</%s>", xmlobjLn1, preBlank, obj)
+
+	for _, subobj := range lvlOAs {
+		ExtractOA(xml, subobj, ipath, lvl+1)
+	}
+
+	return xmlobj
 }
