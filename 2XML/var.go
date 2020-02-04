@@ -1,9 +1,13 @@
 package cvt2xml
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"regexp"
 	"strings"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -60,6 +64,17 @@ var (
 		for i := 0; i < n; i++ {
 			indent += INDENT
 		}
+		return
+	}
+
+	// mReplPiece = map[string]string{
+	// 	` lang="`: ` xml:lang="`,
+	// }
+
+	getReplMap = func(jsonPath string) (m map[string]string) {
+		bytes, err := ioutil.ReadFile(jsonPath)
+		cmn.FailOnErr("%v", err)
+		cmn.FailOnErr("%v", json.Unmarshal(bytes, &m))
 		return
 	}
 )

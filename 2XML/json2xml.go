@@ -82,12 +82,15 @@ AGAIN:
 		goto AGAIN
 	}
 
-	fPln(xmlobj)
+	// fPln(xmlobj)
 	return xmlobj
 }
 
 // JSON2XML3 :
-func JSON2XML3(xml2 string) string {
+func JSON2XML3(xml2 string, mRepl map[string]string) string {
+	for old, new := range mRepl {
+		xml2 = sReplaceAll(xml2, old, new)
+	}
 	return xml2
 }
 

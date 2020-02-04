@@ -65,7 +65,7 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 
 func main() {
 	GenTomlAndStruct(
-		"./out.txt",
+		"../SIFSpec/out.txt",
 		"../2JSON/config/base-go/config",
 		"../2JSON/config/base-toml/List2JSON",
 		"../2JSON/config/base-toml/Num2JSON",
