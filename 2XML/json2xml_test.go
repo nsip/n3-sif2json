@@ -8,14 +8,17 @@ import (
 )
 
 func TestJSON2XML(t *testing.T) {
-	xml1 := JSON2XML1("../data/Activity.json", "../data/Activity_temp.xml")
-	xml2 := JSON2XML2(xml1, "../SIFSpec/out.txt")
-	xml3 := JSON2XML3(xml2, getReplMap("./SIFCfg/replace.json"))
-	ioutil.WriteFile("../data/Activity_out.xml", []byte(xml3), 0666)
+	xml1 := JSON2XML1("../data/AGAddressCollectionSubmission.json")
+	ioutil.WriteFile("../data/AGAddressCollectionSubmission_1_out.xml", []byte(xml1), 0666)
+
+	//xml2 := JSON2XML2(xml1, "../SIFSpec/out.txt")
+
+	//xml3 := JSON2XML3(xml2, getReplMap("./SIFCfg/replace.json"))
+	//ioutil.WriteFile("../data/AGAddressCollectionSubmission_1_out.xml", []byte(xml1), 0666)
 }
 
 func TestSortSimpleObject(t *testing.T) {
-	jsonBytes, err := ioutil.ReadFile("../data/NAPStudentResponseSet3.xml")
+	jsonBytes, err := ioutil.ReadFile("../data/AGAddressCollectionSubmission_1_out.xml")
 	cmn.FailOnErr("%v", err)
 	sifCont := string(jsonBytes)
 
@@ -38,7 +41,8 @@ func TestSortSimpleObject(t *testing.T) {
 
 	InitMapOfObjAttrs(xpathGrp, SEP)
 
-	fPln(SortSimpleObject(sifCont, "NAPStudentResponseSet", 0))
+	// "EntityContact"
+	fPln(SortSimpleObject(sifCont, "Name", 4))
 	// fPln(SortSimpleObject(sifCont, "ReportExclusionFlag", 1))
 	// fPln("-----------------------")
 	// fPln(SortSimpleObject(sifCont, "ItemResponseList", 3))

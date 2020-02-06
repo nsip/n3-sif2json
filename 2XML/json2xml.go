@@ -112,7 +112,10 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 
 	paper, _ = PrintXML(paper, lines[PS], fSf("@%d#", PS), PS, obj)
 
+	specValid := false
 	for attr, end := NextAttr(obj); !end; attr, end = NextAttr(obj) {
+		specValid = true
+
 		AS1 := fSf("%s<%s ", indentAttr, attr)
 		AS2 := fSf("%s<%s>", indentAttr, attr)
 		AS3 := fSf("%s</%s>", indentAttr, attr)
@@ -137,6 +140,7 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 			}
 		}
 	}
+	cmn.FailOnErrWhen(!specValid, "SIF Spec, No attributes for obj: [%v]", fEf(obj))
 
 	// Single Line Object has NO End Tag
 	if PE != -1 {
@@ -192,7 +196,7 @@ func ExtractOA(xml, obj, parent string, lvl int) string {
 // ----------------------------------------------- //
 
 // JSON2XML1 : Disordered, Formatted from JSON
-func JSON2XML1(jsonPath, xmlPath string) string {
+func JSON2XML1(jsonPath string) string {
 	jsonBytes, err := ioutil.ReadFile(jsonPath)
 	cmn.FailOnErr("%v", err)
 	cmn.FailOnErrWhen(!cmn.IsJSON(string(jsonBytes)), "", fEf("Input File is not a valid JSON File"))
@@ -212,7 +216,6 @@ func JSON2XML1(jsonPath, xmlPath string) string {
 	xmlstr, _ = Indent(xmlstr, -4, false)
 	xmlstr = sTrim(xmlstr, " \t\n")
 
-	// ioutil.WriteFile(xmlPath, []byte(xmlstr), 0666)
 	return xmlstr
 }
 
