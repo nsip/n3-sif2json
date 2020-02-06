@@ -25,9 +25,9 @@ func TestEachFileContent(t *testing.T) {
 }
 
 func TestSIF2JSON(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/NAPStudentResponseSet.xml")
+	bytes, err := ioutil.ReadFile("../data/Activity.xml")
 	cmn.FailOnErr("%v", err)
 	json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "3.4.5X", false)
 	fPln(sv, err)
-	ioutil.WriteFile("../data/NAPStudentResponseSet.json", []byte(json), 0666)
+	ioutil.WriteFile("../data/Activity.json", []byte(json), 0666)
 }

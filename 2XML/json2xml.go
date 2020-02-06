@@ -245,8 +245,8 @@ func JSON2XML2(xml1, SIFSpecPath string) string {
 	xmlobj := mIPathSubXML[root]
 AGAIN:
 	for k, subxml := range mIPathSubXML {
-		mark := mIPathSubMark[k]                   // mark could be REPEATED in LIST !!!!!
-		xmlobj = sReplace(xmlobj, mark, subxml, 1) // in LIST, which mark is for unknown ordered subxml ?
+		mark := mIPathSubMark[k]
+		xmlobj = sReplace(xmlobj, mark, subxml, 1)
 	}
 	if sContains(xmlobj, "...") {
 		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xmlobj), 0666)
