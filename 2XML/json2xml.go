@@ -3,96 +3,11 @@ package cvt2xml
 import (
 	"encoding/json"
 	"io/ioutil"
+	"regexp"
 
 	cmn "github.com/cdutwhu/json-util/common"
 	"github.com/clbanning/mxj"
 )
-
-// JSON2XML1 :
-func JSON2XML1(jsonPath, xmlPath string) string {
-	jsonBytes, err := ioutil.ReadFile(jsonPath)
-	cmn.FailOnErr("%v", err)
-	cmn.FailOnErrWhen(!cmn.IsJSON(string(jsonBytes)), "", fEf("Input JSON Path is not a valid JSON File"))
-
-	var f interface{}
-	json.Unmarshal(jsonBytes, &f)
-	// fPln(f)
-
-	b, err := mxj.AnyXmlIndent(f, "", "    ", "")
-	cmn.FailOnErr("%v", err)
-
-	xmlstr := string(b)
-	xmlstr = sReplaceAll(xmlstr, "<>", "")
-	xmlstr = sReplaceAll(xmlstr, "</>", "")
-	xmlstr = re1.ReplaceAllString(xmlstr, "")
-	xmlstr = re2.ReplaceAllString(xmlstr, "")
-	xmlstr, _ = Indent(xmlstr, -4, false)
-	xmlstr = sTrim(xmlstr, " \t\n")
-
-	ioutil.WriteFile(xmlPath, []byte(xmlstr), 0666)
-	return xmlstr
-}
-
-// JSON2XML2 :
-func JSON2XML2(SIFSpecPath, xml1 string) string {
-	const (
-		SEP       = "\t"
-		XPATHTYPE = "XPATHTYPE:"
-	)
-
-	bytes, err := ioutil.ReadFile(SIFSpecPath)
-	cmn.FailOnErr("%v", err)
-	spec := string(bytes)
-
-	for _, line := range sSplit(spec, "\n") {
-		switch {
-		case sHasPrefix(line, XPATHTYPE):
-			l := sTrim(line[len(XPATHTYPE):], " \t\r")
-			xpathGrp = append(xpathGrp, l)
-		}
-	}
-
-	InitMapOfObjAttrs(xpathGrp, SEP)
-
-	// value, end := NextAttr("SoftwareRequirement")
-	// for ; !end; value, end = NextAttr("SoftwareRequirement") {
-	// 	fPln(value)
-	// }
-
-	// bytes, err = ioutil.ReadFile("../data/Activity1.xml")
-	// cmn.FailOnErr("%v", err)
-	// sifCont := string(bytes)
-	sifCont := xml1
-
-	// fPln(SortSimpleObject(sifCont, "Evaluation", 1))
-
-	// Init "mIPathSubXML"
-	root := cmn.XMLRoot(sifCont)
-	ExtractOA(sifCont, root, "", 0)
-
-	// xmlobj := SortSimpleObject(sifCont, root, 0)
-	xmlobj := mIPathSubXML[root]
-
-AGAIN:
-	for k, subxml := range mIPathSubXML {
-		mark := mIPathSubMark[k]
-		xmlobj = sReplace(xmlobj, mark, subxml, 1)
-	}
-	if sContains(xmlobj, "...") {
-		goto AGAIN
-	}
-
-	// fPln(xmlobj)
-	return xmlobj
-}
-
-// JSON2XML3 :
-func JSON2XML3(xml2 string, mRepl map[string]string) string {
-	for old, new := range mRepl {
-		xml2 = sReplaceAll(xml2, old, new)
-	}
-	return xml2
-}
 
 // ----------------------------------------- //
 
@@ -107,7 +22,7 @@ func InitMapOfObjAttrs(xpathGrp []string, sep string) {
 	}
 }
 
-// NextAttr :
+// NextAttr : From Spec
 func NextAttr(obj string) (value string, end bool) {
 	if objType, ok := mOAType[obj]; ok {
 		obj = objType
@@ -123,7 +38,7 @@ func NextAttr(obj string) (value string, end bool) {
 }
 
 // PrintXML : append print to a string
-func PrintXML(paper, line, contentHolder string, iLine int, tag string) (string, bool) {
+func PrintXML(paper, line, mark string, iLine int, tag string) (string, bool) {
 	if _, ok := mOAPrtLn[tag]; !ok {
 		mOAPrtLn[tag] = -1
 	}
@@ -133,8 +48,8 @@ func PrintXML(paper, line, contentHolder string, iLine int, tag string) (string,
 	}
 	mOAPrtLn[tag] = iLine
 
-	if contentHolder != "" {
-		return paper + line + contentHolder + "\n", true
+	if mark != "" {
+		return paper + line + mark + "\n", true
 	}
 	return paper + line + "\n", true
 }
@@ -166,92 +81,67 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 		nObj = n
 	}
 
-	//	NEXTOBJ:
-	for t := 0; t < nObj; t++ {
+	objIdx := fSf("%s@%d", obj, level)
+	if _, ok := mObjIdxStart[objIdx]; !ok {
+		mObjIdxStart[objIdx] = -1
+	}
+	if _, ok := mObjIdxEnd[objIdx]; !ok {
+		mObjIdxEnd[objIdx] = -1
+	}
 
-		rewindAttrIter(mOAType[obj])
-		PS, PE := 0, 0
+	rewindAttrIter(mOAType[obj])
+	PS, PE := -1, -1
 
-		for i, l := range lines {
-			if sHasPrefix(l, OS1) || sHasPrefix(l, OS2) {
-				if tempPaper, prt := PrintXML(paper, l, "", i, obj); !prt {
-					continue
-				} else {
-					paper = tempPaper
-					PS = i
-					break
-				}
+	// ---------------------------------- //
+	for i, l := range lines {
+		if (sHasPrefix(l, OS1) || sHasPrefix(l, OS2)) && i > mObjIdxStart[objIdx] {
+			if _, ok := PrintXML(paper, l, "", i, "*"+obj); ok { // [*+obj] is probe to detect Start line
+				PS, mObjIdxStart[objIdx] = i, i
 			}
 		}
-
-		for i, l := range lines {
-			if sHasPrefix(l, OS3) {
-				if _, prt := PrintXML(paper, l, "", i, "//"+obj); !prt { // [//+obj] is probe to detect End Position
-					continue
-				} else {
-					PE = i
-					break
-				}
+		if sHasPrefix(l, OS3) && i > mObjIdxEnd[objIdx] {
+			if _, ok := PrintXML(paper, l, "", i, "*/"+obj); ok { // [*/+obj] is probe to detect End line
+				PE, mObjIdxEnd[objIdx] = i, i
 			}
 		}
+		if PS != -1 && PE != -1 { // if all found, break. PE may not be found when Single Line Attribute
+			break
+		}
+	}
+	// ---------------------------------- //
 
-		attr, end := NextAttr(obj)
-	NEXTATTR:
-		for ; !end; attr, end = NextAttr(obj) {
-			// fPln(attr)
+	paper, _ = PrintXML(paper, lines[PS], fSf("@%d#", PS), PS, obj)
 
-			AS1 := fSf("%s<%s ", indentAttr, attr)
-			AS2 := fSf("%s<%s>", indentAttr, attr)
-			AS3 := fSf("%s</%s>", indentAttr, attr)
-			AE := fSf("</%s>", attr)
+	for attr, end := NextAttr(obj); !end; attr, end = NextAttr(obj) {
+		AS1 := fSf("%s<%s ", indentAttr, attr)
+		AS2 := fSf("%s<%s>", indentAttr, attr)
+		AS3 := fSf("%s</%s>", indentAttr, attr)
+		AE := fSf("</%s>", attr)
 
-			// fPln(AS1, "|", AS2, "|", AS3, "| ------------------------------- ")
-
-			for i, l := range lines {
-
-				if i > PS && i < PE {
-
-					// fPln(i, l)
-
-					switch {
-					case (sHasPrefix(l, AS1) || sHasPrefix(l, AS2)) && sHasSuffix(l, AE): // one line
-						if tempPaper, prt := PrintXML(paper, l, "", i, attr); !prt {
-							continue
-						} else {
-							paper = tempPaper
-							continue NEXTATTR
-						}
-					case sHasPrefix(l, AS1) || sHasPrefix(l, AS2): // sub-object START
-						if tempPaper, prt := PrintXML(paper, l, "...", i, attr); !prt {
-							continue
-						} else {
-							paper = tempPaper
-							continue
-						}
-					case sHasPrefix(l, AS3): // sub-object END
-						if tempPaper, prt := PrintXML(paper, l, "", i, "/"+attr); !prt {
-							continue
-						} else {
-							paper = tempPaper
-							continue NEXTATTR
-						}
+		for i, l := range lines {
+			if i > PS && i < PE {
+				switch {
+				case (sHasPrefix(l, AS1) || sHasPrefix(l, AS2)) && sHasSuffix(l, AE): // one line
+					if tempPaper, ok := PrintXML(paper, l, "", i, attr); ok {
+						paper = tempPaper
+					}
+				case sHasPrefix(l, AS1) || sHasPrefix(l, AS2): // sub-object START
+					if tempPaper, ok := PrintXML(paper, l, fSf("@%d#...", i), i, attr); ok {
+						paper = tempPaper
+					}
+				case sHasPrefix(l, AS3): // sub-object END
+					if tempPaper, ok := PrintXML(paper, l, "", i, "/"+attr); ok {
+						paper = tempPaper
 					}
 				}
 			}
 		}
+	}
 
-		for i, l := range lines {
-			if sHasPrefix(l, OS3) {
-				if tempPaper, prt := PrintXML(paper, l, "", i, "/"+obj); !prt {
-					continue
-				} else {
-					paper = tempPaper
-					break
-				}
-			}
-		}
-
-	} // end of [nObj] loop
+	// Single Line Object has NO End Tag
+	if PE != -1 {
+		paper, _ = PrintXML(paper, lines[PE], "", PE, "/"+obj)
+	}
 
 	return
 }
@@ -261,35 +151,34 @@ func ExtractOA(xml, obj, parent string, lvl int) string {
 	S := mkIndent(lvl+1) + "<"
 	E := S + "/"
 
-	lvlOAs := []string{}
+	lvlOAs := []string{} // Complex Object Tags
 	xmlobj := sTrim(SortSimpleObject(xml, obj, lvl), "\n")
 	for _, l := range sSplit(xmlobj, "\n") {
 		sl := 0
 		switch {
-		case sHasPrefix(l, S) && !sHasPrefix(l, E) && sHasSuffix(l, "..."):
+		case sHasPrefix(l, S) && !sHasPrefix(l, E) && sContains(l, "..."): // Complex Object Tags
 			sl = len(S)
 		default:
 			continue
 		}
 		oa := cmn.RmTailFromFirstAny(l[sl:], " ", ">")
-		if len(lvlOAs) == 0 {
-			lvlOAs = append(lvlOAs, oa)
-			continue
-		}
-		lastOA := lvlOAs[len(lvlOAs)-1]
-		if oa != lastOA {
-			lvlOAs = append(lvlOAs, oa)
-		}
+		lvlOAs = append(lvlOAs, oa)
 	}
 
-	ipath := parent + "~" + obj
-	if parent == "" {
+	path := parent + "~" + obj
+	if _, ok := mPathIdx[path]; !ok {
+		mPathIdx[path] = 0
+	}
+
+	ipath := fSf("%s@%d", path, mPathIdx[path])
+	mPathIdx[path]++
+	if parent == "" { // root is without @index
 		ipath = obj
 	}
 
 	mIPathSubXML[ipath] = xmlobj
-	xmlobjLn1 := sSplit(xmlobj, "\n")[0]
 
+	xmlobjLn1 := sSplit(xmlobj, "\n")[0]
 	preBlank := mkIndent(sCount(ipath, "~"))
 	mIPathSubMark[ipath] = fSf("%s...\n%s</%s>", xmlobjLn1, preBlank, obj)
 
@@ -298,4 +187,88 @@ func ExtractOA(xml, obj, parent string, lvl int) string {
 	}
 
 	return xmlobj
+}
+
+// ----------------------------------------------- //
+
+// JSON2XML1 : Disordered, Formatted from JSON
+func JSON2XML1(jsonPath, xmlPath string) string {
+	jsonBytes, err := ioutil.ReadFile(jsonPath)
+	cmn.FailOnErr("%v", err)
+	cmn.FailOnErrWhen(!cmn.IsJSON(string(jsonBytes)), "", fEf("Input File is not a valid JSON File"))
+
+	var f interface{}
+	json.Unmarshal(jsonBytes, &f)
+	// fPln(f)
+
+	b, err := mxj.AnyXmlIndent(f, "", "    ", "")
+	cmn.FailOnErr("%v", err)
+
+	xmlstr := string(b)
+	xmlstr = sReplaceAll(xmlstr, "<>", "")
+	xmlstr = sReplaceAll(xmlstr, "</>", "")
+	xmlstr = re1.ReplaceAllString(xmlstr, "")
+	xmlstr = re2.ReplaceAllString(xmlstr, "")
+	xmlstr, _ = Indent(xmlstr, -4, false)
+	xmlstr = sTrim(xmlstr, " \t\n")
+
+	// ioutil.WriteFile(xmlPath, []byte(xmlstr), 0666)
+	return xmlstr
+}
+
+// JSON2XML2 : Ordered, Some pieces are different
+func JSON2XML2(xml1, SIFSpecPath string) string {
+	const (
+		SEP       = "\t"
+		XPATHTYPE = "XPATHTYPE:"
+	)
+
+	bytes, err := ioutil.ReadFile(SIFSpecPath)
+	cmn.FailOnErr("%v", err)
+	spec := string(bytes)
+
+	for _, line := range sSplit(spec, "\n") {
+		switch {
+		case sHasPrefix(line, XPATHTYPE):
+			l := sTrim(line[len(XPATHTYPE):], " \t\r")
+			xpathGrp = append(xpathGrp, l)
+		}
+	}
+
+	// Init Spec Maps
+	InitMapOfObjAttrs(xpathGrp, SEP)
+
+	// Init "mIPathSubXML"
+	root := cmn.XMLRoot(xml1)
+	ExtractOA(xml1, root, "", 0)
+
+	xmlobj := mIPathSubXML[root]
+AGAIN:
+	for k, subxml := range mIPathSubXML {
+		mark := mIPathSubMark[k]                   // mark could be REPEATED in LIST !!!!!
+		xmlobj = sReplace(xmlobj, mark, subxml, 1) // in LIST, which mark is for unknown ordered subxml ?
+	}
+	if sContains(xmlobj, "...") {
+		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xmlobj), 0666)
+		nGoTo++
+		cmn.FailOnErrWhen(nGoTo > maxGoTo, "%v", fEf("goto AGAIN deadlock"))
+		goto AGAIN
+	}
+
+	return xmlobj
+}
+
+// JSON2XML3 : Pieces Replaced, should be almost identical to Original SIF
+func JSON2XML3(xml2 string, mRepl map[string]string) string {
+
+	// remove @Number#
+	r := regexp.MustCompile("@([0-9]+)#")
+	xml2 = string(r.ReplaceAll([]byte(xml2), []byte("")))
+
+	// others from cfg
+	for old, new := range mRepl {
+		xml2 = sReplaceAll(xml2, old, new)
+	}
+
+	return xml2
 }
