@@ -18,6 +18,7 @@ func InitMapOfObjAttrs(xpathGrp []string, sep string) {
 		attr, attrType, objType := ss[0], ss[1], ss[4]
 		mObjAttrs[objType] = append(mObjAttrs[objType], attr)
 		mObjIdxOfAttr[objType] = 0
+
 		mOAType[attr] = attrType
 	}
 }
@@ -89,7 +90,8 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 		mObjIdxEnd[objIdx] = -1
 	}
 
-	rewindAttrIter(mOAType[obj])
+	//rewindAttrIter(mOAType[obj])
+	rewindAttrIter()
 	PS, PE := -1, -1
 
 	// ---------------------------------- //

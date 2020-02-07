@@ -54,16 +54,22 @@ var (
 	mObjIdxOfAttr = make(map[string]int)      // key: obj-type
 	mObjIdxStart  = make(map[string]int)      // key: obj-type@level, value: line-number
 	mObjIdxEnd    = make(map[string]int)      // key: obj-type@level, value: line-number
-	mOAType       = make(map[string]string)   // key: obj
-	mOAPrtLn      = make(map[string]int)      // key: obj
+
+	mOAType  = make(map[string]string) // key: obj
+	mOAPrtLn = make(map[string]int)    // key: obj
 
 	xpathGrp      []string                  // from SIF Spec
 	mIPathSubXML  = make(map[string]string) // key: path@index
 	mIPathSubMark = make(map[string]string) // key: path@index
 	mPathIdx      = make(map[string]int)    // key: path
 
-	rewindAttrIter = func(objType string) {
-		mObjIdxOfAttr[objType] = 0
+	// rewindAttrIter = func(objType string) {
+	// 	mObjIdxOfAttr[objType] = 0
+	// }
+	rewindAttrIter = func() {
+		for k := range mObjIdxOfAttr {
+			mObjIdxOfAttr[k] = 0
+		}
 	}
 
 	resetPrt = func() {

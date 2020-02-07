@@ -8,14 +8,16 @@ import (
 )
 
 func TestJSON2XML(t *testing.T) {
-	xml1 := JSON2XML1("../data/AGAddressCollectionSubmission.json")
-	ioutil.WriteFile("../data/AGAddressCollectionSubmission_1_out.xml", []byte(xml1), 0666)
+	obj := "NAPStudentResponseSet"
+
+	xml1 := JSON2XML1(fSf("../data/%s.json", obj))
+	ioutil.WriteFile(fSf("../data/%s_1_out.xml", obj), []byte(xml1), 0666)
 
 	xml2 := JSON2XML2(xml1, "../SIFSpec/out.txt")
-	ioutil.WriteFile("../data/AGAddressCollectionSubmission_2_out.xml", []byte(xml2), 0666)
+	ioutil.WriteFile(fSf("../data/%s_2_out.xml", obj), []byte(xml2), 0666)
 
 	xml3 := JSON2XML3(xml2, getReplMap("./SIFCfg/replace.json"))
-	ioutil.WriteFile("../data/AGAddressCollectionSubmission_3_out.xml", []byte(xml3), 0666)
+	ioutil.WriteFile(fSf("../data/%s_3_out.xml", obj), []byte(xml3), 0666)
 }
 
 func TestSortSimpleObject(t *testing.T) {
