@@ -25,7 +25,7 @@ func TestEachFileContent(t *testing.T) {
 }
 
 func TestSIF2JSON(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/AGAddressCollectionSubmission.xml")
+	bytes, err := ioutil.ReadFile("../data/examples/AGAddressCollectionSubmission.xml")
 	cmn.FailOnErr("%v", err)
 	json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "3.4.5X", false)
 	fPln(sv, err)
