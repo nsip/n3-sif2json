@@ -8,7 +8,7 @@ import (
 )
 
 func TestJSON2XML(t *testing.T) {
-	obj := "NAPStudentResponseSet"
+	obj := "Activity"
 
 	xml1 := JSON2XML1(fSf("../data/%s.json", obj))
 	ioutil.WriteFile(fSf("../data/%s_1_out.xml", obj), []byte(xml1), 0666)
@@ -21,10 +21,6 @@ func TestJSON2XML(t *testing.T) {
 }
 
 func TestSortSimpleObject(t *testing.T) {
-	jsonBytes, err := ioutil.ReadFile("../data/AGAddressCollectionSubmission_1_out.xml")
-	cmn.FailOnErr("%v", err)
-	sifCont := string(jsonBytes)
-
 	const (
 		SEP       = "\t"
 		XPATHTYPE = "XPATHTYPE:"
@@ -43,8 +39,14 @@ func TestSortSimpleObject(t *testing.T) {
 	}
 
 	InitMapOfObjAttrs(xpathGrp, SEP)
+	fPln(mOATypes["ItemResponse"])
 
-	// "EntityContact"
+	return
+
+	jsonBytes, err := ioutil.ReadFile("../data/AGAddressCollectionSubmission_1_out.xml")
+	cmn.FailOnErr("%v", err)
+	sifCont := string(jsonBytes)
+
 	fPln(SortSimpleObject(sifCont, "Name", 4))
 	// fPln(SortSimpleObject(sifCont, "ReportExclusionFlag", 1))
 	// fPln("-----------------------")

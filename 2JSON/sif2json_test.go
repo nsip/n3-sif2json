@@ -25,7 +25,8 @@ func TestEachFileContent(t *testing.T) {
 }
 
 func TestSIF2JSON(t *testing.T) {
-	obj := "NAPStudentResponseSet"
+	obj := "Activity"
+
 	bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
 	cmn.FailOnErr("%v", err)
 	json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "3.4.5X", false)

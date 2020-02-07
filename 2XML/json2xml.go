@@ -19,23 +19,29 @@ func InitMapOfObjAttrs(xpathGrp []string, sep string) {
 		mObjAttrs[objType] = append(mObjAttrs[objType], attr)
 		mObjIdxOfAttr[objType] = 0
 
-		mOAType[attr] = attrType
+		// mOAType[attr] = attrType
+		mOATypes[attr] = cmn.ToSet(append(mOATypes[attr], attrType)).([]string)
 	}
 }
 
 // NextAttr : From Spec
-func NextAttr(obj string) (value string, end bool) {
-	if objType, ok := mOAType[obj]; ok {
-		obj = objType
+func NextAttr(obj string) (value string, end, valid bool) {
+	if objTypes, ok := mOATypes[obj]; ok && len(objTypes) == 1 {
+		obj = objTypes[0]
+	} else if ok && len(objTypes) > 1 {
+		return "", false, false
 	}
+
+	// --------------------------- //
+
 	idx := mObjIdxOfAttr[obj]
 	if idx == len(mObjAttrs[obj]) {
-		return "", true
+		return "", true, true
 	}
 	defer func() {
 		mObjIdxOfAttr[obj]++
 	}()
-	return mObjAttrs[obj][idx], false
+	return mObjAttrs[obj][idx], false, true
 }
 
 // PrintXML : append print to a string
@@ -90,7 +96,6 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 		mObjIdxEnd[objIdx] = -1
 	}
 
-	//rewindAttrIter(mOAType[obj])
 	rewindAttrIter()
 	PS, PE := -1, -1
 
@@ -114,9 +119,8 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 
 	paper, _ = PrintXML(paper, lines[PS], fSf("@%d#", PS), PS, obj)
 
-	specValid := false
-	for attr, end := NextAttr(obj); !end; attr, end = NextAttr(obj) {
-		specValid = true
+	attr, end, valid := NextAttr(obj)
+	for ; valid && !end; attr, end, valid = NextAttr(obj) {
 
 		AS1 := fSf("%s<%s ", indentAttr, attr)
 		AS2 := fSf("%s<%s>", indentAttr, attr)
@@ -142,7 +146,10 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 			}
 		}
 	}
-	cmn.FailOnErrWhen(!specValid, "SIF Spec, No attributes for obj: [%v]", fEf(obj))
+
+	if !valid {
+		cmn.FailOnErrWhen(!valid, "SIF Spec, No attributes for obj: [%v]", fEf(obj))
+	}
 
 	// Single Line Object has NO End Tag
 	if PE != -1 {
@@ -153,7 +160,7 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 }
 
 // ExtractOA :
-func ExtractOA(xml, obj, parent string, lvl int) string {
+func ExtractOA(xml, obj, path string, lvl int) string {
 	S := mkIndent(lvl+1) + "<"
 	E := S + "/"
 
@@ -171,14 +178,14 @@ func ExtractOA(xml, obj, parent string, lvl int) string {
 		lvlOAs = append(lvlOAs, oa)
 	}
 
-	path := parent + "~" + obj
+	path += ("~" + obj)
 	if _, ok := mPathIdx[path]; !ok {
 		mPathIdx[path] = 0
 	}
 
 	ipath := fSf("%s@%d", path, mPathIdx[path])
 	mPathIdx[path]++
-	if parent == "" { // root is without @index
+	if path == "" { // root is without @index
 		ipath = obj
 	}
 
