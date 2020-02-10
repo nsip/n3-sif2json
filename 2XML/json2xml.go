@@ -11,37 +11,32 @@ import (
 
 // ----------------------------------------- //
 
-// InitMapOfObjAttrs : xpathGrp is from SIF Spec txt
-func InitMapOfObjAttrs(xpathGrp []string, sep string) {
-	for _, xpath := range xpathGrp {
-		ss := sSplit(xpath, sep)
-		attr, attrType, objType := ss[0], ss[1], ss[4]
-		mObjAttrs[objType] = append(mObjAttrs[objType], attr)
-		mObjIdxOfAttr[objType] = 0
-
-		// mOAType[attr] = attrType
-		mOATypes[attr] = cmn.ToSet(append(mOATypes[attr], attrType)).([]string)
+// InitOAs : trvsGrp is from SIF Spec txt
+func InitOAs(trvsGrp []string, tblSep, pathSep string) {
+	for _, trvs := range trvsGrp {
+		path := sSplit(trvs, tblSep)[0]
+		key := cmn.RmTailFromLast(path, pathSep)
+		value := cmn.RmHeadToLast(path, pathSep)
+		mPathAttrs[key] = append(mPathAttrs[key], value)
+		mPathAttrIdx[key] = 0
 	}
 }
 
 // NextAttr : From Spec
-func NextAttr(obj string) (value string, end, valid bool) {
-	if objTypes, ok := mOATypes[obj]; ok && len(objTypes) == 1 {
-		obj = objTypes[0]
-	} else if ok && len(objTypes) > 1 {
-		return "", false, false
+func NextAttr(obj, fullpath string) (value string, end bool) {
+	if fullpath == "/" {
+		fullpath = obj
+	} else {
+		fullpath += obj
 	}
-
-	// --------------------------- //
-
-	idx := mObjIdxOfAttr[obj]
-	if idx == len(mObjAttrs[obj]) {
-		return "", true, true
+	idx := mPathAttrIdx[fullpath]
+	if idx == len(mPathAttrs[fullpath]) {
+		return "", true
 	}
 	defer func() {
-		mObjIdxOfAttr[obj]++
+		mPathAttrIdx[fullpath]++
 	}()
-	return mObjAttrs[obj][idx], false, true
+	return mPathAttrs[fullpath][idx], false
 }
 
 // PrintXML : append print to a string
@@ -64,7 +59,7 @@ func PrintXML(paper, line, mark string, iLine int, tag string) (string, bool) {
 // SortSimpleObject : xml is 4 space formatted, level is obj level
 // obj [level] = attribute [level-1]
 // NextAttr is available
-func SortSimpleObject(xml, obj string, level int) (paper string) {
+func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string) {
 	defer func() {
 		resetPrt()
 	}()
@@ -119,14 +114,12 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 
 	paper, _ = PrintXML(paper, lines[PS], fSf("@%d#", PS), PS, obj)
 
-	attr, end, valid := NextAttr(obj)
-	for ; valid && !end; attr, end, valid = NextAttr(obj) {
-
+	attr, end := NextAttr(obj, trvsPath)
+	for ; !end; attr, end = NextAttr(obj, trvsPath) {
 		AS1 := fSf("%s<%s ", indentAttr, attr)
 		AS2 := fSf("%s<%s>", indentAttr, attr)
 		AS3 := fSf("%s</%s>", indentAttr, attr)
 		AE := fSf("</%s>", attr)
-
 		for i, l := range lines {
 			if i > PS && i < PE {
 				switch {
@@ -147,10 +140,6 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 		}
 	}
 
-	if !valid {
-		cmn.FailOnErrWhen(!valid, "SIF Spec, No attributes for obj: [%v]", fEf(obj))
-	}
-
 	// Single Line Object has NO End Tag
 	if PE != -1 {
 		paper, _ = PrintXML(paper, lines[PE], "", PE, "/"+obj)
@@ -159,13 +148,29 @@ func SortSimpleObject(xml, obj string, level int) (paper string) {
 	return
 }
 
-// ExtractOA :
+// From : AGAddressCollectionSubmission~AddressCollectionReportingList@0~AddressCollectionReporting@0~EntityContact@0
+// To :   AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/EntityContact/
+func iPath2SpecPath(iPath, oldSep, newSep string) string {
+	ss := sSpl(iPath, oldSep)
+	for i, s := range ss {
+		ss[i] = cmn.RmTailFromLast(s, "@")
+	}
+	return sJoin(ss, newSep) + newSep
+}
+
+// ExtractOA : root obj, path is ""
 func ExtractOA(xml, obj, path string, lvl int) string {
 	S := mkIndent(lvl+1) + "<"
 	E := S + "/"
 
+	iPathSep, specTrvsPathSep := "~", "/"
+
+	// fPln(path)
+	// fPln(iPath2SpecPath(path, iPathSep, specTrvsPathSep))
+	specTrvsPath := iPath2SpecPath(path, iPathSep, specTrvsPathSep)
+
 	lvlOAs := []string{} // Complex Object Tags
-	xmlobj := sTrim(SortSimpleObject(xml, obj, lvl), "\n")
+	xmlobj := sTrim(SortSimpleObject(xml, obj, lvl, specTrvsPath), "\n")
 	for _, l := range sSplit(xmlobj, "\n") {
 		sl := 0
 		switch {
@@ -178,25 +183,29 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 		lvlOAs = append(lvlOAs, oa)
 	}
 
-	path += ("~" + obj)
+	if path != "" {
+		path += (iPathSep + obj)
+	} else {
+		path = obj
+	}
 	if _, ok := mPathIdx[path]; !ok {
 		mPathIdx[path] = 0
 	}
 
-	ipath := fSf("%s@%d", path, mPathIdx[path])
+	iPath := fSf("%s@%d", path, mPathIdx[path])
 	mPathIdx[path]++
-	if path == "" { // root is without @index
-		ipath = obj
+	if path == obj { // root is without @index
+		iPath = obj
 	}
 
-	mIPathSubXML[ipath] = xmlobj
+	mIPathSubXML[iPath] = xmlobj
 
 	xmlobjLn1 := sSplit(xmlobj, "\n")[0]
-	preBlank := mkIndent(sCount(ipath, "~"))
-	mIPathSubMark[ipath] = fSf("%s...\n%s</%s>", xmlobjLn1, preBlank, obj)
+	preBlank := mkIndent(sCount(iPath, iPathSep))
+	mIPathSubMark[iPath] = fSf("%s...\n%s</%s>", xmlobjLn1, preBlank, obj)
 
 	for _, subobj := range lvlOAs {
-		ExtractOA(xml, subobj, ipath, lvl+1)
+		ExtractOA(xml, subobj, iPath, lvl+1)
 	}
 
 	return xmlobj
@@ -231,8 +240,7 @@ func JSON2XML1(jsonPath string) string {
 // JSON2XML2 : Ordered, Some pieces are different
 func JSON2XML2(xml1, SIFSpecPath string) string {
 	const (
-		SEP       = "\t"
-		XPATHTYPE = "XPATHTYPE:"
+		TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
 	)
 
 	bytes, err := ioutil.ReadFile(SIFSpecPath)
@@ -241,14 +249,14 @@ func JSON2XML2(xml1, SIFSpecPath string) string {
 
 	for _, line := range sSplit(spec, "\n") {
 		switch {
-		case sHasPrefix(line, XPATHTYPE):
-			l := sTrim(line[len(XPATHTYPE):], " \t\r")
-			xpathGrp = append(xpathGrp, l)
+		case sHasPrefix(line, TRAVERSE):
+			l := sTrim(line[len(TRAVERSE):], " \t\r")
+			trvsGrp = append(trvsGrp, l)
 		}
 	}
 
 	// Init Spec Maps
-	InitMapOfObjAttrs(xpathGrp, SEP)
+	InitOAs(trvsGrp, "\t", "/")
 
 	// Init "mIPathSubXML"
 	root := cmn.XMLRoot(xml1)

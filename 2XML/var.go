@@ -50,22 +50,20 @@ var (
 	re1 = regexp.MustCompile("\n[ ]*<#content>")
 	re2 = regexp.MustCompile("</#content>\n[ ]*")
 
-	mObjAttrs     = make(map[string][]string) // key: obj-type
-	mObjIdxOfAttr = make(map[string]int)      // key: obj-type
-	mObjIdxStart  = make(map[string]int)      // key: obj-type@level, value: line-number
-	mObjIdxEnd    = make(map[string]int)      // key: obj-type@level, value: line-number
+	trvsGrp      []string                    // from SIF Spec
+	mPathAttrs   = make(map[string][]string) // key: spec path, value: attribute-value
+	mPathAttrIdx = make(map[string]int)      // key: spec path, value: attribute-index
+	mObjIdxStart = make(map[string]int)      // key: obj-type@level, value: line-number
+	mObjIdxEnd   = make(map[string]int)      // key: obj-type@level, value: line-number
+	mOAPrtLn     = make(map[string]int)      // key: obj
 
-	mOATypes = make(map[string][]string) // key: obj, value: list of "ObjType@ParentType"
-	mOAPrtLn = make(map[string]int)      // key: obj
-
-	xpathGrp      []string                  // from SIF Spec
 	mIPathSubXML  = make(map[string]string) // key: path@index
 	mIPathSubMark = make(map[string]string) // key: path@index
-	mPathIdx      = make(map[string]int)    // key: path
+	mPathIdx      = make(map[string]int)    // key: path, for IPath
 
 	rewindAttrIter = func() {
-		for k := range mObjIdxOfAttr {
-			mObjIdxOfAttr[k] = 0
+		for k := range mPathAttrIdx {
+			mPathAttrIdx[k] = 0
 		}
 	}
 

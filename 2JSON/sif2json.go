@@ -82,6 +82,9 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	)
 	cmn.FailOnErr("That's embarrassing... %v", err)
 
+	json = jsonBuf.String()
+	ioutil.WriteFile("../data/why.json", []byte(json), 0666)
+
 	json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
 
 	// Digital string to number

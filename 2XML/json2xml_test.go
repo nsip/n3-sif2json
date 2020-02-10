@@ -8,6 +8,8 @@ import (
 )
 
 func TestJSON2XML(t *testing.T) {
+	cmn.SetLog("./error.log")
+
 	obj := "Activity"
 
 	xml1 := JSON2XML1(fSf("../data/%s.json", obj))
@@ -22,8 +24,7 @@ func TestJSON2XML(t *testing.T) {
 
 func TestSortSimpleObject(t *testing.T) {
 	const (
-		SEP       = "\t"
-		XPATHTYPE = "XPATHTYPE:"
+		TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
 	)
 
 	bytes, err := ioutil.ReadFile("../SIFSpec/out.txt")
@@ -32,22 +33,33 @@ func TestSortSimpleObject(t *testing.T) {
 
 	for _, line := range sSplit(spec, "\n") {
 		switch {
-		case sHasPrefix(line, XPATHTYPE):
-			l := sTrim(line[len(XPATHTYPE):], " \t\r")
-			xpathGrp = append(xpathGrp, l)
+		case sHasPrefix(line, TRAVERSE):
+			l := sTrim(line[len(TRAVERSE):], " \t\r")
+			trvsGrp = append(trvsGrp, l)
 		}
 	}
 
-	InitMapOfObjAttrs(xpathGrp, SEP)
-	fPln(mOATypes["ItemResponse"])
+	// Init Spec Maps
+	InitOAs(trvsGrp, "\t", "/")
+
+	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
+	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
+	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
+	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
+
+	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
+	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
+	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
+	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
+	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
 
 	return
 
-	jsonBytes, err := ioutil.ReadFile("../data/AGAddressCollectionSubmission_1_out.xml")
-	cmn.FailOnErr("%v", err)
-	sifCont := string(jsonBytes)
+	// jsonBytes, err := ioutil.ReadFile("../data/AGAddressCollectionSubmission_1_out.xml")
+	// cmn.FailOnErr("%v", err)
+	// sifCont := string(jsonBytes)
 
-	fPln(SortSimpleObject(sifCont, "Name", 4))
+	// fPln(SortSimpleObject(sifCont, "Name", 4))
 	// fPln(SortSimpleObject(sifCont, "ReportExclusionFlag", 1))
 	// fPln("-----------------------")
 	// fPln(SortSimpleObject(sifCont, "ItemResponseList", 3))

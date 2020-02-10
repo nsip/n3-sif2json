@@ -25,11 +25,29 @@ func TestEachFileContent(t *testing.T) {
 }
 
 func TestSIF2JSON(t *testing.T) {
-	obj := "Activity"
 
-	bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
+	dir := `../data/examples/`
+	files, err := ioutil.ReadDir(dir)
 	cmn.FailOnErr("%v", err)
-	json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "3.4.5X", false)
-	fPln(sv, err)
-	ioutil.WriteFile(fSf("../data/%s.json", obj), []byte(json), 0666)
+
+	for _, file := range files {
+		obj := cmn.RmTailFromLast(file.Name(), ".")
+		fPln(obj)
+
+		if obj == "LearningStandardDocument" ||
+			obj == "LearningStandardItem" ||
+			obj == "NAPCodeFrame" ||
+			obj == "NAPTestItem" ||
+			obj == "StudentAttendanceTimeList" {
+			continue
+		}
+
+		// obj := "LearningStandardDocument"
+		bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
+		cmn.FailOnErr("%v", err)
+		json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "3.4.5X", false)
+		fPln(obj, sv, err)
+		ioutil.WriteFile(fSf("../data/%s.json", obj), []byte(json), 0666)
+
+	}
 }

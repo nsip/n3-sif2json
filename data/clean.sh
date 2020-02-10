@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -f *.xml
+rm -f *.xml *.json
