@@ -10,16 +10,27 @@ import (
 func TestJSON2XML(t *testing.T) {
 	cmn.SetLog("./error.log")
 
-	obj := "Activity"
+	dir := `../data/json/`
+	files, err := ioutil.ReadDir(dir)
+	cmn.FailOnErr("%v", err)
 
-	xml1 := JSON2XML1(fSf("../data/%s.json", obj))
-	ioutil.WriteFile(fSf("../data/%s_1_out.xml", obj), []byte(xml1), 0666)
+	for _, file := range files {
+		obj := cmn.RmTailFromLast(file.Name(), ".")
+		fPln("------------", obj)
 
-	xml2 := JSON2XML2(xml1, "../SIFSpec/out.txt")
-	ioutil.WriteFile(fSf("../data/%s_2_out.xml", obj), []byte(xml2), 0666)
+		resetAll()
 
-	xml3 := JSON2XML3(xml2, getReplMap("./SIFCfg/replace.json"))
-	ioutil.WriteFile(fSf("../data/%s_3_out.xml", obj), []byte(xml3), 0666)
+		// obj := "LearningResource"
+
+		xml1 := JSON2XML1(fSf("../data/json/%s.json", obj))
+		// ioutil.WriteFile(fSf("../data/xml/%s_1_out.xml", obj), []byte(xml1), 0666)
+
+		xml2 := JSON2XML2(xml1, "../SIFSpec/out.txt")
+		// ioutil.WriteFile(fSf("../data/xml/%s_2_out.xml", obj), []byte(xml2), 0666)
+
+		xml3 := JSON2XML3(xml2, getReplMap("./SIFCfg/replace.json"))
+		ioutil.WriteFile(fSf("../data/xml/%s_3_out.xml", obj), []byte(xml3), 0666)
+	}
 }
 
 func TestSortSimpleObject(t *testing.T) {

@@ -3,6 +3,7 @@ package cvt2json
 import (
 	"io/ioutil"
 	"os"
+	"regexp"
 
 	xj "github.com/basgys/goxml2json"
 	cmn "github.com/cdutwhu/json-util/common"
@@ -49,12 +50,19 @@ func eachFileContent(dir, ext string, indices ...int) (rt []string) {
 
 // enforceConfig : LIST config must be from low Level to high level
 func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
+
+	rLB := regexp.MustCompile(`\[[ \t\r\n]*\[`)
+	rRB := regexp.MustCompile(`\][ \t\r\n]*\]`)
+
 	for _, jsoncfg := range lsJSONCfg {
 		// make sure [jsoncfg] is formatted
 		// otherwise, do Fmt firstly
 		// jsoncfg = pp.FmtJSONStr(jsoncfg, jqDir)
-		maskroot, _ := jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
-		json = pp.FmtJSONStr(maskroot, jqDir)
+
+		json, _ = jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
+		// make sure there is no double "[" OR "]"
+		bytes := rRB.ReplaceAll(rLB.ReplaceAll([]byte(json), []byte("[")), []byte("]"))
+		json = pp.FmtJSONStr(string(bytes), jqDir)
 	}
 	return json
 }
@@ -82,8 +90,8 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	)
 	cmn.FailOnErr("That's embarrassing... %v", err)
 
-	json = jsonBuf.String()
-	ioutil.WriteFile("../data/why.json", []byte(json), 0666)
+	// json = jsonBuf.String()
+	// ioutil.WriteFile("../data/why.json", []byte(json), 0666)
 
 	json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
 
