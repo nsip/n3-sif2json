@@ -18,6 +18,7 @@ var (
 	sReplaceAll = strings.ReplaceAll
 	sSplit      = strings.Split
 	sNewReader  = strings.NewReader
+	sJoin       = strings.Join
 	sSplitRev   = func(s, sep string) []string {
 		a := sSplit(s, sep)
 		for i, j := 0, len(a)-1; i < j; i, j = i+1, j-1 {
