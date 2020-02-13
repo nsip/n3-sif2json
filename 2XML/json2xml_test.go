@@ -21,14 +21,21 @@ func TestJSON2XML(t *testing.T) {
 		resetAll()
 
 		// obj := "LearningResource"
+		if !cmn.XIn(obj, []string{"LearningStandardDocument", "StudentAttendanceTimeList"}) {
+			continue
+		}
 
-		xml1 := JSON2XML1(fSf("../data/json/%s.json", obj))
-		// ioutil.WriteFile(fSf("../data/xml/%s_1_out.xml", obj), []byte(xml1), 0666)
+		// JSON2XML0 : deal with XML multiple-line content
+		jsonWithCode, mCodeStr := JSON2XML0(fSf("../data/json/%s.json", obj))
+
+		xml1 := JSON2XML1(jsonWithCode)
+		ioutil.WriteFile(fSf("../data/xml/%s_1_out.xml", obj), []byte(xml1), 0666)
 
 		xml2 := JSON2XML2(xml1, "../SIFSpec/out.txt")
-		// ioutil.WriteFile(fSf("../data/xml/%s_2_out.xml", obj), []byte(xml2), 0666)
+		ioutil.WriteFile(fSf("../data/xml/%s_2_out.xml", obj), []byte(xml2), 0666)
 
-		xml3 := JSON2XML3(xml2, getReplMap("./SIFCfg/replace.json"))
+		mRepl := cmn.MapsMerge(getReplMap("./SIFCfg/replace.json"), mCodeStr).(map[string]string)
+		xml3 := JSON2XML3(xml2, mRepl)
 		ioutil.WriteFile(fSf("../data/xml/%s_3_out.xml", obj), []byte(xml3), 0666)
 	}
 }

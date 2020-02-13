@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm *.json *.log
+rm -f *.json *.log

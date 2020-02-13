@@ -213,14 +213,30 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 
 // ----------------------------------------------- //
 
-// JSON2XML1 : Disordered, Formatted from JSON
-func JSON2XML1(jsonPath string) string {
-	jsonBytes, err := ioutil.ReadFile(jsonPath)
+// JSON2XML0 : if some JSON fields value have special (LF, TBL), pick them up for final replacement
+func JSON2XML0(jsonPath string) (json string, mCodeStr map[string]string) {
+	bytes, err := ioutil.ReadFile(jsonPath)
 	cmn.FailOnErr("%v", err)
-	cmn.FailOnErrWhen(!cmn.IsJSON(string(jsonBytes)), "", fEf("Input File is not a valid JSON File"))
+	json = string(bytes)
+	cmn.FailOnErrWhen(!cmn.IsJSON(json), "", fEf("Input File is not a valid JSON File"))
 
+	mCodeStr = make(map[string]string)
+	strGrpWithLF := regexp.MustCompile(`".+": ".*(\\n)+.*"`).FindAllString(json, -1)
+	for _, s := range strGrpWithLF {
+		vLiteral := sSpl(s, `": "`)[1]
+		vLiteral = vLiteral[:len(vLiteral)-1]                              // literal \n \t
+		vEsc := sReplaceAll(sReplaceAll(vLiteral, `\n`, "\n"), `\t`, "\t") // escape \n \t
+		k4Esc := cmn.MD5Str(vEsc)
+		mCodeStr[k4Esc] = vEsc
+		json = sReplaceAll(json, vLiteral, k4Esc)
+	}
+	return
+}
+
+// JSON2XML1 : return Disordered, Formatted from JSON string
+func JSON2XML1(jsonstr string) string {
 	var f interface{}
-	json.Unmarshal(jsonBytes, &f)
+	cmn.FailOnErr("%v", json.Unmarshal([]byte(jsonstr), &f))
 	// fPln(f)
 
 	b, err := mxj.AnyXmlIndent(f, "", "    ", "")

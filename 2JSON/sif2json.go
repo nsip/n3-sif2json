@@ -94,6 +94,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	// ioutil.WriteFile("../data/why.json", []byte(json), 0666)
 
 	json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
+	// return // test 3rd party lib
 
 	// Digital string to number
 	// json := replaceDigCont(json, s2j.JQDir)
