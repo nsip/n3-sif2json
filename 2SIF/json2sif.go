@@ -20,6 +20,7 @@ func InitOAs(trvsGrp []string, tblSep, pathSep string) {
 		mPathAttrs[key] = append(mPathAttrs[key], value)
 		mPathAttrIdx[key] = 0
 	}
+	SpecOK = true
 }
 
 // NextAttr : From Spec
@@ -254,27 +255,26 @@ func JSON2SIF3RD(jsonstr string) string {
 }
 
 // JSON2SIFViaSpec : Ordered, Some pieces are different
-func JSON2SIFViaSpec(xml1, SIFSpecPath string) string {
-	const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
-
-	bytes, err := ioutil.ReadFile(SIFSpecPath)
-	cmn.FailOnErr("%v", err)
-	spec := string(bytes)
-
-	for _, line := range sSplit(spec, "\n") {
-		switch {
-		case sHasPrefix(line, TRAVERSE):
-			l := sTrim(line[len(TRAVERSE):], " \t\r")
-			SpecOnTrvsGrp = append(SpecOnTrvsGrp, l)
+func JSON2SIFViaSpec(xml, SIFSpecPath string) string {
+	if !SpecOK {
+		const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
+		bytes, err := ioutil.ReadFile(SIFSpecPath)
+		cmn.FailOnErr("%v", err)
+		spec := string(bytes)
+		for _, line := range sSplit(spec, "\n") {
+			switch {
+			case sHasPrefix(line, TRAVERSE):
+				l := sTrim(line[len(TRAVERSE):], " \t\r")
+				TrvsGrpViaSpec = append(TrvsGrpViaSpec, l)
+			}
 		}
+		// Init Spec Maps
+		InitOAs(TrvsGrpViaSpec, "\t", "/")
 	}
 
-	// Init Spec Maps
-	InitOAs(SpecOnTrvsGrp, "\t", "/")
-
 	// Init "mIPathSubXML"
-	root := cmn.XMLRoot(xml1)
-	ExtractOA(xml1, root, "", 0)
+	root := cmn.XMLRoot(xml)
+	ExtractOA(xml, root, "", 0)
 
 	xmlobj := mIPathSubXML[root]
 AGAIN:
@@ -362,16 +362,16 @@ func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp 
 // -------------------------------------------------------- //
 
 // JSON2SIFRepl : Pieces Replaced, should be almost identical to Original SIF
-func JSON2SIFRepl(xml2 string, mRepl map[string]string) string {
+func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 
 	// remove @Number#
 	r := regexp.MustCompile("@([0-9]+)#")
-	xml2 = string(r.ReplaceAll([]byte(xml2), []byte("")))
+	xml = string(r.ReplaceAll([]byte(xml), []byte("")))
 
 	// others from cfg
 	for old, new := range mRepl {
-		xml2 = sReplaceAll(xml2, old, new)
+		xml = sReplaceAll(xml, old, new)
 	}
 
-	return xml2
+	return xml
 }

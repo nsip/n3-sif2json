@@ -16,7 +16,7 @@ func TestJSON2XML(t *testing.T) {
 
 	for _, file := range files {
 		obj := cmn.RmTailFromLast(file.Name(), ".")
-		fPln("------------", obj)
+		// fPln("------------", obj)
 
 		resetAll()
 
@@ -34,6 +34,33 @@ func TestJSON2XML(t *testing.T) {
 		xml1 := JSON2SIFViaSpec(xml, "../SIFSpec/out.txt")
 		// ioutil.WriteFile(fSf("../data/xml/%s_1_out.xml", obj), []byte(xml1), 0666)
 
+		// doing ...
+		posGrp, pathGrp, mAttrGrp := SearchTagWithAttr(xml)
+		for i, path := range pathGrp {
+			fPln("--------------------------------------------")
+			attrs := []string{}
+			for _, trvs := range TrvsGrpViaSpec {
+				if sHasPrefix(trvs, path+"/@") {
+					fPln(trvs)
+					attrs = append(attrs, sSplit(trvs, "\t")[2][1:]) // from Spec format
+				}
+			}
+			fPln(attrs)
+
+			xmlLine := xml[posGrp[i][0]:posGrp[i][1]]
+			fPln(xmlLine)
+			tag, _ := TagFromXMLLine(xmlLine)
+			fPln(tag)
+			n := CountHeadSpace(xmlLine, 1)
+			fPln(n)
+
+			m := mAttrGrp[i]
+			fPln(m)
+
+			out := fSf("")
+		}
+		// doing ...
+
 		mRepl := cmn.MapsMerge(getReplMap("./SIFCfg/replace.json"), mCodeStr).(map[string]string)
 		xml2 := JSON2SIFRepl(xml1, mRepl)
 		ioutil.WriteFile(fSf("../data/xml/%s_2_out.xml", obj), []byte(xml2), 0666)
@@ -41,9 +68,7 @@ func TestJSON2XML(t *testing.T) {
 }
 
 func TestSortSimpleObject(t *testing.T) {
-	const (
-		TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
-	)
+	const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
 
 	bytes, err := ioutil.ReadFile("../SIFSpec/out.txt")
 	cmn.FailOnErr("%v", err)
@@ -53,12 +78,12 @@ func TestSortSimpleObject(t *testing.T) {
 		switch {
 		case sHasPrefix(line, TRAVERSE):
 			l := sTrim(line[len(TRAVERSE):], " \t\r")
-			SpecOnTrvsGrp = append(SpecOnTrvsGrp, l)
+			TrvsGrpViaSpec = append(TrvsGrpViaSpec, l)
 		}
 	}
 
 	// Init Spec Maps
-	InitOAs(SpecOnTrvsGrp, "\t", "/")
+	InitOAs(TrvsGrpViaSpec, "\t", "/")
 
 	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
 	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
@@ -87,4 +112,14 @@ func TestSortSimpleObject(t *testing.T) {
 
 	// ExtractOA(sifCont, "NAPStudentResponseSet", "", 0)
 
+}
+
+func TestSearchTagWithAttr(t *testing.T) {
+	cmn.SetLog("./error.log")
+	bytes, err := ioutil.ReadFile("../data/xml/AGAddressCollectionSubmission_2_out.xml")
+	cmn.FailOnErr("%v", err)
+	xml := string(bytes)
+	cmn.FailOnErrWhen(!cmn.IsXML(xml), "%v", fEf("Not XML"))
+
+	fPln(sReplByPos("abcdefg", 5, 6, "AAAA"))
 }

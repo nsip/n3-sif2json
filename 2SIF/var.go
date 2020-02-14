@@ -55,7 +55,9 @@ var (
 	re1 = regexp.MustCompile("\n[ ]*<#content>")
 	re2 = regexp.MustCompile("</#content>\n[ ]*")
 
-	SpecOnTrvsGrp []string                    // from SIF Spec
+	SpecOK         bool     // Indicator for Init Spec
+	TrvsGrpViaSpec []string // from SIF Spec
+
 	mPathAttrs    = make(map[string][]string) // key: spec path, value: attribute-value
 	mPathAttrIdx  = make(map[string]int)      // key: spec path, value: attribute-index
 	mObjIdxStart  = make(map[string]int)      // key: obj-type@level, value: line-number
@@ -76,7 +78,6 @@ var (
 	}
 
 	resetAll = func() {
-		SpecOnTrvsGrp = []string{}
 		mPathAttrs = make(map[string][]string)
 		mPathAttrIdx = make(map[string]int)
 		mObjIdxStart = make(map[string]int)
