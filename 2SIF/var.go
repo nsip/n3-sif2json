@@ -36,6 +36,11 @@ var (
 		}
 		return a
 	}
+	sReplByPos = func(s string, start, end int, new string) string {
+		cmn.FailOnErrWhen(end < start, "end must be greater than start%v", fEf(""))
+		left, right := s[:start], s[end:]
+		return left + new + right
+	}
 )
 
 var (
@@ -50,7 +55,7 @@ var (
 	re1 = regexp.MustCompile("\n[ ]*<#content>")
 	re2 = regexp.MustCompile("</#content>\n[ ]*")
 
-	trvsGrp       []string                    // from SIF Spec
+	SpecOnTrvsGrp []string                    // from SIF Spec
 	mPathAttrs    = make(map[string][]string) // key: spec path, value: attribute-value
 	mPathAttrIdx  = make(map[string]int)      // key: spec path, value: attribute-index
 	mObjIdxStart  = make(map[string]int)      // key: obj-type@level, value: line-number
@@ -71,7 +76,7 @@ var (
 	}
 
 	resetAll = func() {
-		trvsGrp = []string{}
+		SpecOnTrvsGrp = []string{}
 		mPathAttrs = make(map[string][]string)
 		mPathAttrIdx = make(map[string]int)
 		mObjIdxStart = make(map[string]int)

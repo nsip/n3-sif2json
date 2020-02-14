@@ -26,17 +26,17 @@ func TestJSON2XML(t *testing.T) {
 		// }
 
 		// JSON2XML0 : deal with XML multiple-line content
-		jsonWithCode, mCodeStr := JSON2XML0(fSf("../data/json/%s.json", obj))
+		jsonWithCode, mCodeStr := JSON2SIF4LF(fSf("../data/json/%s.json", obj))
 
-		xml1 := JSON2XML1(jsonWithCode)
+		xml := JSON2SIF3RD(jsonWithCode)
+		// ioutil.WriteFile(fSf("../data/xml/%s_0_out.xml", obj), []byte(xml), 0666)
+
+		xml1 := JSON2SIFViaSpec(xml, "../SIFSpec/out.txt")
 		// ioutil.WriteFile(fSf("../data/xml/%s_1_out.xml", obj), []byte(xml1), 0666)
 
-		xml2 := JSON2XML2(xml1, "../SIFSpec/out.txt")
-		// ioutil.WriteFile(fSf("../data/xml/%s_2_out.xml", obj), []byte(xml2), 0666)
-
 		mRepl := cmn.MapsMerge(getReplMap("./SIFCfg/replace.json"), mCodeStr).(map[string]string)
-		xml3 := JSON2XML3(xml2, mRepl)
-		ioutil.WriteFile(fSf("../data/xml/%s_3_out.xml", obj), []byte(xml3), 0666)
+		xml2 := JSON2SIFRepl(xml1, mRepl)
+		ioutil.WriteFile(fSf("../data/xml/%s_2_out.xml", obj), []byte(xml2), 0666)
 	}
 }
 
@@ -53,12 +53,12 @@ func TestSortSimpleObject(t *testing.T) {
 		switch {
 		case sHasPrefix(line, TRAVERSE):
 			l := sTrim(line[len(TRAVERSE):], " \t\r")
-			trvsGrp = append(trvsGrp, l)
+			SpecOnTrvsGrp = append(SpecOnTrvsGrp, l)
 		}
 	}
 
 	// Init Spec Maps
-	InitOAs(trvsGrp, "\t", "/")
+	InitOAs(SpecOnTrvsGrp, "\t", "/")
 
 	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
 	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))

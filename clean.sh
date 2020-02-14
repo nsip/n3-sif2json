@@ -18,7 +18,7 @@ cd ./2JSON
 ./clean.sh
 cd -
 
-cd ./2XML
+cd ./2SIF
 ./clean.sh
 cd -
 

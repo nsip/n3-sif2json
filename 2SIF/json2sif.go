@@ -213,8 +213,8 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 
 // ----------------------------------------------- //
 
-// JSON2XML0 : if some JSON fields value have special (LF, TBL), pick them up for final replacement
-func JSON2XML0(jsonPath string) (json string, mCodeStr map[string]string) {
+// JSON2SIF4LF : if JSON fields have special (LF, TBL), pick them up for later replacement
+func JSON2SIF4LF(jsonPath string) (json string, mCodeStr map[string]string) {
 	bytes, err := ioutil.ReadFile(jsonPath)
 	cmn.FailOnErr("%v", err)
 	json = string(bytes)
@@ -233,8 +233,8 @@ func JSON2XML0(jsonPath string) (json string, mCodeStr map[string]string) {
 	return
 }
 
-// JSON2XML1 : return Disordered, Formatted from JSON string
-func JSON2XML1(jsonstr string) string {
+// JSON2SIF3RD : via 3rd lib converter, return Disordered, Formatted XML
+func JSON2SIF3RD(jsonstr string) string {
 	var f interface{}
 	cmn.FailOnErr("%v", json.Unmarshal([]byte(jsonstr), &f))
 	// fPln(f)
@@ -253,11 +253,9 @@ func JSON2XML1(jsonstr string) string {
 	return xmlstr
 }
 
-// JSON2XML2 : Ordered, Some pieces are different
-func JSON2XML2(xml1, SIFSpecPath string) string {
-	const (
-		TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
-	)
+// JSON2SIFViaSpec : Ordered, Some pieces are different
+func JSON2SIFViaSpec(xml1, SIFSpecPath string) string {
+	const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
 
 	bytes, err := ioutil.ReadFile(SIFSpecPath)
 	cmn.FailOnErr("%v", err)
@@ -267,12 +265,12 @@ func JSON2XML2(xml1, SIFSpecPath string) string {
 		switch {
 		case sHasPrefix(line, TRAVERSE):
 			l := sTrim(line[len(TRAVERSE):], " \t\r")
-			trvsGrp = append(trvsGrp, l)
+			SpecOnTrvsGrp = append(SpecOnTrvsGrp, l)
 		}
 	}
 
 	// Init Spec Maps
-	InitOAs(trvsGrp, "\t", "/")
+	InitOAs(SpecOnTrvsGrp, "\t", "/")
 
 	// Init "mIPathSubXML"
 	root := cmn.XMLRoot(xml1)
@@ -294,8 +292,77 @@ AGAIN:
 	return xmlobj
 }
 
-// JSON2XML3 : Pieces Replaced, should be almost identical to Original SIF
-func JSON2XML3(xml2 string, mRepl map[string]string) string {
+// -------------------------------------------------------- //
+
+// CountHeadSpace :
+func CountHeadSpace(s string, nGrp int) int {
+	for i, c := range s {
+		if c == ' ' {
+			continue
+		}
+		return i / nGrp
+	}
+	return 0
+}
+
+// TagFromXMLLine :
+func TagFromXMLLine(line string) (tag string, mKeyAttr map[string]string) {
+	line = sTrim(line, " \t\n\r")
+	cmn.FailOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "XML Err @ %v", fEf(line))
+	if tag := regexp.MustCompile(`<.+[> ]`).FindString(line); tag != "" {
+		tag = tag[1 : len(tag)-1] // remove '<' '>'
+		ss := sSplit(tag, " ")    // cut fields
+		mKeyAttr = make(map[string]string)
+		for _, attr := range ss[1:] {
+			if ak := regexp.MustCompile(`.+="`).FindString(attr); ak != "" {
+				mKeyAttr[ak[:len(ak)-2]] = attr // remove '="'
+			}
+		}
+		return ss[0], mKeyAttr
+	}
+	return "", nil
+}
+
+// Hierarchy :
+func Hierarchy(searchArea string, lvl int, hierarchy *[]string) {
+	r := regexp.MustCompile(fSf(`\n[ ]{%d}<.*>`, (lvl-1)*4))
+	if locGrp := r.FindAllStringIndex(searchArea, -1); locGrp != nil {
+		loc := locGrp[len(locGrp)-1]
+		start, end := loc[0], loc[1]
+		find := searchArea[start:end]
+		Hierarchy(searchArea[:start], lvl-1, hierarchy)
+		tag, _ := TagFromXMLLine(find)
+		*hierarchy = append(*hierarchy, tag)
+	}
+}
+
+// SearchTagWithAttr : where (get line from xml), tag-path (get info from spec), attribute-map (re-order attributes, reconstruct line)
+func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp []map[string]string) {
+	root := cmn.XMLRoot(xml)
+	TagOrAttr, minAttr := `[^ \t<>]+`, 2
+	r := regexp.MustCompile(fSf(`[ ]*<%[1]s[ ]+(%[1]s="%[1]s"[ ]*){%d,}>`, TagOrAttr, minAttr))
+	if loc := r.FindAllStringIndex(xml, -1); loc != nil {
+		for _, l := range loc {
+			hierarchy := &[]string{root}
+			start, end := l[0], l[1]
+			withAttr := xml[start:end]
+
+			Hierarchy(xml[:start], CountHeadSpace(withAttr, 4), hierarchy)
+			tag, mka := TagFromXMLLine(withAttr)
+			*hierarchy = append(*hierarchy, tag)
+
+			posGrp = append(posGrp, [2]int{start, end})
+			pathGrp = append(pathGrp, sJoin(*hierarchy, "/"))
+			mAttrGrp = append(mAttrGrp, mka)
+		}
+	}
+	return
+}
+
+// -------------------------------------------------------- //
+
+// JSON2SIFRepl : Pieces Replaced, should be almost identical to Original SIF
+func JSON2SIFRepl(xml2 string, mRepl map[string]string) string {
 
 	// remove @Number#
 	r := regexp.MustCompile("@([0-9]+)#")
