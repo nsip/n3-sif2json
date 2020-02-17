@@ -60,9 +60,10 @@ func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string
 		indentAttr += INDENT
 	}
 
-	OS1 := fSf("%s<%s ", indentObj, obj)
-	OS2 := fSf("%s<%s>", indentObj, obj)
-	OS3 := fSf("%s</%s>", indentObj, obj)
+	OS1 := fSf("%s<%s ", indentObj, obj)  // begin 1
+	OS2 := fSf("%s<%s>", indentObj, obj)  // begin 2
+	OS3 := fSf("%s<%s/>", indentObj, obj) // empty element begin & end
+	OE1 := fSf("%s</%s>", indentObj, obj) // block end
 
 	lines := sSplit(xml, "\n")
 
@@ -85,12 +86,12 @@ func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string
 
 	// ---------------------------------- //
 	for i, l := range lines {
-		if (sHasPrefix(l, OS1) || sHasPrefix(l, OS2)) && i > mObjIdxStart[objIdx] {
+		if (sHasPrefix(l, OS1) || sHasPrefix(l, OS2) || sHasPrefix(l, OS3)) && i > mObjIdxStart[objIdx] {
 			if _, ok := PrintXML(paper, l, "", i, "*"+obj); ok { // [*+obj] is probe to detect Start line
 				PS, mObjIdxStart[objIdx] = i, i
 			}
 		}
-		if sHasPrefix(l, OS3) && i > mObjIdxEnd[objIdx] {
+		if sHasPrefix(l, OE1) && i > mObjIdxEnd[objIdx] {
 			if _, ok := PrintXML(paper, l, "", i, "*/"+obj); ok { // [*/+obj] is probe to detect End line
 				PE, mObjIdxEnd[objIdx] = i, i
 			}
@@ -105,14 +106,15 @@ func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string
 
 	attr, end := NextAttr(obj, trvsPath)
 	for ; !end; attr, end = NextAttr(obj, trvsPath) {
-		AS1 := fSf("%s<%s ", indentAttr, attr)
-		AS2 := fSf("%s<%s>", indentAttr, attr)
-		AS3 := fSf("%s</%s>", indentAttr, attr)
-		AE := fSf("</%s>", attr)
+		AS1 := fSf("%s<%s ", indentAttr, attr)  // begin 1
+		AS2 := fSf("%s<%s>", indentAttr, attr)  // begin 2
+		AS3 := fSf("%s<%s/>", indentAttr, attr) // empty element begin & end
+		AE1 := fSf("%s</%s>", indentAttr, attr) // block end
+		AE2 := fSf("</%s>", attr)               // one line end
 		for i, l := range lines {
 			if i > PS && i < PE {
 				switch {
-				case (sHasPrefix(l, AS1) || sHasPrefix(l, AS2)) && sHasSuffix(l, AE): // one line
+				case ((sHasPrefix(l, AS1) || sHasPrefix(l, AS2)) && sHasSuffix(l, AE2)) || sHasPrefix(l, AS3): // one line (including empty)
 					if tempPaper, ok := PrintXML(paper, l, "", i, attr); ok {
 						paper = tempPaper
 					}
@@ -120,7 +122,7 @@ func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string
 					if tempPaper, ok := PrintXML(paper, l, fSf("@%d#...", i), i, attr); ok {
 						paper = tempPaper
 					}
-				case sHasPrefix(l, AS3): // sub-object END
+				case sHasPrefix(l, AE1): // sub-object END
 					if tempPaper, ok := PrintXML(paper, l, "", i, "/"+attr); ok {
 						paper = tempPaper
 					}
@@ -149,10 +151,12 @@ func iPath2SpecPath(iPath, oldSep, newSep string) string {
 
 // ExtractOA : root obj, path is ""
 func ExtractOA(xml, obj, path string, lvl int) string {
+	const (
+		iPathSep, specTrvsPathSep = "~", "/"
+	)
+
 	S := mkIndent(lvl+1) + "<"
 	E := S + "/"
-
-	iPathSep, specTrvsPathSep := "~", "/"
 
 	// fPln(path)
 	// fPln(iPath2SpecPath(path, iPathSep, specTrvsPathSep))
