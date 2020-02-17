@@ -55,17 +55,16 @@ var (
 	re1 = regexp.MustCompile("\n[ ]*<#content>")
 	re2 = regexp.MustCompile("</#content>\n[ ]*")
 
-	SpecOK         bool     // Indicator for Init Spec
-	TrvsGrpViaSpec []string // from SIF Spec
+	TrvsGrpViaSpec []string                    // from SIF Spec
+	mPathAttrs     = make(map[string][]string) // key: spec path, value: attribute-value
+	mPathAttrIdx   = make(map[string]int)      // key: spec path, value: attribute-index
 
-	mPathAttrs    = make(map[string][]string) // key: spec path, value: attribute-value
-	mPathAttrIdx  = make(map[string]int)      // key: spec path, value: attribute-index
-	mObjIdxStart  = make(map[string]int)      // key: obj-type@level, value: line-number
-	mObjIdxEnd    = make(map[string]int)      // key: obj-type@level, value: line-number
-	mOAPrtLn      = make(map[string]int)      // key: obj
-	mIPathSubXML  = make(map[string]string)   // key: path@index
-	mIPathSubMark = make(map[string]string)   // key: path@index
-	mPathIdx      = make(map[string]int)      // key: path, for IPath
+	mObjIdxStart  = make(map[string]int)    // key: obj-type@level, value: line-number
+	mObjIdxEnd    = make(map[string]int)    // key: obj-type@level, value: line-number
+	mOAPrtLn      = make(map[string]int)    // key: obj
+	mIPathSubXML  = make(map[string]string) // key: path@index
+	mIPathSubMark = make(map[string]string) // key: path@index
+	mPathIdx      = make(map[string]int)    // key: path, for IPath
 
 	rewindAttrIter = func() {
 		for k := range mPathAttrIdx {
@@ -78,8 +77,6 @@ var (
 	}
 
 	resetAll = func() {
-		mPathAttrs = make(map[string][]string)
-		mPathAttrIdx = make(map[string]int)
 		mObjIdxStart = make(map[string]int)
 		mObjIdxEnd = make(map[string]int)
 		mOAPrtLn = make(map[string]int)

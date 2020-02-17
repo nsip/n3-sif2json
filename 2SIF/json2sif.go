@@ -11,18 +11,6 @@ import (
 
 // ----------------------------------------- //
 
-// InitOAs : trvsGrp is from SIF Spec txt
-func InitOAs(trvsGrp []string, tblSep, pathSep string) {
-	for _, trvs := range trvsGrp {
-		path := sSplit(trvs, tblSep)[0]
-		key := cmn.RmTailFromLast(path, pathSep)
-		value := cmn.RmHeadToLast(path, pathSep)
-		mPathAttrs[key] = append(mPathAttrs[key], value)
-		mPathAttrIdx[key] = 0
-	}
-	SpecOK = true
-}
-
 // NextAttr : From Spec
 func NextAttr(obj, fullpath string) (value string, end bool) {
 	if fullpath == "/" {
@@ -254,42 +242,77 @@ func JSON2SIF3RD(jsonstr string) string {
 	return xmlstr
 }
 
-// JSON2SIFViaSpec : Ordered, Some pieces are different
-func JSON2SIFViaSpec(xml, SIFSpecPath string) string {
-	if !SpecOK {
-		const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
-		bytes, err := ioutil.ReadFile(SIFSpecPath)
-		cmn.FailOnErr("%v", err)
-		spec := string(bytes)
-		for _, line := range sSplit(spec, "\n") {
-			switch {
-			case sHasPrefix(line, TRAVERSE):
-				l := sTrim(line[len(TRAVERSE):], " \t\r")
-				TrvsGrpViaSpec = append(TrvsGrpViaSpec, l)
-			}
-		}
-		// Init Spec Maps
-		InitOAs(TrvsGrpViaSpec, "\t", "/")
+// InitOAs : fill [TrvsGrpViaSpec] & [mPathAttrs] & [mPathAttrIdx]
+func InitOAs(SIFSpecPath string, tblSep, pathSep string) {
+	if len(mPathAttrs) > 0 {
+		return
 	}
 
+	const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
+	bytes, err := ioutil.ReadFile(SIFSpecPath)
+	cmn.FailOnErr("%v", err)
+	spec := string(bytes)
+	for _, line := range sSplit(spec, "\n") {
+		switch {
+		case sHasPrefix(line, TRAVERSE):
+			l := sTrim(line[len(TRAVERSE):], " \t\r")
+			TrvsGrpViaSpec = append(TrvsGrpViaSpec, l)
+		}
+	}
+	for _, trvs := range TrvsGrpViaSpec {
+		path := sSplit(trvs, tblSep)[0]
+		key := cmn.RmTailFromLast(path, pathSep)
+		value := cmn.RmHeadToLast(path, pathSep)
+		mPathAttrs[key] = append(mPathAttrs[key], value)
+		mPathAttrIdx[key] = 0
+	}
+}
+
+// JSON2SIFSpec : Ordered, Some pieces are different
+func JSON2SIFSpec(xml, SIFSpecPath string) string {
+	InitOAs(SIFSpecPath, "\t", "/")
+
+	// adjusting attributes order
+	posGrp, pathGrp, mAttrGrp, root := SearchTagWithAttr(xml)
+	for i, path := range pathGrp {
+		attrs2write := ""
+		for _, trvs := range TrvsGrpViaSpec {
+			if sHasPrefix(trvs, path+"/@") { // from Spec format
+				attr := sSplit(trvs, "\t")[2][1:] // from Spec format
+				attr2write := mAttrGrp[i][attr]
+				attrs2write += attr2write + " "
+			}
+		}
+		attrs2write = sTrim(attrs2write, " ")
+		// fPln(attrs2write)
+
+		start, end := posGrp[i][0], posGrp[i][1]
+		xmlLine := xml[start:end]
+		tag, _ := TagFromXMLLine(xmlLine)
+		out := fSf("%s<%s %s>", mkIndent(CountHeadSpace(xmlLine, 4)), tag, attrs2write)
+		xml = sReplByPos(xml, start, end, out)
+	}
+	// End adjusting attributes order
+
+	// ---------------------------------- //
+
 	// Init "mIPathSubXML"
-	root := cmn.XMLRoot(xml)
 	ExtractOA(xml, root, "", 0)
 
-	xmlobj := mIPathSubXML[root]
+	xml = mIPathSubXML[root]
 AGAIN:
 	for k, subxml := range mIPathSubXML {
 		mark := mIPathSubMark[k]
-		xmlobj = sReplace(xmlobj, mark, subxml, 1)
+		xml = sReplace(xml, mark, subxml, 1)
 	}
-	if sContains(xmlobj, "...") {
-		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xmlobj), 0666)
+	if sContains(xml, "...") {
+		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xml), 0666)
 		nGoTo++
 		cmn.FailOnErrWhen(nGoTo > maxGoTo, "%v", fEf("goto AGAIN deadlock"))
 		goto AGAIN
 	}
 
-	return xmlobj
+	return xml
 }
 
 // -------------------------------------------------------- //
@@ -337,8 +360,8 @@ func Hierarchy(searchArea string, lvl int, hierarchy *[]string) {
 }
 
 // SearchTagWithAttr : where (get line from xml), tag-path (get info from spec), attribute-map (re-order attributes, reconstruct line)
-func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp []map[string]string) {
-	root := cmn.XMLRoot(xml)
+func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp []map[string]string, root string) {
+	root = cmn.XMLRoot(xml)
 	TagOrAttr, minAttr := `[^ \t<>]+`, 2
 	r := regexp.MustCompile(fSf(`[ ]*<%[1]s[ ]+(%[1]s="%[1]s"[ ]*){%d,}>`, TagOrAttr, minAttr))
 	if loc := r.FindAllStringIndex(xml, -1); loc != nil {

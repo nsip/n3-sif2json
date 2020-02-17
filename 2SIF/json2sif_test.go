@@ -20,8 +20,7 @@ func TestJSON2XML(t *testing.T) {
 
 		resetAll()
 
-		// obj := "LearningResource"
-		// if !cmn.XIn(obj, []string{"LearningStandardDocument", "StudentAttendanceTimeList"}) {
+		// if obj != "AGStatusReport" {
 		// 	continue
 		// }
 
@@ -29,38 +28,9 @@ func TestJSON2XML(t *testing.T) {
 		jsonWithCode, mCodeStr := JSON2SIF4LF(fSf("../data/json/%s.json", obj))
 
 		xml := JSON2SIF3RD(jsonWithCode)
-		// ioutil.WriteFile(fSf("../data/xml/%s_0_out.xml", obj), []byte(xml), 0666)
+		ioutil.WriteFile(fSf("../data/xml/%s_0_out.xml", obj), []byte(xml), 0666)
 
-		xml1 := JSON2SIFViaSpec(xml, "../SIFSpec/out.txt")
-		// ioutil.WriteFile(fSf("../data/xml/%s_1_out.xml", obj), []byte(xml1), 0666)
-
-		// doing ...
-		posGrp, pathGrp, mAttrGrp := SearchTagWithAttr(xml)
-		for i, path := range pathGrp {
-			fPln("--------------------------------------------")
-			attrs := []string{}
-			for _, trvs := range TrvsGrpViaSpec {
-				if sHasPrefix(trvs, path+"/@") {
-					fPln(trvs)
-					attrs = append(attrs, sSplit(trvs, "\t")[2][1:]) // from Spec format
-				}
-			}
-			fPln(attrs)
-
-			xmlLine := xml[posGrp[i][0]:posGrp[i][1]]
-			fPln(xmlLine)
-			tag, _ := TagFromXMLLine(xmlLine)
-			fPln(tag)
-			n := CountHeadSpace(xmlLine, 1)
-			fPln(n)
-
-			m := mAttrGrp[i]
-			fPln(m)
-
-			out := fSf("")
-		}
-		// doing ...
-
+		xml1 := JSON2SIFSpec(xml, "../SIFSpec/out.txt")
 		mRepl := cmn.MapsMerge(getReplMap("./SIFCfg/replace.json"), mCodeStr).(map[string]string)
 		xml2 := JSON2SIFRepl(xml1, mRepl)
 		ioutil.WriteFile(fSf("../data/xml/%s_2_out.xml", obj), []byte(xml2), 0666)
@@ -68,22 +38,8 @@ func TestJSON2XML(t *testing.T) {
 }
 
 func TestSortSimpleObject(t *testing.T) {
-	const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
-
-	bytes, err := ioutil.ReadFile("../SIFSpec/out.txt")
-	cmn.FailOnErr("%v", err)
-	spec := string(bytes)
-
-	for _, line := range sSplit(spec, "\n") {
-		switch {
-		case sHasPrefix(line, TRAVERSE):
-			l := sTrim(line[len(TRAVERSE):], " \t\r")
-			TrvsGrpViaSpec = append(TrvsGrpViaSpec, l)
-		}
-	}
-
 	// Init Spec Maps
-	InitOAs(TrvsGrpViaSpec, "\t", "/")
+	InitOAs("../SIFSpec/out.txt", "\t", "/")
 
 	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
 	fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
