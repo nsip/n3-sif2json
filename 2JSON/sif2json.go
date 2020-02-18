@@ -70,7 +70,7 @@ func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
 // SIF2JSON : if [SIFVer] is "", use config's DefaultSIFVer
 func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (json, sv string, err error) {
 	const (
-		SignSIFVer = "# SIFVER #"
+		SignSIFVer = "#SIFVER#"
 	)
 
 	ICfg := cfg.NewCfg(cfgPath)

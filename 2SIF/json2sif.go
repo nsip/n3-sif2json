@@ -1,12 +1,15 @@
-package cvt2xml
+package cvt2sif
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"os"
 	"regexp"
 
 	cmn "github.com/cdutwhu/json-util/common"
 	"github.com/clbanning/mxj"
+	cfg "github.com/nsip/n3-sif2json/2SIF/config"
 )
 
 // ----------------------------------------- //
@@ -50,7 +53,7 @@ func PrintXML(paper, line, mark string, iLine int, tag string) (string, bool) {
 // NextAttr is available
 func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string) {
 	defer func() {
-		resetPrt()
+		ResetPrt()
 	}()
 
 	const INDENT = "    " // 4 space
@@ -81,7 +84,7 @@ func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string
 		mObjIdxEnd[objIdx] = -1
 	}
 
-	rewindAttrIter()
+	RewindAttrIter()
 	PS, PE := -1, -1
 
 	// ---------------------------------- //
@@ -207,13 +210,9 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 // ----------------------------------------------- //
 
 // JSON2SIF4LF : if JSON fields have special (LF, TBL), pick them up for later replacement
-func JSON2SIF4LF(jsonPath string) (json string, mCodeStr map[string]string) {
-	bytes, err := ioutil.ReadFile(jsonPath)
-	cmn.FailOnErr("%v", err)
-	json = string(bytes)
+func JSON2SIF4LF(json string) (string, map[string]string) {
 	cmn.FailOnErrWhen(!cmn.IsJSON(json), "", fEf("Input File is not a valid JSON File"))
-
-	mCodeStr = make(map[string]string)
+	mCodeStr := make(map[string]string)
 	strGrpWithLF := regexp.MustCompile(`".+": ".*(\\n)+.*"`).FindAllString(json, -1)
 	for _, s := range strGrpWithLF {
 		vLiteral := sSpl(s, `": "`)[1]
@@ -223,7 +222,7 @@ func JSON2SIF4LF(jsonPath string) (json string, mCodeStr map[string]string) {
 		mCodeStr[k4Esc] = vEsc
 		json = sReplaceAll(json, vLiteral, k4Esc)
 	}
-	return
+	return json, mCodeStr
 }
 
 // JSON2SIF3RD : via 3rd lib converter, return Disordered, Formatted XML
@@ -401,4 +400,44 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 	}
 
 	return xml
+}
+
+// -------------------------------------------------------- //
+
+// JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
+func JSON2SIF(cfgPath, json, SIFVer string) string {
+	ICfg := cfg.NewCfg(cfgPath)
+	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("JSON2SIF config couldn't be Loaded"))
+	j2s := ICfg.(*cfg.JSON2SIF)
+
+	// looking for suitable SIFSpec txt
+	SIFSpec := ""
+	{
+		files, err := ioutil.ReadDir(j2s.SIFSpecDir)
+		cmn.FailOnErr("%v", err)
+		for _, file := range files {
+			fullname := j2s.SIFSpecDir + file.Name()
+			f, err := os.Open(fullname)
+			cmn.FailOnErr("%v", err)
+			line := ""
+			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
+				if _, err = fmt.Fscan(f, &line); err == nil && line == SIFVer {
+					SIFSpec = fullname
+					f.Close()
+					break
+				}
+			}
+			f.Close()
+		}
+
+		//
+		if SIFSpec == "" {
+			j2s.DefaultSIFVer
+		}
+	}
+
+	ResetAll()
+	jsonWithCode, mCodeStr := JSON2SIF4LF(json)
+	mRepl := cmn.MapsMerge(getReplMap(j2s.ReplCfgPath), mCodeStr).(map[string]string)
+	return JSON2SIFRepl(JSON2SIFSpec(JSON2SIF3RD(jsonWithCode), SIFSpec), mRepl)
 }

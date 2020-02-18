@@ -26,6 +26,7 @@ func TestEachFileContent(t *testing.T) {
 
 func TestSIF2JSON(t *testing.T) {
 	cmn.SetLog("./error.log")
+	defer cmn.ResetLog()
 
 	dir := `../data/examples/`
 	files, err := ioutil.ReadDir(dir)

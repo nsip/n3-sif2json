@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
+	cvt2sif "github.com/nsip/n3-sif2json/2SIF"
 	glb "github.com/nsip/n3-sif2json/Server/global"
 )
 
@@ -41,7 +42,7 @@ func HostHTTPAsync() {
 			fSf("POST %-40s-> %s\n"+
 				"POST %-40s-> %s\n",
 				fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
-				fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML) (Not IMPLEMENTED YET)"))
+				fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML). [sv]: SIF Spec. Version"))
 	})
 
 	path = route.SIF2JSON
@@ -81,6 +82,27 @@ func HostHTTPAsync() {
 	})
 
 	path = route.JSON2SIF
+	e.POST(path, func(c echo.Context) error {
+		defer func() { mMtx[path].Unlock() }()
+		mMtx[path].Lock()
+		glb.WDCheck()
+		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
+			if !cmn.IsJSON(string(bytes)) {
+				goto ERR
+			}
+			sv := ""
+			if ok, ver := url1Value(c.QueryParams(), 0, "sv"); ok {
+				sv = ver
+			}
+			sif, svUsed, err := cvt2sif.JSON2SIF()
+		}
+	ERR:
+		return c.JSON(http.StatusBadRequest, result{
+			Data:  nil,
+			Info:  "",
+			Error: "JSON Data must be provided via Request BODY as Valid JSON",
+		})
+	})
 
 	e.Start(fSf(":%d", port))
 }

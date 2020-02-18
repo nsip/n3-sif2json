@@ -1,4 +1,4 @@
-package cvt2xml
+package cvt2sif
 
 import (
 	"encoding/json"
@@ -66,17 +66,17 @@ var (
 	mIPathSubMark = make(map[string]string) // key: path@index
 	mPathIdx      = make(map[string]int)    // key: path, for IPath
 
-	rewindAttrIter = func() {
+	RewindAttrIter = func() {
 		for k := range mPathAttrIdx {
 			mPathAttrIdx[k] = 0
 		}
 	}
 
-	resetPrt = func() {
+	ResetPrt = func() {
 		mOAPrtLn = make(map[string]int)
 	}
 
-	resetAll = func() {
+	ResetAll = func() {
 		mObjIdxStart = make(map[string]int)
 		mObjIdxEnd = make(map[string]int)
 		mOAPrtLn = make(map[string]int)
