@@ -33,32 +33,44 @@ func main() {
 		url := mFnURL[os.Args[1]] // http://ip:port/
 
 		cmd := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
-		svPtr := cmd.String("sv", "", "SIF Version (optional), format like (1.2.3)")
-		// sifPtr := cmd.String("sif", "", "the path of SIF file to be uploaded")
-		sifPtr, sifName := cmd.String("sif", "", "the path of SIF file to be uploaded"), ""
-		// jsonPtr := cmd.String("json", "", "the path of JSON file to be uploaded")
+		iPtr := cmd.String("i", "", "Path of original SIF/JSON file to be uploaded")
+		vPtr := cmd.String("v", "", "SIF Version (optional), format like (1.2.3)")
+		oPtr := cmd.String("o", "", "Path of outcome file (optional)")
+		// infoPtr := cmd.String("info", "", "Only dump the request info (optional)")
 		cmd.Parse(os.Args[2:])
 
-		switch os.Args[1] { // Config - Route - each Field
-		// case "API":
-		// 	// fPln("accessing ... " + url)
-		// 	// resp, err = http.Get(url)
-		// 	goto QUIT
+		if *vPtr != "" {
+			url += fSf("?sv=%s", *vPtr)
+		}
+		// fPln("accessing ... " + url)
 
-		case "SIF2JSON":
-			if *svPtr != "" {
-				url += fSf("?sv=%s", *svPtr)
+		if *oPtr != "" {
+			dir := filepath.Dir(*oPtr)
+			if _, err := os.Stat(dir); os.IsNotExist(err) {
+				os.Mkdir(dir, os.ModePerm)
 			}
-			// fPln("accessing ... " + url)
-			cmn.FailOnErrWhen(*sifPtr == "", "%v", fEf("[-sif] must be provided"))
-			sif, err := ioutil.ReadFile(*sifPtr)
-			cmn.FailOnErr("%v: %v", err, "Is [-sif] provided correctly?")
-			cmn.FailOnErrWhen(!cmn.IsXML(string(sif)), "%v", fEf("sif is not valid XML file, abort"))
-			sifName = filepath.Base(*sifPtr)
-			resp, err = http.Post(url, "application/json", bytes.NewBuffer(sif))
+		}
 
-		case "JSON2SIF":
-			cmn.FailOnErr("%v", fEf("JSON2SIF is not implemented"))
+		switch os.Args[1] { // Config - Route - each Field
+		case "API":
+			resp, err = http.Get(url)
+
+		case "SIF2JSON", "JSON2SIF":
+			cmn.FailOnErrWhen(*iPtr == "", "%v", fEf("[-i] must be provided"))
+			data, err := ioutil.ReadFile(*iPtr)
+			cmn.FailOnErr("%v: %v", err, "Is [-i] provided correctly?")
+			if os.Args[1] == "SIF2JSON" {
+				cmn.FailOnErrWhen(!cmn.IsXML(string(data)), "%v", fEf("input file is not valid XML, Abort"))
+				if *oPtr != "" && !sHasSuffix(*oPtr, ".json") {
+					*oPtr += ".json"
+				}
+			} else {
+				cmn.FailOnErrWhen(!cmn.IsJSON(string(data)), "%v", fEf("input file is not valid JSON, Abort"))
+				if *oPtr != "" && !sHasSuffix(*oPtr, ".xml") {
+					*oPtr += ".xml"
+				}
+			}
+			resp, err = http.Post(url, "application/json", bytes.NewBuffer(data))
 
 		default:
 			if e := cmn.WarnOnErr("%v", fEf("Unsupported Subcommand: %v", os.Args[1])); e != nil {
@@ -72,17 +84,25 @@ func main() {
 		data, err = ioutil.ReadAll(resp.Body)
 		cmn.FailOnErr("resp Body fatal: %v", err)
 		if data != nil {
-			m := make(map[string]interface{})
-			cmn.FailOnErr("json.Unmarshal ... %v", json.Unmarshal(data, &m))
-			cmn.FailOnErrWhen(m["error"] != nil && m["error"] != "", "%v", fEf("ERROR: %v\n", m["error"]))
-			if m["info"] != nil && m["info"] != "" {
-				fPf("INFO: %v\n", m["info"])
-			}
-			if m["data"] != nil && m["data"] != "" {
-				path := fSf("./data/%s.json", sifName)
-				fPf("Saving to %s\n", path)
-				ioutil.WriteFile(path, []byte(m["data"].(string)), 0666)
-				fPf("%s\n", m["data"])
+			if os.Args[1] == "API" {
+				fPt(string(data))
+			} else {
+				m := make(map[string]interface{})
+				cmn.FailOnErr("json.Unmarshal ... %v", json.Unmarshal(data, &m))
+				cmn.FailOnErrWhen(m["error"] != nil && m["error"] != "", "%v", fEf("ERROR: %v\n", m["error"]))
+
+				if m["info"] != nil && m["info"] != "" {
+					fPf("INFO: %v\n", m["info"])
+				}
+
+				fPln(" ----------------------------- ")
+
+				if m["data"] != nil && m["data"] != "" {
+					if *oPtr != "" {
+						ioutil.WriteFile(*oPtr, []byte(m["data"].(string)), 0666)
+					}
+					fPf("%s\n", m["data"])
+				}
 			}
 		}
 

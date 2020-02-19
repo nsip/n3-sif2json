@@ -43,13 +43,9 @@ var (
 	}
 )
 
-var (
-	nGoTo = 0
-)
+var nGoTo = 0
 
-const (
-	maxGoTo = 100
-)
+const maxGoTo = 100
 
 var (
 	re1 = regexp.MustCompile("\n[ ]*<#content>")

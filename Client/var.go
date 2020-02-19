@@ -9,11 +9,14 @@ import (
 )
 
 var (
-	fPf   = fmt.Printf
-	fPln  = fmt.Println
-	fSf   = fmt.Sprintf
-	fEf   = fmt.Errorf
-	sJoin = strings.Join
+	fPt  = fmt.Print
+	fPf  = fmt.Printf
+	fPln = fmt.Println
+	fSf  = fmt.Sprintf
+	fEf  = fmt.Errorf
+
+	sJoin      = strings.Join
+	sHasSuffix = strings.HasSuffix
 )
 
 var (
