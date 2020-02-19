@@ -12,6 +12,8 @@ import (
 type Config struct {
 	Path       string
 	ELog       string
+	Cfg2JSON   string
+	Cfg2SIF    string
 	WebService struct {
 		Port    int
 		Version string

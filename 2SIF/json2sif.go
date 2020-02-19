@@ -452,7 +452,7 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 		case SIFVer != "":
 			return "", "", fEf("No SIF Spec @Version %s", SIFVer)
 		case SIFVer == "":
-			return "", "", fEf("No Default SIF Spec @Version %s", SIFVer)
+			return "", "", fEf("No Default SIF Spec @Version %s", j2s.DefaultSIFVer)
 		}
 	}
 	// end looking

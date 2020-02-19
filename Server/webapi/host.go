@@ -58,7 +58,7 @@ func HostHTTPAsync() {
 			if ok, ver := url1Value(c.QueryParams(), 0, "sv"); ok {
 				sv = ver
 			}
-			json, svUsed, err := cvt2json.SIF2JSON("../2JSON/config/SIF2JSON.toml", string(bytes), sv, false)
+			json, svUsed, err := cvt2json.SIF2JSON(glb.Cfg.Cfg2JSON, string(bytes), sv, false)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, result{
 					Data:  nil,
@@ -94,7 +94,7 @@ func HostHTTPAsync() {
 			if ok, ver := url1Value(c.QueryParams(), 0, "sv"); ok {
 				sv = ver
 			}
-			sif, svUsed, err := cvt2sif.JSON2SIF("../2SIF/config/JSON2SIF.toml", string(bytes), sv)
+			sif, svUsed, err := cvt2sif.JSON2SIF(glb.Cfg.Cfg2SIF, string(bytes), sv)
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, result{
 					Data:  nil,

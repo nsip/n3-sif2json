@@ -46,7 +46,7 @@ func main() {
 
 		if *oPtr != "" {
 			dir := filepath.Dir(*oPtr)
-			if _, err := os.Stat(dir); os.IsNotExist(err) {
+			if _, err = os.Stat(dir); os.IsNotExist(err) {
 				os.Mkdir(dir, os.ModePerm)
 			}
 		}
@@ -79,7 +79,7 @@ func main() {
 			}
 		}
 
-		cmn.FailOnErr("http access fatal: %v", err)
+		cmn.FailOnErrWhen(resp == nil, "HTTP Access Fatal: %v OR %v", err, fEf("Couldn't get Response"))
 		defer resp.Body.Close()
 		data, err = ioutil.ReadAll(resp.Body)
 		cmn.FailOnErr("resp Body fatal: %v", err)
@@ -112,7 +112,7 @@ func main() {
 
 	select {
 	case <-timeout:
-		cmn.FailOnErr("%v", fEf("Didn't Get Server Response in time. %d(s)", glb.Cfg.Access.Timeout))
+		cmn.FailOnErr("%v", fEf("Didn't Get Response in time. %d(s)", glb.Cfg.Access.Timeout))
 	case <-done:
 	}
 }

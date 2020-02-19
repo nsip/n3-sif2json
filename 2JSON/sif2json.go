@@ -121,7 +121,8 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	if _, err := os.Stat(svDir); err == nil {
 		sv = cmn.RmHeadToLast(svDir, "/")
 	} else {
-		return "", "", fEf("%sSIF(%s) Spec-Cfg is Missing", dft, s2j.DefaultSIFVer)
+		// return "", "", fEf("%sSIF(%s) Spec-Cfg is Missing", dft, s2j.DefaultSIFVer)
+		return "", "", fEf("No %sSIF Spec @Version %s", dft, s2j.DefaultSIFVer)
 	}
 	// End Checking
 
