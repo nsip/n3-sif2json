@@ -14,6 +14,7 @@ func TestJSON2SIF(t *testing.T) {
 	dir := `../data/json/`
 	files, err := ioutil.ReadDir(dir)
 	cmn.FailOnErr("%v", err)
+	cmn.FailOnErrWhen(len(files) == 0, "%v", fEf("no json files prepared"))
 
 	for _, file := range files {
 		ResetAll()
@@ -24,8 +25,12 @@ func TestJSON2SIF(t *testing.T) {
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s.json", obj))
 		cmn.FailOnErr("%v", err)
 
-		sif := JSON2SIF("./config/JSON2SIF.toml", string(bytes), "3.4.5X")
-		ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(sif), 0666)
+		if sif, sv, err := JSON2SIF("./config/JSON2SIF.toml", string(bytes), "3.4.5X"); err == nil {
+			fPln(sv + " is used")
+			ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(sif), 0666)
+		} else {
+			fPln(err.Error())
+		}
 
 		// {
 		// 	// JSON2SIF4LF : deal with XML multiple-line content

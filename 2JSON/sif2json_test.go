@@ -31,6 +31,7 @@ func TestSIF2JSON(t *testing.T) {
 	dir := `../data/examples/`
 	files, err := ioutil.ReadDir(dir)
 	cmn.FailOnErr("%v", err)
+	cmn.FailOnErrWhen(len(files) == 0, "%v", fEf("no xml files prepared"))
 
 	for _, file := range files {
 		obj := cmn.RmTailFromLast(file.Name(), ".")
