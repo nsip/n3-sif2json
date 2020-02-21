@@ -38,6 +38,11 @@ func TestSIF2JSON(t *testing.T) {
 		fPln(obj)
 
 		// obj := "LearningStandardDocument" // "LearningStandardItem", "StudentAttendanceTimeList"
+
+		// if cmn.XIn(obj, []string{"LearningStandardDocument", "StudentAttendanceTimeList"}) {
+		// 	continue
+		// }
+
 		bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
 		cmn.FailOnErr("%v", err)
 		json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "3.4.5X", false)

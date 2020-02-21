@@ -8,7 +8,6 @@ import (
 	xj "github.com/basgys/goxml2json"
 	cmn "github.com/cdutwhu/json-util/common"
 	jkv "github.com/cdutwhu/json-util/jkv"
-	pp "github.com/cdutwhu/json-util/preprocess"
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
@@ -62,7 +61,8 @@ func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
 		json, _ = jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
 		// make sure there is no double "[" OR "]"
 		bytes := rRB.ReplaceAll(rLB.ReplaceAll([]byte(json), []byte("[")), []byte("]"))
-		json = pp.FmtJSONStr(string(bytes), jqDir)
+		// json = pp.FmtJSONStr(string(bytes), jqDir)
+		json = jkv.FormatJSON(string(bytes), 2)
 	}
 	return json
 }
@@ -93,7 +93,8 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	// json = jsonBuf.String()
 	// ioutil.WriteFile("../data/why.json", []byte(json), 0666)
 
-	json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
+	// json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
+	json = jkv.FormatJSON(jsonBuf.String(), 2)
 	// return // test 3rd party lib
 
 	// Digital string to number
