@@ -3,6 +3,8 @@ package cvt2json
 import (
 	"fmt"
 	"strings"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -25,6 +27,11 @@ var (
 			a[i], a[j] = a[j], a[i]
 		}
 		return a
+	}
+	sReplByPos = func(s string, start, end int, new string) string {
+		cmn.FailOnErrWhen(end < start, "end must be greater than start%v", fEf(""))
+		left, right := s[:start], s[end:]
+		return left + new + right
 	}
 )
 

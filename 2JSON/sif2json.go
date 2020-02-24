@@ -95,10 +95,44 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 
 	// json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
 	json = jkv.FormatJSON(jsonBuf.String(), 2)
-	// return // test 3rd party lib
 
-	// Digital string to number
-	// json := replaceDigCont(json, s2j.JQDir)
+	// Deal with 'LF', 'TB', P1
+	posGrp, values := [][]int{}, []string{}
+	for _, pos := range regexp.MustCompile(`": "[^"]*[\n]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, -1) {
+		start, end := pos[0]+4, pos[1]-2
+		posGrp = append(posGrp, []int{start, end})
+		values = append(values, sReplaceAll(json[start:end], "\n", "#LF#"))
+	}
+	json = cmn.ReplByPosGrp(json, posGrp, values)
+
+	posGrp, values = [][]int{}, []string{}
+	for _, pos := range regexp.MustCompile(`": "[^"]*[\t]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, -1) {
+		start, end := pos[0]+4, pos[1]-2
+		posGrp = append(posGrp, []int{start, end})
+		values = append(values, sReplaceAll(json[start:end], "\t", "#TB#"))
+	}
+	json = cmn.ReplByPosGrp(json, posGrp, values)
+
+	// AGAIN1:
+	// 	for _, pos := range regexp.MustCompile(`": "[^"]*[\n]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, 1) {
+	// 		start, end := pos[0]+4, pos[1]-2
+	// 		value := json[start:end]
+	// 		value = sReplaceAll(value, "\n", "#LF#")
+	// 		json = sReplByPos(json, start, end, value)
+	// 		goto AGAIN1
+	// 	}
+
+	// AGAIN2:
+	// 	for _, pos := range regexp.MustCompile(`": "[^"]*[\t]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, 1) {
+	// 		start, end := pos[0]+4, pos[1]-2
+	// 		value := json[start:end]
+	// 		value = sReplaceAll(value, "\t", "#TB#")
+	// 		json = sReplByPos(json, start, end, value)
+	// 		goto AGAIN2
+	// 	}
+	// End Dealing with 'LF', 'TB', P1
+
+	// return // --------------------------------------- test 3rd party lib --------------------------------------- //
 
 	// Attributes Modification
 	obj := cmn.XMLRoot(xml)          // infer object from xml root by default, use this object to search config json
@@ -122,7 +156,6 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	if _, err := os.Stat(svDir); err == nil {
 		sv = cmn.RmHeadToLast(svDir, "/")
 	} else {
-		// return "", "", fEf("%sSIF(%s) Spec-Cfg is Missing", dft, s2j.DefaultSIFVer)
 		return "", "", fEf("No %sSIF Spec @Version %s", dft, s2j.DefaultSIFVer)
 	}
 	// End Checking
@@ -138,6 +171,11 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	// BOOLEAN
 	rules = eachFileContent(s2j.SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
 	json = enforceConfig(json, s2j.JQDir, rules...)
+
+	// Deal with 'LF', 'TB'  P2
+	json = sReplaceAll(json, "#LF#", "\\n")
+	json = sReplaceAll(json, "#TB#", "\\t")
+	// End Dealing with 'LF', 'TB', P2
 
 	return
 }

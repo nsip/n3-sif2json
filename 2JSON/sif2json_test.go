@@ -37,7 +37,7 @@ func TestSIF2JSON(t *testing.T) {
 		obj := cmn.RmTailFromLast(file.Name(), ".")
 		fPln(obj)
 
-		// obj := "LearningStandardDocument" // "LearningStandardItem", "StudentAttendanceTimeList"
+		// obj := "LearningStandardDocument" // "StudentAttendanceTimeList"
 
 		// if cmn.XIn(obj, []string{"LearningStandardDocument", "StudentAttendanceTimeList"}) {
 		// 	continue
