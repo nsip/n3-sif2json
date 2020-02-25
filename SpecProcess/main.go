@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path/filepath"
 
 	cmn "github.com/cdutwhu/json-util/common"
 )
@@ -64,14 +66,28 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 }
 
 func main() {
-	GenTomlAndStruct(
-		"../SIFSpec/out.txt",
-		"../2JSON/config/base-go/config",
-		"../2JSON/config/base-toml/List2JSON",
-		"../2JSON/config/base-toml/Num2JSON",
-		"../2JSON/config/base-toml/Bool2JSON",
-		"../2JSON/config/",
-	)
+	if len(os.Args) < 7 {
+		fPln("You are not allowed to use this tool to create next build step resource unless you fully understand what you are doing.\n" +
+			"Project author or other admins are advised to do this for adding SIF Specifications into this project.\n" +
+			"If you still want to do it by yourself, input following arguments orderly:\n" +
+			"  1. SIF Spec. file path. (file format is like /SIFSpec/out.txt)\n" +
+			"  2. piece of go file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-go/config)\n" +
+			"  3. piece of toml file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-toml/List2JSON)\n" +
+			"  4. piece of toml file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-toml/Num2JSON)\n" +
+			"  5. piece of toml file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-toml/Bool2JSON)\n" +
+			"  6. auto-created go & toml configuration files output directory")
+		return
+	}
+	SIFSpecName := os.Args[1]
+	goBaseFile := os.Args[2]
+	listTomlBaseFile := os.Args[3]
+	numTomlBaseFile := os.Args[4]
+	boolTomlBaseFile := os.Args[5]
+	cfgOutputDir := os.Args[6]
+	GenTomlAndStruct(SIFSpecName, goBaseFile, listTomlBaseFile, numTomlBaseFile, boolTomlBaseFile, cfgOutputDir)
+	abs, err := filepath.Abs(cfgOutputDir)
+	cmn.FailOnErr("%v", err)
+	fPf("Dumped [config.go] [Bool2JSON.toml] [List2JSON.toml] [Num2JSON.toml] into %s\n", abs)
 }
 
 // GenTomlAndStruct :

@@ -153,7 +153,7 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extCon
 				}
 				jsonstr := MakeJSON(mm)
 				// jsonfmt := pp.FmtJSONStr(jsonstr, jqDir) // format jsonstr ( Only single thread use this line )
-				jsonfmt := jkv.FormatJSON(jsonstr, 2)
+				jsonfmt := jkv.FmtJSON(jsonstr, 2)
 				ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonfmt), 0666)
 			} else {
 				break
@@ -164,14 +164,14 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extCon
 		mm := MakeMap(paths, sep, jsonVal)
 		jsonstr := MakeJSON(mm)
 		// jsonfmt := pp.FmtJSONStr(jsonstr, jqDir) // format jsonstr ( Only single thread use this line )
-		jsonfmt := jkv.FormatJSON(jsonstr, 2)
+		jsonfmt := jkv.FmtJSON(jsonstr, 2)
 		ioutil.WriteFile(fSf("%s0.json", path), []byte(jsonfmt), 0666)
 
 		if extContent {
 			// extend jsonstr, such as xml->json '#content', "30" => { "#content": "30" }
 			jsonext := sReplaceAll(jsonstr, fSf(`"%s"`, jsonVal), fSf(`{"#content": "%s"}`, jsonVal))
 			// jsonextfmt := pp.FmtJSONStr(jsonext, jqDir)
-			jsonextfmt := jkv.FormatJSON(jsonext, 2)
+			jsonextfmt := jkv.FmtJSON(jsonext, 2)
 			ioutil.WriteFile(fSf("%s1.json", path), []byte(jsonextfmt), 0666)
 		}
 	}

@@ -62,7 +62,7 @@ func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
 		// make sure there is no double "[" OR "]"
 		bytes := rRB.ReplaceAll(rLB.ReplaceAll([]byte(json), []byte("[")), []byte("]"))
 		// json = pp.FmtJSONStr(string(bytes), jqDir)
-		json = jkv.FormatJSON(string(bytes), 2)
+		json = jkv.FmtJSON(string(bytes), 2)
 	}
 	return json
 }
@@ -94,7 +94,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	// ioutil.WriteFile("../data/why.json", []byte(json), 0666)
 
 	// json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
-	json = jkv.FormatJSON(jsonBuf.String(), 2)
+	json = jkv.FmtJSON(jsonBuf.String(), 2)
 
 	// Deal with 'LF', 'TB', P1
 	posGrp, values := [][]int{}, []string{}
