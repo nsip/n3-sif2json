@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path/filepath"
 	"time"
 
 	cmn "github.com/cdutwhu/json-util/common"
@@ -35,7 +34,8 @@ func main() {
 		cmd := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 		iPtr := cmd.String("i", "", "Path of original SIF/JSON file to be uploaded")
 		vPtr := cmd.String("v", "", "SIF Version (optional), format like (1.2.3)")
-		oPtr := cmd.String("o", "", "Path of outcome file (optional)")
+		fPtr := cmd.Bool("f", false, "bool flag: Print INFO & ERROR as well") //         true flag: print INFO & ERROR from Server
+		// oPtr := cmd.String("o", "", "Path of outcome file (optional)")             // use redirect to output
 		// infoPtr := cmd.String("info", "", "Only dump the request info (optional)")
 		cmd.Parse(os.Args[2:])
 
@@ -44,12 +44,12 @@ func main() {
 		}
 		// fPln("accessing ... " + url)
 
-		if *oPtr != "" {
-			dir := filepath.Dir(*oPtr)
-			if _, err = os.Stat(dir); os.IsNotExist(err) {
-				os.Mkdir(dir, os.ModePerm)
-			}
-		}
+		// if *oPtr != "" {
+		// 	dir := filepath.Dir(*oPtr)
+		// 	if _, err = os.Stat(dir); os.IsNotExist(err) {
+		// 		os.Mkdir(dir, os.ModePerm)
+		// 	}
+		// }
 
 		switch os.Args[1] { // Config - Route - each Field
 		case "API":
@@ -61,14 +61,14 @@ func main() {
 			cmn.FailOnErr("%v: %v", err, "Is [-i] provided correctly?")
 			if os.Args[1] == "SIF2JSON" {
 				cmn.FailOnErrWhen(!cmn.IsXML(string(data)), "%v", fEf("input file is not valid XML, Abort"))
-				if *oPtr != "" && !sHasSuffix(*oPtr, ".json") {
-					*oPtr += ".json"
-				}
+				// if *oPtr != "" && !sHasSuffix(*oPtr, ".json") {
+				// 	*oPtr += ".json"
+				// }
 			} else {
 				cmn.FailOnErrWhen(!cmn.IsJSON(string(data)), "%v", fEf("input file is not valid JSON, Abort"))
-				if *oPtr != "" && !sHasSuffix(*oPtr, ".xml") {
-					*oPtr += ".xml"
-				}
+				// if *oPtr != "" && !sHasSuffix(*oPtr, ".xml") {
+				// 	*oPtr += ".xml"
+				// }
 			}
 			resp, err = http.Post(url, "application/json", bytes.NewBuffer(data))
 
@@ -89,19 +89,23 @@ func main() {
 			} else {
 				m := make(map[string]interface{})
 				cmn.FailOnErr("json.Unmarshal ... %v", json.Unmarshal(data, &m))
-				cmn.FailOnErrWhen(m["error"] != nil && m["error"] != "", "%v", fEf("ERROR: %v\n", m["error"]))
+				// cmn.FailOnErrWhen(m["error"] != nil && m["error"] != "", "%v", fEf("ERROR: %v\n", m["error"]))
 
-				if m["info"] != nil && m["info"] != "" {
-					fPf("INFO: %v\n", m["info"])
-				}
-
-				fPln(" ----------------------------- ")
-
-				if m["data"] != nil && m["data"] != "" {
-					if *oPtr != "" {
-						ioutil.WriteFile(*oPtr, []byte(m["data"].(string)), 0666)
+				if *fPtr {
+					if m["info"] != nil && m["info"] != "" {
+						fPf("INFO: %v\n", m["info"])
 					}
+					fPln("-----------------------------")
+					if m["error"] != nil && m["error"] != "" {
+						fPf("ERROR: %v\n", m["error"])
+					}
+					fPln("-----------------------------")
+				}
+				if m["data"] != nil && m["data"] != "" {
 					fPf("%s\n", m["data"])
+					// if *oPtr != "" {
+					// 	ioutil.WriteFile(*oPtr, []byte(m["data"].(string)), 0666)
+					// }
 				}
 			}
 		}
