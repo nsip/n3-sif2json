@@ -1,4 +1,4 @@
-package cvt2json
+package main
 
 import (
 	"encoding/json"

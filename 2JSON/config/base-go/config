@@ -26,7 +26,7 @@ type List2JSON struct {
 	CfgJSONOutDir string
 	CfgJSONValue  string
 	// ----------------------------------------------------------- //
-	// # AUTO-GEN: LIST # //
+	// #AUTO-GEN: LIST# //
 }
 
 // Num2JSON :
@@ -37,7 +37,7 @@ type Num2JSON struct {
 	CfgJSONOutDir string
 	CfgJSONValue  string
 	// ----------------------------------------------------------- //
-	// # AUTO-GEN: NUMERIC # //
+	// #AUTO-GEN: NUMERIC# //
 }
 
 // Bool2JSON :
@@ -48,7 +48,7 @@ type Bool2JSON struct {
 	CfgJSONOutDir string
 	CfgJSONValue  string
 	// ----------------------------------------------------------- //
-	// # AUTO-GEN: BOOLEAN # //
+	// #AUTO-GEN: BOOLEAN# //
 }
 
 // SIF2JSON :

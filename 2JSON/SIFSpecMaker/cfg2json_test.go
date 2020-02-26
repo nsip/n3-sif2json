@@ -1,4 +1,4 @@
-package cvt2json
+package main
 
 import (
 	"testing"
@@ -32,5 +32,5 @@ func TestOthers(t *testing.T) {
 }
 
 func TestMakeJSON(t *testing.T) {
-	YieldJSONBySIF("./config/List2JSON.toml", "./config/Num2JSON.toml", "./config/Bool2JSON.toml")
+	YieldJSONBySIF("../config/List2JSON.toml", "../config/Num2JSON.toml", "../config/Bool2JSON.toml")
 }

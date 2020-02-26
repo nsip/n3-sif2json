@@ -67,7 +67,7 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 
 func main() {
 	if len(os.Args) < 7 {
-		fPln("You are not allowed to use this tool to create next build step resource unless you fully understand what you are doing.\n" +
+		fPln("You are not allowed to use this tool to create next build step resource unless fully understand what you are doing.\n" +
 			"Project author or other admins are advised to do this for adding SIF Specifications into this project.\n" +
 			"If you still want to do it by yourself, input following arguments orderly:\n" +
 			"  1. SIF Spec. file path. (file format is like /SIFSpec/out.txt)\n" +
@@ -95,11 +95,11 @@ func GenTomlAndStruct(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml
 
 	// appears in ./2JSON/ .base files
 	const (
-		SignTOML    = "# AUTO-GEN #"
-		SignGO4LIST = "// # AUTO-GEN: LIST # //"
-		SignGO4NUM  = "// # AUTO-GEN: NUMERIC # //"
-		SignGO4BOOL = "// # AUTO-GEN: BOOLEAN # //"
-		SignSIFVer  = "# SIF-VER #"
+		SignTOML    = "#AUTO-GEN#"
+		SignGO4LIST = "// #AUTO-GEN: LIST# //"
+		SignGO4NUM  = "// #AUTO-GEN: NUMERIC# //"
+		SignGO4BOOL = "// #AUTO-GEN: BOOLEAN# //"
+		SignSIFVer  = "#SIF-VER#"
 	)
 
 	// Check [base] file Replace Marks //

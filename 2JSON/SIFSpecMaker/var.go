@@ -1,10 +1,8 @@
-package cvt2json
+package main
 
 import (
 	"fmt"
 	"strings"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -28,9 +26,16 @@ var (
 		}
 		return a
 	}
-	sReplByPos = func(s string, start, end int, new string) string {
-		cmn.FailOnErrWhen(end < start, "end must be greater than start%v", fEf(""))
-		left, right := s[:start], s[end:]
-		return left + new + right
+)
+
+var (
+	lsObjects        = []string{}
+	mObjPaths        = map[string][]string{}
+	mObjMaxLenOfPath = map[string]int{}
+
+	clearBuf = func() {
+		lsObjects = []string{}
+		mObjPaths = map[string][]string{}
+		mObjMaxLenOfPath = map[string]int{}
 	}
 )
