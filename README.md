@@ -1,7 +1,7 @@
 # Project Title
 
-A Web-Service for converting SIF file to JSON file & vice versa.
-Meanwhile, a command line client is included for accessing the Web-Service.
+A Web-Service & a command line client for converting SIF to JSON & vice versa.
+Meanwhile,  is included for accessing the Web-Service.
 
 
 ## Getting Started

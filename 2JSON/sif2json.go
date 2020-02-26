@@ -91,7 +91,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	cmn.FailOnErr("That's embarrassing... %v", err)
 
 	// json = jsonBuf.String()
-	// ioutil.WriteFile("../data/why.json", []byte(json), 0666)
+	// return // --------------------------------------- test 3rd party lib --------------------------------------- //
 
 	// json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
 	json = jkv.FmtJSON(jsonBuf.String(), 2)

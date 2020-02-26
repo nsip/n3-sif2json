@@ -35,9 +35,7 @@ func TestSIF2JSON(t *testing.T) {
 
 	for _, file := range files {
 		obj := cmn.RmTailFromLast(file.Name(), ".")
-		fPln(obj)
-
-		// obj := "LearningStandardDocument" // "StudentAttendanceTimeList"
+		fPln("start:", obj)
 
 		// if cmn.XIn(obj, []string{"LearningStandardDocument", "StudentAttendanceTimeList"}) {
 		// 	continue
@@ -46,8 +44,9 @@ func TestSIF2JSON(t *testing.T) {
 		bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
 		cmn.FailOnErr("%v", err)
 		json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), "3.4.5X", false)
-		fPln(obj, sv, err)
-		ioutil.WriteFile(fSf("../data/json/%s.json", obj), []byte(json), 0666)
-
+		fPln("end:", obj, sv, err)
+		if json != "" {
+			ioutil.WriteFile(fSf("../data/json/%s.json", obj), []byte(json), 0666)
+		}
 	}
 }
