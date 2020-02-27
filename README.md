@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-1. Convert SIF Spec(txt) to toml files.
+1. Convert SIF Spec Description (txt) to toml files.
 
     goto /SpecProcess, run 'build.sh', create executable.
 
