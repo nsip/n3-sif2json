@@ -15,8 +15,9 @@ var (
 )
 
 // Init : initialize the global variables
-func Init() bool {
-	Cfg = cfg.NewCfg("./config.toml", "../config.toml", "../../config.toml", "./config/config.toml")
+func Init(configs ...string) bool {
+	configs = append(configs, "./config.toml", "../config.toml", "../../config.toml", "./config/config.toml")
+	Cfg = cfg.NewCfg(configs...)
 	return Cfg != nil
 }
 
