@@ -1,6 +1,4 @@
-# Project Title
-
-A Web-Service & Its Command Line Client for Converting SIF to JSON & Vice Versa.
+# A Web-Service & Its Command Line Client for Converting SIF to JSON & Vice Versa.
 
 ## Getting Started
 
@@ -44,7 +42,7 @@ A Web-Service & Its Command Line Client for Converting SIF to JSON & Vice Versa.
     run executable with 'config.toml' which has IP setting etc.
     (a copy of config.toml exists in /Server/config)
 
-### Prerequisites
+## Prerequisites
 
 SIF Specification Description File.
 Text readable format, and at least contains:
