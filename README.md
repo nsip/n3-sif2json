@@ -1,4 +1,4 @@
-# A Web-Service & Its Command Line Client for Converting SIF to JSON & Vice Versa.
+# Web-Service & CLI for Converting SIF to JSON & Vice Versa
 
 ## Getting Started
 
