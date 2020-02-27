@@ -2,8 +2,6 @@ package main
 
 import (
 	"testing"
-
-	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
 func TestMakeMap(t *testing.T) {
@@ -17,7 +15,7 @@ func TestMakeMap(t *testing.T) {
 
 func TestOthers(t *testing.T) {
 
-	l2j := cfg.NewCfg("./config/List2JSON.toml").(*cfg.List2JSON)
+	l2j := NewCfg("./List2JSON.toml").(*List2JSON)
 	InitCfgBuf(*l2j, l2j.Sep) // Init Global Maps
 	fPln(GetLoadedObjects())
 
@@ -32,5 +30,5 @@ func TestOthers(t *testing.T) {
 }
 
 func TestMakeJSON(t *testing.T) {
-	YieldJSONBySIF("../config/List2JSON.toml", "../config/Num2JSON.toml", "../config/Bool2JSON.toml")
+	YieldJSONBySIF("./List2JSON.toml", "./Num2JSON.toml", "./Bool2JSON.toml")
 }

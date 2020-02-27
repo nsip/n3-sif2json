@@ -9,7 +9,6 @@ import (
 
 	cmn "github.com/cdutwhu/json-util/common"
 	jkv "github.com/cdutwhu/json-util/jkv"
-	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 	"github.com/peterbourgon/mergemap"
 )
 
@@ -180,10 +179,10 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extCon
 // YieldJSONBySIFList :
 func YieldJSONBySIFList(cfgPath string) {
 
-	ICfg := cfg.NewCfg(cfgPath)
+	ICfg := NewCfg(cfgPath)
 	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
 
-	l2j := ICfg.(*cfg.List2JSON)
+	l2j := ICfg.(*List2JSON)
 	cmn.FailOnErrWhen(l2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 	cmn.FailOnErrWhen(l2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
@@ -207,10 +206,10 @@ func YieldJSONBySIFList(cfgPath string) {
 // YieldJSONBySIFNum :
 func YieldJSONBySIFNum(cfgPath string) {
 
-	ICfg := cfg.NewCfg(cfgPath)
+	ICfg := NewCfg(cfgPath)
 	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
 
-	n2j := ICfg.(*cfg.Num2JSON)
+	n2j := ICfg.(*Num2JSON)
 	cmn.FailOnErrWhen(n2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 	cmn.FailOnErrWhen(n2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
@@ -223,10 +222,10 @@ func YieldJSONBySIFNum(cfgPath string) {
 // YieldJSONBySIFBool :
 func YieldJSONBySIFBool(cfgPath string) {
 
-	ICfg := cfg.NewCfg(cfgPath)
+	ICfg := NewCfg(cfgPath)
 	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
 
-	b2j := ICfg.(*cfg.Bool2JSON)
+	b2j := ICfg.(*Bool2JSON)
 	cmn.FailOnErrWhen(b2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 	cmn.FailOnErrWhen(b2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
@@ -241,4 +240,22 @@ func YieldJSONBySIF(listCfg, numCfg, boolCfg string) {
 	YieldJSONBySIFList(listCfg)
 	YieldJSONBySIFNum(numCfg)
 	YieldJSONBySIFBool(boolCfg)
+}
+
+func main() {
+	if len(os.Args) < 4 {
+		fPln("You are not allowed to use this tool to create JSON config files unless fully understand what you are doing.\n" +
+			"Project author or other admins are advised to do this for creating SIF Specifications JSON config files.\n" +
+			"If you still want to continue, make sure <List2JSON.toml>, <Num2JSON.toml> and <Bool2JSON.toml> are existing.\n" +
+			"Then input following arguments orderly:\n" +
+			"  1. path of List2JSON.toml\n" +
+			"  2. path of Num2JSON.toml\n" +
+			"  3. path of Bool2JSON.toml")
+		return
+	}
+	listCfgToml := os.Args[1]
+	numCfgToml := os.Args[2]
+	boolCfgToml := os.Args[3]
+	YieldJSONBySIF(listCfgToml, numCfgToml, boolCfgToml)
+	fPln("JSON Config files are created")
 }

@@ -1,22 +1,14 @@
-package cfg
+package main
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"reflect"
-	"strings"
 
 	"github.com/burntsushi/toml"
 )
 
-var (
-	fPf        = fmt.Printf
-	fPln       = fmt.Println
-	sHasSuffix = strings.HasSuffix
-)
-
-// !!! toml file name must be identical to config struct definition name !!!
+// !!! toml file name must be identical to config struct name !!!
 
 // List2JSON :
 type List2JSON struct {
@@ -51,26 +43,12 @@ type Bool2JSON struct {
 	// #AUTO-GEN: BOOLEAN# //
 }
 
-// SIF2JSON :
-type SIF2JSON struct {
-	Path           string
-	ELog           string
-	JQDir          string
-	AttrPrefix     string
-	ContentPrefix  string
-	DefaultSIFVer  string
-	SIFCfgDir4LIST string
-	SIFCfgDir4NUM  string
-	SIFCfgDir4BOOL string
-}
-
 var (
-	// toml file name must be identical to config struct definition name
+	// toml file name must be identical to config struct name
 	lsCfg = []interface{}{
 		&List2JSON{},
 		&Num2JSON{},
-		&Bool2JSON{},
-		&SIF2JSON{},
+		&Bool2JSON{},		
 	}
 )
 

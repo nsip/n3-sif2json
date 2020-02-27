@@ -36,11 +36,11 @@ var (
 		}
 		return a
 	}
-	sReplByPos = func(s string, start, end int, new string) string {
-		cmn.FailOnErrWhen(end < start, "end must be greater than start%v", fEf(""))
-		left, right := s[:start], s[end:]
-		return left + new + right
-	}
+	// sReplByPos = func(s string, start, end int, new string) string {
+	// 	cmn.FailOnErrWhen(end < start, "end must be greater than start%v", fEf(""))
+	// 	left, right := s[:start], s[end:]
+	// 	return left + new + right
+	// }
 )
 
 var nGoTo = 0

@@ -67,14 +67,14 @@ func PrintGrp4Cfg(m map[string][]string, attr string) (toml, goStruct string) {
 
 func main() {
 	if len(os.Args) < 7 {
-		fPln("You are not allowed to use this tool to create next build step resource unless fully understand what you are doing.\n" +
-			"Project author or other admins are advised to do this for adding SIF Specifications into this project.\n" +
-			"If you still want to do it by yourself, input following arguments orderly:\n" +
-			"  1. SIF Spec. file path. (file format is like /SIFSpec/out.txt)\n" +
-			"  2. piece of go file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-go/config)\n" +
-			"  3. piece of toml file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-toml/List2JSON)\n" +
-			"  4. piece of toml file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-toml/Num2JSON)\n" +
-			"  5. piece of toml file, DO NOT edit file name or content. (a copy exists in /2JSON/config/base-toml/Bool2JSON)\n" +
+		fPln("You are not allowed to use this cli to create next build step resource unless fully understand what you are doing.\n" +
+			"Project author or other admins are advised to do this for adding SIF Specifications.\n" +
+			"If you still want to continue, input following arguments orderly:\n" +
+			"  1. SIF Spec. file path. (a copy is /SIFSpec/out.txt                                        DO NOT edit!)\n" +
+			"  2. path of config go-source base, (a copy exists in /2JSON/SpecCfgMaker/base-go/config     DO NOT edit!)\n" +
+			"  3. path of List2JSON toml base, (a copy exists in /2JSON/SpecCfgMaker/base-toml/List2JSON  DO NOT edit!)\n" +
+			"  4. path of Num2JSON toml base, (a copy exists in /2JSON/SpecCfgMaker/base-toml/Num2JSON    DO NOT edit!)\n" +
+			"  5. path of Bool2JSON toml base, (a copy exists in /2JSON/SpecCfgMaker/base-toml/Bool2JSON  DO NOT edit!)\n" +
 			"  6. auto-created go & toml configuration files output directory")
 		return
 	}

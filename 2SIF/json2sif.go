@@ -293,7 +293,8 @@ func JSON2SIFSpec(xml, SIFSpecPath string) string {
 		xmlLine := xml[start:end]
 		tag, _ := TagFromXMLLine(xmlLine)
 		out := fSf("%s<%s %s>", mkIndent(CountHeadSpace(xmlLine, 4)), tag, attrs2write)
-		xml = sReplByPos(xml, start, end, out)
+		// xml = sReplByPos(xml, start, end, out)
+		xml = cmn.ReplByPosGrp(xml, [][]int{{start, end}}, []string{out})
 	}
 	// End adjusting attributes order
 

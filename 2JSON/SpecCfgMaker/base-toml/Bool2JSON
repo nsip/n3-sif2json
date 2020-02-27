@@ -1,7 +1,7 @@
 Path = ""
 JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
 Sep = "/"
-CfgJSONOutDir = "../SIFSpec/#SIF-VER#/BOOLEAN/"
+CfgJSONOutDir = "../SpecCfg/#SIF-VER#/BOOLEAN/"
 CfgJSONValue = "(B)"
 
 #AUTO-GEN#
