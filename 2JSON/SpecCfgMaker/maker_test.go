@@ -20,7 +20,7 @@ func TestOthers(t *testing.T) {
 	fPln(GetLoadedObjects())
 
 	obj := "PurchaseOrder"
-	YieldJSON4OneCfg(obj, l2j.Sep, "./data", "[]", l2j.JQDir, true, false)
+	YieldJSON4OneCfg(obj, l2j.Sep, "./data", "[]", true, false)
 	fPln(GetAllFullPaths(obj, l2j.Sep))
 
 	if _, ok := mObjMaxLenOfPath[obj]; !ok {

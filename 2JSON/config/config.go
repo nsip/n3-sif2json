@@ -22,7 +22,6 @@ var (
 type SIF2JSON struct {
 	Path           string
 	ELog           string
-	JQDir          string
 	AttrPrefix     string
 	ContentPrefix  string
 	DefaultSIFVer  string

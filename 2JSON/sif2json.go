@@ -48,7 +48,7 @@ func eachFileContent(dir, ext string, indices ...int) (rt []string) {
 }
 
 // enforceConfig : LIST config must be from low Level to high level
-func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
+func enforceConfig(json string, lsJSONCfg ...string) string {
 
 	rLB := regexp.MustCompile(`\[[ \t\r\n]*\[`)
 	rRB := regexp.MustCompile(`\][ \t\r\n]*\]`)
@@ -61,7 +61,6 @@ func enforceConfig(json, jqDir string, lsJSONCfg ...string) string {
 		json, _ = jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
 		// make sure there is no double "[" OR "]"
 		bytes := rRB.ReplaceAll(rLB.ReplaceAll([]byte(json), []byte("[")), []byte("]"))
-		// json = pp.FmtJSONStr(string(bytes), jqDir)
 		json = jkv.FmtJSON(string(bytes), 2)
 	}
 	return json
@@ -93,7 +92,6 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	// json = jsonBuf.String()
 	// return // --------------------------------------- test 3rd party lib --------------------------------------- //
 
-	// json = pp.FmtJSONStr(jsonBuf.String(), s2j.JQDir)
 	json = jkv.FmtJSON(jsonBuf.String(), 2)
 
 	// Deal with 'LF', 'TB', P1
@@ -162,15 +160,15 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 
 	// LIST
 	rules := eachFileContent(s2j.SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
-	json = enforceConfig(json, s2j.JQDir, rules...)
+	json = enforceConfig(json, rules...)
 
 	// NUMERIC
 	rules = eachFileContent(s2j.SIFCfgDir4NUM+obj, "json", cmn.Iter2Slc(2)...)
-	json = enforceConfig(json, s2j.JQDir, rules...)
+	json = enforceConfig(json, rules...)
 
 	// BOOLEAN
 	rules = eachFileContent(s2j.SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
-	json = enforceConfig(json, s2j.JQDir, rules...)
+	json = enforceConfig(json, rules...)
 
 	// Deal with 'LF', 'TB'  P2
 	json = sReplaceAll(json, "#LF#", "\\n")

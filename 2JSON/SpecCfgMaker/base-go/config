@@ -13,7 +13,6 @@ import (
 // List2JSON :
 type List2JSON struct {
 	Path          string
-	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
 	CfgJSONValue  string
@@ -24,7 +23,6 @@ type List2JSON struct {
 // Num2JSON :
 type Num2JSON struct {
 	Path          string
-	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
 	CfgJSONValue  string
@@ -35,7 +33,6 @@ type Num2JSON struct {
 // Bool2JSON :
 type Bool2JSON struct {
 	Path          string
-	JQDir         string
 	Sep           string
 	CfgJSONOutDir string
 	CfgJSONValue  string

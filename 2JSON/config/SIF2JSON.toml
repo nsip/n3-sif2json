@@ -1,6 +1,5 @@
-Path = "/home/qing/go/src/github.com/nsip/n3-sif2json/2JSON/config/SIF2JSON.toml"
+Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/2JSON/config/SIF2JSON.toml"
 ELog = "./error.log"
-JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
 AttrPrefix = "-"
 ContentPrefix = "#"
 DefaultSIFVer = "0.0.1"

@@ -1,5 +1,4 @@
 Path = ""
-JQDir = "/home/qing/go/src/github.com/cdutwhu/json-util/preprocess/utils"
 Sep = "/"
 CfgJSONOutDir = "../SpecCfg/#SIF-VER#/NUMERIC/"
 CfgJSONValue = "(N)"

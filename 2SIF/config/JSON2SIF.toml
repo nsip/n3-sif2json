@@ -1,4 +1,4 @@
-Path = "/home/qing/go/src/github.com/nsip/n3-sif2json/2SIF/config/JSON2SIF.toml"
+Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/2SIF/config/JSON2SIF.toml"
 ELog = "./error.log"
 DefaultSIFVer = "0.0.1"
 SIFSpecDir = "../SIFSpec/"

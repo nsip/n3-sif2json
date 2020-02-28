@@ -131,7 +131,7 @@ func MakeJSON(m map[string]interface{}) string {
 // ----------------------------------------------- //
 
 // YieldJSON4OneCfg :
-func YieldJSON4OneCfg(obj, sep, outDir, jsonVal, jqDir string, levelized, extContent bool) {
+func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bool) {
 	if outDir[len(outDir)-1] != '/' {
 		outDir += "/"
 	}
@@ -184,21 +184,20 @@ func YieldJSONBySIFList(cfgPath string) {
 
 	l2j := ICfg.(*List2JSON)
 	cmn.FailOnErrWhen(l2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnErrWhen(l2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
 	InitCfgBuf(*l2j, l2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue, l2j.JQDir, true, false)
+		YieldJSON4OneCfg(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue, true, false)
 	}
 
 	// lsObj := GetLoadedObjects()
 	// wg := sync.WaitGroup{}
 	// wg.Add(len(lsObj))
 	// for _, obj := range lsObj {
-	// 	go func(obj, sep, outDir, l2j.CfgJSONValue, jqDir string) {
+	// 	go func(obj, sep, outDir, l2j.CfgJSONValue string) {
 	// 		defer wg.Done()
 	// 		YieldJSON4OneCfg(obj, sep, outDir, l2j.CfgJSONValue, jqDir)
-	// 	}(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue, l2j.JQDir)
+	// 	}(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue)
 	// }
 	// wg.Wait()
 }
@@ -211,11 +210,10 @@ func YieldJSONBySIFNum(cfgPath string) {
 
 	n2j := ICfg.(*Num2JSON)
 	cmn.FailOnErrWhen(n2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnErrWhen(n2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
 	InitCfgBuf(*n2j, n2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, n2j.Sep, n2j.CfgJSONOutDir, n2j.CfgJSONValue, n2j.JQDir, false, true)
+		YieldJSON4OneCfg(obj, n2j.Sep, n2j.CfgJSONOutDir, n2j.CfgJSONValue, false, true)
 	}
 }
 
@@ -227,11 +225,10 @@ func YieldJSONBySIFBool(cfgPath string) {
 
 	b2j := ICfg.(*Bool2JSON)
 	cmn.FailOnErrWhen(b2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
-	cmn.FailOnErrWhen(b2j.JQDir == "", "%v", fEf("Config-[JQDir] loaded error"))
 
 	InitCfgBuf(*b2j, b2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, b2j.Sep, b2j.CfgJSONOutDir, b2j.CfgJSONValue, b2j.JQDir, false, true)
+		YieldJSON4OneCfg(obj, b2j.Sep, b2j.CfgJSONOutDir, b2j.CfgJSONValue, false, true)
 	}
 }
 
