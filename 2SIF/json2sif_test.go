@@ -11,7 +11,9 @@ func TestJSON2SIF(t *testing.T) {
 	cmn.SetLog("./error.log")
 	defer cmn.ResetLog()
 
-	dir := `../data/json/`
+	ver := "3.4.6"
+
+	dir := `../data/json/` + ver
 	files, err := ioutil.ReadDir(dir)
 	cmn.FailOnErr("%v", err)
 	cmn.FailOnErrWhen(len(files) == 0, "%v", fEf("no json files prepared"))
@@ -22,14 +24,15 @@ func TestJSON2SIF(t *testing.T) {
 		obj := cmn.RmTailFromLast(file.Name(), ".")
 		// fPln("------------", obj)
 
-		bytes, err := ioutil.ReadFile(fSf("../data/json/%s.json", obj))
+		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
 		cmn.FailOnErr("%v", err)
 
-		if sif, sv, err := JSON2SIF("./config/JSON2SIF.toml", string(bytes), "3.4.5X"); err == nil {
-			fPln(sv + " is used")
-			ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(sif), 0666)
-		} else {
-			fPln(err.Error())
+		sif, sv, err := JSON2SIF("./config/JSON2SIF.toml", string(bytes), ver)
+		cmn.FailOnErr("%v", err)
+
+		fPln(sv + " is used")
+		if sif != "" {
+			cmn.MustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif), 0666)
 		}
 
 		// {

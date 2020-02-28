@@ -30,4 +30,4 @@ cd ./2SIF
 cd -
 
 rm -rf ./2JSON/SpecCfg/*
-rm -rf ./data/*.json ./data/*_out.xml
+rm -rf ./data/json/ ./data/sif/

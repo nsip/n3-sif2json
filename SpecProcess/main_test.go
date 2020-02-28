@@ -7,8 +7,8 @@ func TestMain(t *testing.T) {
 }
 
 func TestGenTomlAndStruct(t *testing.T) {
-	GenTomlAndStruct(
-		"../SIFSpec/out.txt",
+	GenTomlAndGoSrc(
+		"../SIFSpec/3.4.6.txt",
 		"../2JSON/SpecCfgMaker/base-go/config",
 		"../2JSON/SpecCfgMaker/base-toml/List2JSON",
 		"../2JSON/SpecCfgMaker/base-toml/Num2JSON",

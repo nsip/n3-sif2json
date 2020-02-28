@@ -84,14 +84,14 @@ func main() {
 	numTomlBaseFile := os.Args[4]
 	boolTomlBaseFile := os.Args[5]
 	cfgOutputDir := os.Args[6]
-	GenTomlAndStruct(SIFSpecName, goBaseFile, listTomlBaseFile, numTomlBaseFile, boolTomlBaseFile, cfgOutputDir)
+	GenTomlAndGoSrc(SIFSpecName, goBaseFile, listTomlBaseFile, numTomlBaseFile, boolTomlBaseFile, cfgOutputDir)
 	abs, err := filepath.Abs(cfgOutputDir)
 	cmn.FailOnErr("%v", err)
 	fPf("Dumped [config.go] [Bool2JSON.toml] [List2JSON.toml] [Num2JSON.toml] into %s\n", abs)
 }
 
-// GenTomlAndStruct :
-func GenTomlAndStruct(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4BOOL, outDir string) {
+// GenTomlAndGoSrc :
+func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4BOOL, outDir string) {
 
 	// appears in ./2JSON/ .base files
 	const (
