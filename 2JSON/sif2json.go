@@ -11,20 +11,6 @@ import (
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
-// func replaceDigCont(json, jqDir string) string {
-// 	json = pp.FmtJSONStr(json, jqDir)
-// 	m4repl := contValRepl(reContDigVal.FindAllString(json, -1))
-// 	for oldstr, newstr := range m4repl {
-// 		json = sReplaceAll(json, oldstr, newstr)
-// 	}
-// 	return json
-
-// 	// for _, pair := range reContDigVal.FindAllStringIndex(jsonfmt, -1) {
-// 	// 	str := jsonfmt[pair[0]:pair[1]]
-// 	// 	fPln(contDigVal(str))
-// 	// }
-// }
-
 func eachFileContent(dir, ext string, indices ...int) (rt []string) {
 	if dir[len(dir)-1] != '/' {
 		dir += "/"
@@ -54,9 +40,8 @@ func enforceConfig(json string, lsJSONCfg ...string) string {
 	rRB := regexp.MustCompile(`\][ \t\r\n]*\]`)
 
 	for _, jsoncfg := range lsJSONCfg {
-		// make sure [jsoncfg] is formatted
-		// otherwise, do Fmt firstly
-		// jsoncfg = pp.FmtJSONStr(jsoncfg, jqDir)
+		// make sure [jsoncfg] is formatted; Otherwise, do Fmt firstly
+		// jsoncfg = jkv.FmtJSON(jsoncfg, 2)
 
 		json, _ = jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
 		// make sure there is no double "[" OR "]"
