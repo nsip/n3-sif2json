@@ -32,7 +32,7 @@ func TestJSON2SIF(t *testing.T) {
 
 		fPln(sv + " is used")
 		if sif != "" {
-			cmn.MustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif), 0666)
+			cmn.MustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
 		}
 
 		// {

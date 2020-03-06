@@ -48,7 +48,7 @@ func TestSIF2JSON(t *testing.T) {
 		fPln("end:", obj, sv, err)
 		cmn.FailOnErr("%v", err)
 		if json != "" {
-			cmn.MustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json), 0666)
+			cmn.MustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
 		}
 	}
 }
