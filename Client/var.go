@@ -17,6 +17,8 @@ var (
 
 	sJoin      = strings.Join
 	sHasSuffix = strings.HasSuffix
+	sTrimRight = strings.TrimRight
+	sReplace   = strings.Replace
 )
 
 var (

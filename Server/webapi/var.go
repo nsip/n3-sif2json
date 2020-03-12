@@ -11,6 +11,7 @@ import (
 )
 
 var (
+	fPln        = fmt.Println
 	fSf         = fmt.Sprintf
 	sReplaceAll = strings.ReplaceAll
 )

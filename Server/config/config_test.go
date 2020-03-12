@@ -10,4 +10,5 @@ func TestLoad(t *testing.T) {
 	fPln(cfg.Cfg2SIF)
 	fPln(cfg.WebService)
 	fPln(cfg.Route)
+	fPln(cfg.NATS)
 }

@@ -23,6 +23,11 @@ type Config struct {
 		SIF2JSON string
 		JSON2SIF string
 	}
+	NATS struct {
+		URL     string
+		Subject string
+		Timeout int
+	}
 }
 
 // NewCfg :

@@ -3,10 +3,12 @@ package webapi
 import (
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	cmn "github.com/cdutwhu/json-util/common"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/nats-io/nats.go"
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
 	cvt2sif "github.com/nsip/n3-sif2json/2SIF"
 	glb "github.com/nsip/n3-sif2json/Server/global"
@@ -37,7 +39,7 @@ func HostHTTPAsync() {
 	e.GET(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
-		glb.WDCheck()
+
 		return c.String(http.StatusOK,
 			fSf("POST %-40s-> %s\n"+
 				"POST %-40s-> %s\n",
@@ -49,43 +51,83 @@ func HostHTTPAsync() {
 	e.POST(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
-		glb.WDCheck()
-		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
-			if !cmn.IsXML(string(bytes)) {
-				goto ERR
-			}
-			sv := ""
-			if ok, ver := url1Value(c.QueryParams(), 0, "sv"); ok {
-				sv = ver
-			}
-			json, svUsed, err := cvt2json.SIF2JSON(glb.Cfg.Cfg2JSON, string(bytes), sv, false)
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, result{
-					Data:  nil,
-					Info:  "",
-					Error: err.Error(),
-				})
-			}
-			return c.JSON(http.StatusOK, result{
-				Data:  &json,
-				Info:  svUsed,
-				Error: "",
+
+		bytes, err := ioutil.ReadAll(c.Request().Body)
+		if err != nil || !cmn.IsXML(string(bytes)) {
+			return c.JSON(http.StatusBadRequest, result{
+				Data:  nil,
+				Info:  "",
+				Error: err.Error() + " OR Is Request BODY Valid XML?",
 			})
-			// return c.String(http.StatusOK, json) // json string is already JSON String, so return String
 		}
-	ERR:
-		return c.JSON(http.StatusBadRequest, result{
-			Data:  nil,
-			Info:  "",
-			Error: "SIF Data must be provided via Request BODY as Valid XML",
+
+		var (
+			info      string
+			errIntSvr error
+		)
+
+		pvalues := c.QueryParams()
+		sv, pub2nats := "", false
+		if ok, v := url1Value(pvalues, 0, "sv"); ok {
+			sv = v
+		}
+		if ok, n := url1Value(pvalues, 0, "nats"); ok && n != "" {
+			pub2nats = true
+		}
+
+		json, svUsed, err := cvt2json.SIF2JSON(glb.Cfg.Cfg2JSON, string(bytes), sv, false)
+		info = "[cvt2json.SIF2JSON]"
+		if err != nil {
+			errIntSvr = err
+			goto ERR_IS
+		}
+
+		// send a copy to NATS
+		if pub2nats {
+			url := glb.Cfg.NATS.URL
+			subj := glb.Cfg.NATS.Subject
+			timeout := time.Duration(glb.Cfg.NATS.Timeout)
+
+			info += fSf(" | To NATS@Subject: [%s@%s]", url, subj)
+			nc, err := nats.Connect(url)
+			if err != nil {
+				errIntSvr = err
+				goto ERR_IS
+			}
+
+			msg, err := nc.Request(subj, []byte(json), timeout*time.Millisecond)
+			if msg != nil {
+				info += fSf(" | NATS responded: [%s]", string(msg.Data))
+			}
+			if err != nil {
+				errIntSvr = err
+				goto ERR_IS
+			}
+		}
+
+	ERR_IS:
+		if errIntSvr != nil {
+			return c.JSON(http.StatusInternalServerError, result{
+				Data:  nil,
+				Info:  info,
+				Error: errIntSvr.Error(),
+			})
+		}
+
+		info += fSf(" | SIF Ver: [%s]", svUsed)
+		return c.JSON(http.StatusOK, result{
+			Data:  &json,
+			Info:  info,
+			Error: "",
 		})
+		// return c.String(http.StatusOK, json) // json string is already JSON String, so return String
 	})
 
 	path = route.JSON2SIF
 	e.POST(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
-		glb.WDCheck()
+
 		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
 			if !cmn.IsJSON(string(bytes)) {
 				goto ERR

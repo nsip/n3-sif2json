@@ -1,9 +1,9 @@
-Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Client/config/config.toml"
+Path = "/home/qing/go/src/github.com/nsip/n3-sif2json/Client/config/config.toml"
 ELog = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Client/error.log"
 
 [Server]
   Protocol = "http"
-  IP = "192.168.31.183"
+  IP = "192.168.92.156"
   Port = 1324
 
 [Access]

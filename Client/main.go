@@ -22,7 +22,6 @@ func main() {
 	}
 	cmn.FailOnErrWhen(!initMapFnURL(glb.Cfg.Server.Protocol, glb.Cfg.Server.IP, glb.Cfg.Server.Port), "%v", fEf("initMapFnURL failed"))
 
-	timeout := time.After(time.Duration(glb.Cfg.Access.Timeout) * time.Second)
 	done := make(chan bool)
 
 	go func() {
@@ -35,12 +34,20 @@ func main() {
 		cmd := flag.NewFlagSet(os.Args[1], flag.ExitOnError)
 		iPtr := cmd.String("i", "", "Path of original SIF/JSON file to be uploaded")
 		vPtr := cmd.String("v", "", "SIF Version (optional), format like (1.2.3)")
-		fPtr := cmd.Bool("f", false, "bool flag: Print INFO & ERROR as well") //     true flag: print INFO & ERROR from Server
+		fPtr := cmd.Bool("f", false, "full dump flag: Print INFO & ERROR")     // true: print INFO & ERROR from Server
+		nPtr := cmd.Bool("n", false, "indicate server to send a copy to NATS") // true: indicate server
 		cmd.Parse(os.Args[2:])
 
+		psV, psN := "", ""
 		if *vPtr != "" {
-			url += fSf("?sv=%s", *vPtr)
+			psV = fSf("sv=%s", *vPtr)
 		}
+		if *nPtr {
+			psN = fSf("nats=true")
+		}
+		url = fSf("%s?%s&%s", url, psV, psN)
+		url = sReplace(url, "?&", "?", 1)
+		url = sTrimRight(url, "?&")
 
 		if *fPtr {
 			fPln("accessing ... " + url)
@@ -53,14 +60,14 @@ func main() {
 
 		case "SIF2JSON", "JSON2SIF":
 			cmn.FailOnErrWhen(*iPtr == "", "%v", fEf("[-i] must be provided"))
-
 			data, err := ioutil.ReadFile(*iPtr)
 			cmn.FailOnErr("%v: %v", err, "Is [-i] provided correctly?")
+			str := string(data)
 
 			if os.Args[1] == "SIF2JSON" {
-				cmn.FailOnErrWhen(!cmn.IsXML(string(data)), "%v Abort", fEf("input file is not valid XML,"))
+				cmn.FailOnErrWhen(!cmn.IsXML(str), "%v Abort", fEf("input file is invalid XML,"))
 			} else {
-				cmn.FailOnErrWhen(!cmn.IsJSON(string(data)), "%v About", fEf("input file is not valid JSON,"))
+				cmn.FailOnErrWhen(!cmn.IsJSON(str), "%v About", fEf("input file is invalid JSON,"))
 			}
 			resp, err = http.Post(url, "application/json", bytes.NewBuffer(data))
 
@@ -83,7 +90,6 @@ func main() {
 			} else {
 				m := make(map[string]interface{})
 				cmn.FailOnErr("json.Unmarshal ... %v", json.Unmarshal(data, &m))
-				// cmn.FailOnErrWhen(m["error"] != nil && m["error"] != "", "%v", fEf("ERROR: %v\n", m["error"]))
 
 				if *fPtr {
 					if m["info"] != nil && m["info"] != "" {
@@ -105,7 +111,7 @@ func main() {
 	}()
 
 	select {
-	case <-timeout:
+	case <-time.After(time.Duration(glb.Cfg.Access.Timeout) * time.Second):
 		cmn.FailOnErr("%v", fEf("Didn't Get Response in time. %d(s)", glb.Cfg.Access.Timeout))
 	case <-done:
 	}
