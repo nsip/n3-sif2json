@@ -4,6 +4,8 @@
 
 1. Convert SIF Spec Description (txt) to toml files.
 
+    ( !!! IGNORE THIS STEP unless 3 folders, [BOOLEAN, LIST, NUMERIC], under /2JSON/SpecCfg/(sif-version)/ DO NOT exist !!! )
+
     goto /SpecProcess, run 'build.sh', create executable.
 
     run executable with 'SIF Specification Description File',
@@ -21,6 +23,8 @@
     run `./SpecProcess ../SIFSpec/3.4.6.txt ../2JSON/SpecCfgMaker/base-go/config ../2JSON/SpecCfgMaker/base-toml/List2JSON ../2JSON/SpecCfgMaker/base-toml/Num2JSON ../2JSON/SpecCfgMaker/base-toml/Bool2JSON ../2JSON/SpecCfgMaker/`
 
 2. Create Configure(json) from toml files.
+
+    ( !!! IGNORE THIS STEP unless 3 folders, [BOOLEAN, LIST, NUMERIC], under /2JSON/SpecCfg/(sif-version)/ DO NOT exist !!! )
 
     goto /2JSON/SpecCfgMaker, run 'build.sh'
                               with 'config.go' from step 1, create executable.
