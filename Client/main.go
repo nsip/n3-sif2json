@@ -79,7 +79,7 @@ func main() {
 			}
 		}
 
-		cmn.FailOnErrWhen(resp == nil, "HTTP Access Fatal: %v OR %v", err, fEf("Couldn't get Response"))
+		cmn.FailOnErrWhen(resp == nil, "HTTP Access Fatal: %v OR %v", err, fEf("Couldn't get Response."), url)
 		defer resp.Body.Close()
 
 		data, err := ioutil.ReadAll(resp.Body)
