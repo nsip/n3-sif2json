@@ -1,5 +1,5 @@
-Path = "config/config.toml"
-ELog = "error.log"
+Path = "/home/nias/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
+ELog = "/home/nias/go/src/github.com/nsip/n3-sif2json/Server/error.log"
 Cfg2JSON = "../2JSON/config/SIF2JSON.toml"
 Cfg2SIF = "../2SIF/config/JSON2SIF.toml"
 

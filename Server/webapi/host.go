@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+	"fmt"
 
 	cmn "github.com/cdutwhu/json-util/common"
 	"github.com/labstack/echo"
@@ -49,11 +50,14 @@ func HostHTTPAsync() {
 
 	path = route.SIF2JSON
 	e.POST(path, func(c echo.Context) error {
+		fmt.Println("001. Start");
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
 
 		bytes, err := ioutil.ReadAll(c.Request().Body)
+		fmt.Println("002. isXml");
 		if err != nil || !cmn.IsXML(string(bytes)) {
+			fmt.Println("002.1. error", err);
 			return c.JSON(http.StatusBadRequest, result{
 				Data:  nil,
 				Info:  "",
@@ -61,6 +65,7 @@ func HostHTTPAsync() {
 			})
 		}
 
+		fmt.Println("003. Past xml");
 		var (
 			info      string
 			errIntSvr error
@@ -75,13 +80,16 @@ func HostHTTPAsync() {
 			pub2nats = true
 		}
 
+		fmt.Println("004. ");
 		json, svUsed, err := cvt2json.SIF2JSON(glb.Cfg.Cfg2JSON, string(bytes), sv, false)
 		info = "[cvt2json.SIF2JSON]"
 		if err != nil {
+			fmt.Println("004.1. ", err);
 			errIntSvr = err
 			goto ERR_IS
 		}
 
+		fmt.Println("005. ");
 		// send a copy to NATS
 		if pub2nats {
 			url := glb.Cfg.NATS.URL
@@ -106,7 +114,9 @@ func HostHTTPAsync() {
 		}
 
 	ERR_IS:
+		fmt.Println("101. ");
 		if errIntSvr != nil {
+			fmt.Println("101.1 ");
 			return c.JSON(http.StatusInternalServerError, result{
 				Data:  nil,
 				Info:  info,
@@ -114,6 +124,7 @@ func HostHTTPAsync() {
 			})
 		}
 
+		fmt.Println("102 ");
 		info += fSf(" | SIF Ver: [%s]", svUsed)
 		return c.JSON(http.StatusOK, result{
 			Data:  &json,
