@@ -61,9 +61,9 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
 	s2j := ICfg.(*cfg.SIF2JSON)
 
-	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4LIST, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4NUM, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4BOOL, SignSIFVer) == 0, "SignSIFVer is missing @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4LIST, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4NUM, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4BOOL, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
 
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
@@ -75,49 +75,24 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	cmn.FailOnErr("That's embarrassing... %v", err)
 
 	// json = jsonBuf.String()
-	// return // --------------------------------------- test 3rd party lib --------------------------------------- //
+	// return // --------------------------- test 3rd party lib --------------------------- //
 
 	json = jkv.FmtJSON(jsonBuf.String(), 2)
 
-	// Deal with 'LF', 'TB', P1
-	posGrp, values := [][]int{}, []string{}
-	for _, pos := range regexp.MustCompile(`": "[^"]*[\n]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, -1) {
-		start, end := pos[0]+4, pos[1]-2
-		posGrp = append(posGrp, []int{start, end})
-		values = append(values, sReplaceAll(json[start:end], "\n", "#LF#"))
+	// Deal with 'LF', 'TB', Part1 --------------------------------------------------------------------------
+	mRepl1 := map[string]string{"\n": "#LF#", "\t": "#TB#"}
+	for k, v := range mRepl1 {
+		posGrp, values := [][]int{}, []string{}
+		re := regexp.MustCompile(fSf(`": "[^"]*[%s]+[^"]*"[,\n]{1}`, k))
+		for _, pos := range re.FindAllStringIndex(json, -1) {
+			start, end := pos[0]+4, pos[1]-2
+			posGrp = append(posGrp, []int{start, end})
+			values = append(values, sReplaceAll(json[start:end], k, v))
+		}
+		json = cmn.ReplByPosGrp(json, posGrp, values)
 	}
-	json = cmn.ReplByPosGrp(json, posGrp, values)
 
-	posGrp, values = [][]int{}, []string{}
-	for _, pos := range regexp.MustCompile(`": "[^"]*[\t]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, -1) {
-		start, end := pos[0]+4, pos[1]-2
-		posGrp = append(posGrp, []int{start, end})
-		values = append(values, sReplaceAll(json[start:end], "\t", "#TB#"))
-	}
-	json = cmn.ReplByPosGrp(json, posGrp, values)
-
-	// AGAIN1:
-	// 	for _, pos := range regexp.MustCompile(`": "[^"]*[\n]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, 1) {
-	// 		start, end := pos[0]+4, pos[1]-2
-	// 		value := json[start:end]
-	// 		value = sReplaceAll(value, "\n", "#LF#")
-	// 		json = sReplByPos(json, start, end, value)
-	// 		goto AGAIN1
-	// 	}
-
-	// AGAIN2:
-	// 	for _, pos := range regexp.MustCompile(`": "[^"]*[\t]+[^"]*"[,\n]{1}`).FindAllStringIndex(json, 1) {
-	// 		start, end := pos[0]+4, pos[1]-2
-	// 		value := json[start:end]
-	// 		value = sReplaceAll(value, "\t", "#TB#")
-	// 		json = sReplByPos(json, start, end, value)
-	// 		goto AGAIN2
-	// 	}
-	// End Dealing with 'LF', 'TB', P1
-
-	// return // --------------------------------------- test 3rd party lib --------------------------------------- //
-
-	// Attributes Modification
+	// Attributes Modification according to Config ----------------------------------------------------------
 	obj := cmn.XMLRoot(xml)          // infer object from xml root by default, use this object to search config json
 	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
 		obj = subobj[0]
@@ -141,7 +116,6 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	} else {
 		return "", "", fEf("No %sSIF Spec @Version %s", dft, s2j.DefaultSIFVer)
 	}
-	// End Checking
 
 	// LIST
 	rules := eachFileContent(s2j.SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
@@ -155,10 +129,21 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	rules = eachFileContent(s2j.SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
-	// Deal with 'LF', 'TB'  P2
-	json = sReplaceAll(json, "#LF#", "\\n")
-	json = sReplaceAll(json, "#TB#", "\\t")
-	// End Dealing with 'LF', 'TB', P2
+	// Deal with 'LF', 'TB'  Part2 --------------------------------------------------------------------------
+	mRepl2 := map[string]string{"#LF#": "\\n", "#TB#": "\\t"}
+	for k, v := range mRepl2 {
+		json = sReplaceAll(json, k, v)
+	}
+
+	// XML empty element(empty text) with Attributes --------------------------------------------------------
+	emptyPosPair := [][]int{}
+	re := regexp.MustCompile(`": \{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+}`)
+	for _, pos := range re.FindAllStringIndex(json, -1) {
+		emptyPosPair = append(emptyPosPair, []int{pos[0] + 6, pos[0] + 6})
+	}
+	const mark = "value" // "#content"
+	json = cmn.ReplByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
+	json = jkv.FmtJSON(json, 2)
 
 	return
 }

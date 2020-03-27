@@ -1,10 +1,10 @@
-Path = "/home/nias/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
-ELog = "/home/nias/go/src/github.com/nsip/n3-sif2json/Server/error.log"
+Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
+ELog = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/error.log"
 Cfg2JSON = "../2JSON/config/SIF2JSON.toml"
 Cfg2SIF = "../2SIF/config/JSON2SIF.toml"
 
 [WebService]
-  Port = 8091
+  Port = 1324
   Version = "0.1.0"
 
 [Route]

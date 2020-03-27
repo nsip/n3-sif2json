@@ -28,6 +28,18 @@ func TestSIF2JSON(t *testing.T) {
 	cmn.SetLog("./error.log")
 	defer cmn.ResetLog()
 
+	// bytes, err := ioutil.ReadFile("/home/qmiao/Desktop/attribute_test.xml")
+	// cmn.FailOnErr("%v", err)
+	// obj := "Activity"
+	// sv := "3.4.6"
+	// json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), sv, false)
+	// // fPln("end:", obj, sv, err)
+	// cmn.FailOnErr("%v", err)
+	// if json != "" {
+	// 	cmn.MustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
+	// }
+	// return
+
 	dir := `../data/examples/`
 	files, err := ioutil.ReadDir(dir)
 	cmn.FailOnErr("%v", err)

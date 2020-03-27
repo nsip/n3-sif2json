@@ -27,4 +27,4 @@ OUTPATH=./build/Linux64/
 GOOS="linux" GOARCH="$GOARCH" go build -ldflags="$LDFLAGS" -o $OUT
 cp $OUT $OUTPATH
 
-rm $OUT
+# rm $OUT

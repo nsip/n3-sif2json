@@ -12,7 +12,6 @@ func TestJSON2SIF(t *testing.T) {
 	defer cmn.ResetLog()
 
 	ver := "3.4.6"
-
 	dir := `../data/json/` + ver
 	files, err := ioutil.ReadDir(dir)
 	cmn.FailOnErr("%v", err)
@@ -22,7 +21,11 @@ func TestJSON2SIF(t *testing.T) {
 		ResetAll()
 
 		obj := cmn.RmTailFromLast(file.Name(), ".")
-		// fPln("------------", obj)
+		fPln("------------", obj)
+
+		// if obj != "Activity" {
+		// 	continue
+		// }
 
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
 		cmn.FailOnErr("%v", err)
