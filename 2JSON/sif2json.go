@@ -137,10 +137,24 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 
 	// XML empty element(empty text) with Attributes --------------------------------------------------------
 	emptyPosPair := [][]int{}
-	re := regexp.MustCompile(`": \{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+}`)
-	for _, pos := range re.FindAllStringIndex(json, -1) {
+
+	re1 := regexp.MustCompile(`": \{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+\}`) // one empty object
+	for _, pos := range re1.FindAllStringIndex(json, -1) {
 		emptyPosPair = append(emptyPosPair, []int{pos[0] + 6, pos[0] + 6})
 	}
+
+	re2 := regexp.MustCompile(`[\[,]\n[ ]+\{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+\}`) // empty object in array
+	for _, pos := range re2.FindAllStringIndex(json, -1) {
+		remain, offset := json[pos[0]:], 0
+		for i, c := range remain {
+			if c == '{' {
+				offset = i + 1
+				break
+			}
+		}
+		emptyPosPair = append(emptyPosPair, []int{pos[0] + offset, pos[0] + offset})
+	}
+
 	const mark = "value" // "#content"
 	json = cmn.ReplByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
 	json = jkv.FmtJSON(json, 2)

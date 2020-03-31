@@ -23,7 +23,7 @@ func TestJSON2SIF(t *testing.T) {
 		obj := cmn.RmTailFromLast(file.Name(), ".")
 		fPln("------------", obj)
 
-		// if obj != "Activity" {
+		// if obj == "Activity2" {
 		// 	continue
 		// }
 

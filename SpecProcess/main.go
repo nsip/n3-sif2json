@@ -160,7 +160,8 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 		case sHasPrefix(line, OBJECT):
 			objGrp = append(objGrp, sTrim(line[len(OBJECT):], " \t\r\n"))
 		case sHasPrefix(line, LIST):
-			listPathGrp = append(listPathGrp, cmn.RmTailFromLast(line[len(LIST):], "/"))
+			// listPathGrp = append(listPathGrp, cmn.RmTailFromLast(line[len(LIST):], "/")) // exclude last one
+			listPathGrp = append(listPathGrp, sTrim(line[len(LIST):], " \t\r\n"))
 		case sHasPrefix(line, NUMERIC):
 			numPathGrp = append(numPathGrp, sTrim(line[len(NUMERIC):], " \t\r\n"))
 		case sHasPrefix(line, BOOLEAN):
