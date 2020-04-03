@@ -411,13 +411,17 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("JSON2SIF config couldn't be Loaded"))
 	j2s := ICfg.(*cfg.JSON2SIF)
 
+	SIFSpecDir := j2s.SIFSpecDir
+	DefaultSIFVer := j2s.DefaultSIFVer
+	ReplCfgPath := j2s.ReplCfgPath
+
 	// looking for suitable SIFSpec txt
 	SIFSpec := ""
-	files, err := ioutil.ReadDir(j2s.SIFSpecDir)
+	files, err := ioutil.ReadDir(SIFSpecDir)
 	cmn.FailOnErr("%v", err)
 	if SIFVer != "" {
 		for _, file := range files {
-			fullname := j2s.SIFSpecDir + file.Name()
+			fullname := SIFSpecDir + file.Name()
 			f, err := os.Open(fullname)
 			cmn.FailOnErr("%v", err)
 			line := ""
@@ -433,12 +437,12 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 
 	} else { // SIFVer == "", user Default-SIFVer from Config
 		for _, file := range files {
-			fullname := j2s.SIFSpecDir + file.Name()
+			fullname := SIFSpecDir + file.Name()
 			f, err := os.Open(fullname)
 			cmn.FailOnErr("%v", err)
 			line := ""
 			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
-				if _, err = fmt.Fscan(f, &line); err == nil && line == j2s.DefaultSIFVer {
+				if _, err = fmt.Fscan(f, &line); err == nil && line == DefaultSIFVer {
 					SIFSpec = fullname
 					f.Close()
 					break
@@ -453,13 +457,13 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 		case SIFVer != "":
 			return "", "", fEf("No SIF Spec @Version %s", SIFVer)
 		case SIFVer == "":
-			return "", "", fEf("No Default SIF Spec @Version %s", j2s.DefaultSIFVer)
+			return "", "", fEf("No Default SIF Spec @Version %s", DefaultSIFVer)
 		}
 	}
 	// end looking
 
 	ResetAll()
 	jsonWithCode, mCodeStr := JSON2SIF4LF(json)
-	mRepl := cmn.MapsMerge(getReplMap(j2s.ReplCfgPath), mCodeStr).(map[string]string)
+	mRepl := cmn.MapsMerge(getReplMap(ReplCfgPath), mCodeStr).(map[string]string)
 	return JSON2SIFRepl(JSON2SIFSpec(JSON2SIF3RD(jsonWithCode), SIFSpec), mRepl), SIFVer, nil
 }

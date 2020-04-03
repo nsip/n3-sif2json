@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"testing"
 
+	"github.com/go-xmlfmt/xmlfmt"
+
 	cmn "github.com/cdutwhu/json-util/common"
 )
 
@@ -21,17 +23,20 @@ func TestJSON2SIF(t *testing.T) {
 		ResetAll()
 
 		obj := cmn.RmTailFromLast(file.Name(), ".")
-		fPln("------------", obj)
 
 		// if obj == "Activity2" {
 		// 	continue
 		// }
 
+		fPln("------------", obj)
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
 		cmn.FailOnErr("%v", err)
 
 		sif, sv, err := JSON2SIF("./config/JSON2SIF.toml", string(bytes), ver)
 		cmn.FailOnErr("%v", err)
+
+		sif = xmlfmt.FormatXML(sif, "", "    ")
+		sif = sTrim(sif, " \t\n\r")
 
 		fPln(sv + " is used")
 		if sif != "" {

@@ -2,6 +2,7 @@ package cvt2json
 
 import (
 	"io/ioutil"
+	"sync"
 	"testing"
 
 	cmn "github.com/cdutwhu/json-util/common"
@@ -45,22 +46,32 @@ func TestSIF2JSON(t *testing.T) {
 	cmn.FailOnErr("%v", err)
 	cmn.FailOnErrWhen(len(files) == 0, "%v", fEf("no xml files prepared"))
 
+	wg := sync.WaitGroup{}
+	wg.Add(len(files))
+
 	for _, file := range files {
 		obj := cmn.RmTailFromLast(file.Name(), ".")
-		fPln("start:", obj)
 
 		// if cmn.XIn(obj, []string{"LearningStandardDocument", "StudentAttendanceTimeList"}) {
 		// 	continue
 		// }
 
-		bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
-		cmn.FailOnErr("%v", err)
-		sv := "3.4.6"
-		json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), sv, false)
-		fPln("end:", obj, sv, err)
-		cmn.FailOnErr("%v", err)
-		if json != "" {
-			cmn.MustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
-		}
+		go func(obj string) {
+			defer wg.Done()
+
+			fPln("start:", obj)
+			bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
+			cmn.FailOnErr("%v", err)
+			sv := "3.4.6"
+			json, sv, err := SIF2JSON("./config/SIF2JSON.toml", string(bytes), sv, false)
+			fPln("end:", obj, sv, err)
+			cmn.FailOnErr("%v", err)
+			if json != "" {
+				cmn.MustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
+			}
+
+		}(obj)
 	}
+
+	wg.Wait()
 }

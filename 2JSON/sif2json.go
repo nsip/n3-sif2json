@@ -61,9 +61,13 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
 	s2j := ICfg.(*cfg.SIF2JSON)
 
-	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4LIST, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4NUM, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnErrWhen(sCount(s2j.SIFCfgDir4BOOL, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
+	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM
+	SIFCfgDir4BOOL := s2j.SIFCfgDir4BOOL
+
+	cmn.FailOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	cmn.FailOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
 
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
@@ -98,35 +102,34 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 		obj = subobj[0]
 	}
 
-	dft := "Default "
+	ver, dft := s2j.DefaultSIFVer, "Default "
 	if SIFVer != "" {
-		s2j.DefaultSIFVer = SIFVer
-		dft = ""
+		ver, dft = SIFVer, ""
 	}
 
 	// SIFCfgDir Version Set
-	s2j.SIFCfgDir4LIST = sReplaceAll(s2j.SIFCfgDir4LIST, SignSIFVer, s2j.DefaultSIFVer)
-	s2j.SIFCfgDir4NUM = sReplaceAll(s2j.SIFCfgDir4NUM, SignSIFVer, s2j.DefaultSIFVer)
-	s2j.SIFCfgDir4BOOL = sReplaceAll(s2j.SIFCfgDir4BOOL, SignSIFVer, s2j.DefaultSIFVer)
+	SIFCfgDir4LIST = sReplaceAll(SIFCfgDir4LIST, SignSIFVer, ver)
+	SIFCfgDir4NUM = sReplaceAll(SIFCfgDir4NUM, SignSIFVer, ver)
+	SIFCfgDir4BOOL = sReplaceAll(SIFCfgDir4BOOL, SignSIFVer, ver)
 
 	// Check SIFCfg Version Directory
-	svDir := cmn.RmTailFromLastN(s2j.SIFCfgDir4LIST, "/", 2)
+	svDir := cmn.RmTailFromLastN(SIFCfgDir4LIST, "/", 2)
 	if _, err := os.Stat(svDir); err == nil {
 		sv = cmn.RmHeadToLast(svDir, "/")
 	} else {
-		return "", "", fEf("No %sSIF Spec @Version %s", dft, s2j.DefaultSIFVer)
+		return "", "", fEf("No %sSIF Spec @Version %s", dft, ver)
 	}
 
 	// LIST
-	rules := eachFileContent(s2j.SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
+	rules := eachFileContent(SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
 	json = enforceConfig(json, rules...)
 
 	// NUMERIC
-	rules = eachFileContent(s2j.SIFCfgDir4NUM+obj, "json", cmn.Iter2Slc(2)...)
+	rules = eachFileContent(SIFCfgDir4NUM+obj, "json", cmn.Iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
 	// BOOLEAN
-	rules = eachFileContent(s2j.SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
+	rules = eachFileContent(SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
 	// Deal with 'LF', 'TB'  Part2 --------------------------------------------------------------------------
