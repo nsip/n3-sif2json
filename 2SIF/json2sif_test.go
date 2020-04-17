@@ -5,24 +5,22 @@ import (
 	"testing"
 
 	"github.com/go-xmlfmt/xmlfmt"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 func TestJSON2SIF(t *testing.T) {
-	cmn.SetLog("./error.log")
-	defer cmn.ResetLog()
+	setLog("./error.log")
+	defer resetLog()
 
 	ver := "3.4.6"
 	dir := `../data/json/` + ver
 	files, err := ioutil.ReadDir(dir)
-	cmn.FailOnErr("%v", err)
-	cmn.FailOnErrWhen(len(files) == 0, "%v", fEf("no json files prepared"))
+	failOnErr("%v", err)
+	failOnErrWhen(len(files) == 0, "%v", fEf("no json files prepared"))
 
 	for _, file := range files {
 		ResetAll()
 
-		obj := cmn.RmTailFromLast(file.Name(), ".")
+		obj := rmTailFromLast(file.Name(), ".")
 
 		// if obj == "Activity2" {
 		// 	continue
@@ -30,17 +28,17 @@ func TestJSON2SIF(t *testing.T) {
 
 		fPln("------------", obj)
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
-		cmn.FailOnErr("%v", err)
+		failOnErr("%v", err)
 
 		sif, sv, err := JSON2SIF("./config/JSON2SIF.toml", string(bytes), ver)
-		cmn.FailOnErr("%v", err)
+		failOnErr("%v", err)
 
 		sif = xmlfmt.FormatXML(sif, "", "    ")
 		sif = sTrim(sif, " \t\n\r")
 
 		fPln(sv + " is used")
 		if sif != "" {
-			cmn.MustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
+			mustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
 		}
 
 		// {
@@ -53,7 +51,7 @@ func TestJSON2SIF(t *testing.T) {
 		// 	xml1 := JSON2SIFSpec(xml, "../SIFSpec/out.txt") // sv is here
 		// 	// ioutil.WriteFile(fSf("../data/sif/%s_1_out.xml", obj), []byte(xml1), 0666)
 
-		// 	mRepl := cmn.MapsMerge(getReplMap("./config/replace.json"), mCodeStr).(map[string]string)
+		// 	mRepl := mapsMerge(getReplMap("./config/replace.json"), mCodeStr).(map[string]string)
 		// 	xml2 := JSON2SIFRepl(xml1, mRepl)
 		// 	ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(xml2), 0666)
 		// }
@@ -76,7 +74,7 @@ func TestSortSimpleObject(t *testing.T) {
 	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
 
 	jsonBytes, err := ioutil.ReadFile("../data/sif/AGStatusReport_0_out.xml")
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	sifCont := string(jsonBytes)
 
 	fPln(SortSimpleObject(sifCont, "AGRule", 4, "AGStatusReport/AGReportingObjectResponseList/AGReportingObjectResponse/AGRuleList/"))

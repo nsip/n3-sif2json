@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -26,6 +28,9 @@ var (
 		}
 		return a
 	}
+
+	failOnErr     = cmn.FailOnErr
+	failOnErrWhen = cmn.FailOnErrWhen
 )
 
 var (

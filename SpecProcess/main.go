@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-
-	cmn "github.com/cdutwhu/json-util/common"
 )
 
 // Println :
@@ -31,7 +29,7 @@ func ObjGrp(sep string, listGrp ...string) []string {
 			m[obj] = true
 		}
 	}
-	return cmn.MapKeys(m).([]string)
+	return mapKeys(m).([]string)
 }
 
 // MapOfGrp :
@@ -41,7 +39,7 @@ func MapOfGrp(objs []string, sep string, xxxPathGrp ...string) map[string][]stri
 		prefix := obj + sep
 		for _, lp := range xxxPathGrp {
 			if sHasPrefix(lp, prefix) {
-				m[obj] = append(m[obj], cmn.RmHeadToFirst(lp, sep))
+				m[obj] = append(m[obj], rmHeadToFirst(lp, sep))
 			}
 		}
 	}
@@ -86,7 +84,7 @@ func main() {
 	cfgOutputDir := os.Args[6]
 	GenTomlAndGoSrc(SIFSpecName, goBaseFile, listTomlBaseFile, numTomlBaseFile, boolTomlBaseFile, cfgOutputDir)
 	abs, err := filepath.Abs(cfgOutputDir)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	fPf("Dumped [config.go] [Bool2JSON.toml] [List2JSON.toml] [Num2JSON.toml] into %s\n", abs)
 }
 
@@ -105,29 +103,29 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 	// Check [base] file Replace Marks //
 
 	bytes, err := ioutil.ReadFile(baseGO)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	goStruct := string(bytes)
-	cmn.FailOnErrWhen(sCount(goStruct, SignGO4LIST+"\n") != 1, "%v", fEf("@SignGO4LIST"))
-	cmn.FailOnErrWhen(sCount(goStruct, SignGO4NUM+"\n") != 1, "%v", fEf("@SignGO4NUM"))
-	cmn.FailOnErrWhen(sCount(goStruct, SignGO4BOOL+"\n") != 1, "%v", fEf("@SignGO4BOOL"))
+	failOnErrWhen(sCount(goStruct, SignGO4LIST+"\n") != 1, "%v", fEf("@SignGO4LIST"))
+	failOnErrWhen(sCount(goStruct, SignGO4NUM+"\n") != 1, "%v", fEf("@SignGO4NUM"))
+	failOnErrWhen(sCount(goStruct, SignGO4BOOL+"\n") != 1, "%v", fEf("@SignGO4BOOL"))
 
 	bytes, err = ioutil.ReadFile(baseToml4LIST)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	tomlLIST := string(bytes)
-	cmn.FailOnErrWhen(sCount(tomlLIST, SignTOML) != 1, "%v", fEf("@SignTOML"))
-	cmn.FailOnErrWhen(sCount(tomlLIST, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
+	failOnErrWhen(sCount(tomlLIST, SignTOML) != 1, "%v", fEf("@SignTOML"))
+	failOnErrWhen(sCount(tomlLIST, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
 
 	bytes, err = ioutil.ReadFile(baseToml4NUM)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	tomlNUM := string(bytes)
-	cmn.FailOnErrWhen(sCount(tomlNUM, SignTOML) != 1, "%v", fEf("@SignTOML"))
-	cmn.FailOnErrWhen(sCount(tomlNUM, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
+	failOnErrWhen(sCount(tomlNUM, SignTOML) != 1, "%v", fEf("@SignTOML"))
+	failOnErrWhen(sCount(tomlNUM, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
 
 	bytes, err = ioutil.ReadFile(baseToml4BOOL)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	tomlBOOL := string(bytes)
-	cmn.FailOnErrWhen(sCount(tomlBOOL, SignTOML) != 1, "%v", fEf("@SignTOML"))
-	cmn.FailOnErrWhen(sCount(tomlBOOL, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
+	failOnErrWhen(sCount(tomlBOOL, SignTOML) != 1, "%v", fEf("@SignTOML"))
+	failOnErrWhen(sCount(tomlBOOL, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
 
 	// ************************************** //
 
@@ -148,7 +146,7 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 	)
 
 	bytes, err = ioutil.ReadFile(SIFSpecPath)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	content := string(bytes)
 
 	SIFVer := ""
@@ -160,7 +158,7 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 		case sHasPrefix(line, OBJECT):
 			objGrp = append(objGrp, sTrim(line[len(OBJECT):], " \t\r\n"))
 		case sHasPrefix(line, LIST):
-			// listPathGrp = append(listPathGrp, cmn.RmTailFromLast(line[len(LIST):], "/")) // exclude last one
+			// listPathGrp = append(listPathGrp, rmTailFromLast(line[len(LIST):], "/")) // exclude last one
 			listPathGrp = append(listPathGrp, sTrim(line[len(LIST):], " \t\r\n"))
 		case sHasPrefix(line, NUMERIC):
 			numPathGrp = append(numPathGrp, sTrim(line[len(NUMERIC):], " \t\r\n"))
@@ -185,27 +183,27 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 		toml4Bool, goStruct4Bool := PrintGrp4Cfg(mBoolAttr, "BOOLEAN")
 
 		// fPln(SIFVer)
-		// cmn.FailOnErrWhen(SIFVer != "3.4.5X", "%v", fEf("why?"))
+		// failOnErrWhen(SIFVer != "3.4.5X", "%v", fEf("why?"))
 
 		toml := sReplace(tomlLIST, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4List, 1)
-		baseFile4LIST := cmn.RmHeadToLast(baseToml4LIST, "/") + ".toml"
-		cmn.FailOnErr("%v", ioutil.WriteFile(outDir+baseFile4LIST, []byte(toml), 0666))
+		baseFile4LIST := rmHeadToLast(baseToml4LIST, "/") + ".toml"
+		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4LIST, []byte(toml), 0666))
 
 		toml = sReplace(tomlNUM, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4Num, 1)
-		baseFile4NUM := cmn.RmHeadToLast(baseToml4NUM, "/") + ".toml"
-		cmn.FailOnErr("%v", ioutil.WriteFile(outDir+baseFile4NUM, []byte(toml), 0666))
+		baseFile4NUM := rmHeadToLast(baseToml4NUM, "/") + ".toml"
+		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4NUM, []byte(toml), 0666))
 
 		toml = sReplace(tomlBOOL, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4Bool, 1)
-		baseFile4BOOL := cmn.RmHeadToLast(baseToml4BOOL, "/") + ".toml"
-		cmn.FailOnErr("%v", ioutil.WriteFile(outDir+baseFile4BOOL, []byte(toml), 0666))
+		baseFile4BOOL := rmHeadToLast(baseToml4BOOL, "/") + ".toml"
+		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4BOOL, []byte(toml), 0666))
 
 		goStruct = sReplace(goStruct, SignGO4LIST, goStruct4List, 1)
 		goStruct = sReplace(goStruct, SignGO4NUM, goStruct4Num, 1)
 		goStruct = sReplace(goStruct, SignGO4BOOL, goStruct4Bool, 1)
-		baseFile4GO := cmn.RmHeadToLast(baseGO, "/") + ".go"
-		cmn.FailOnErr("%v", ioutil.WriteFile(outDir+baseFile4GO, []byte(goStruct), 0666))
+		baseFile4GO := rmHeadToLast(baseGO, "/") + ".go"
+		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4GO, []byte(goStruct), 0666))
 	}
 }

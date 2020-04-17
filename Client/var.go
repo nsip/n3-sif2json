@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 
+	cmn "github.com/cdutwhu/json-util/common"
 	glb "github.com/nsip/n3-sif2json/Client/global"
 )
 
@@ -19,6 +20,14 @@ var (
 	sHasSuffix = strings.HasSuffix
 	sTrimRight = strings.TrimRight
 	sReplace   = strings.Replace
+
+	failOnErrWhen = cmn.FailOnErrWhen
+	failOnErr     = cmn.FailOnErr
+	warnOnErrWhen = cmn.WarnOnErrWhen
+	warnOnErr     = cmn.WarnOnErr
+	setLog        = cmn.SetLog
+	isXML         = cmn.IsXML
+	isJSON        = cmn.IsJSON
 )
 
 var (

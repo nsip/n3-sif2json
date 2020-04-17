@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"sort"
 
-	cmn "github.com/cdutwhu/json-util/common"
 	jkv "github.com/cdutwhu/json-util/jkv"
 	"github.com/peterbourgon/mergemap"
 )
@@ -124,7 +123,7 @@ func MakeMap(paths []string, sep, valsymbol string) map[string]interface{} {
 // MakeJSON :
 func MakeJSON(m map[string]interface{}) string {
 	jsonbytes, e := json.Marshal(m)
-	cmn.FailOnErr("MakeJSON Fatal: %v", e)
+	failOnErr("MakeJSON Fatal: %v", e)
 	return string(jsonbytes)
 }
 
@@ -138,9 +137,9 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 	path := outDir + obj + "/"
 
 	// delete all obsolete json files when new config-json files are coming
-	cmn.FailOnErr("%v", os.RemoveAll(path))
+	failOnErr("%v", os.RemoveAll(path))
 	fPf("%s is removed\n", path)
-	cmn.FailOnErr("%v", os.MkdirAll(path, os.ModePerm))
+	failOnErr("%v", os.MkdirAll(path, os.ModePerm))
 	fPf("%s is created\n", path)
 
 	if levelized {
@@ -177,10 +176,10 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 func YieldJSONBySIFList(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
+	failOnErrWhen(ICfg == nil, "%v", fEf("LIST Configuration File Couldn't Be Loaded"))
 
 	l2j := ICfg.(*List2JSON)
-	cmn.FailOnErrWhen(l2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	failOnErrWhen(l2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 
 	InitCfgBuf(*l2j, l2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
@@ -203,10 +202,10 @@ func YieldJSONBySIFList(cfgPath string) {
 func YieldJSONBySIFNum(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
+	failOnErrWhen(ICfg == nil, "%v", fEf("NUMERIC Configuration File Couldn't Be Loaded"))
 
 	n2j := ICfg.(*Num2JSON)
-	cmn.FailOnErrWhen(n2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	failOnErrWhen(n2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 
 	InitCfgBuf(*n2j, n2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
@@ -218,10 +217,10 @@ func YieldJSONBySIFNum(cfgPath string) {
 func YieldJSONBySIFBool(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
+	failOnErrWhen(ICfg == nil, "%v", fEf("BOOLEAN Configuration File Couldn't Be Loaded"))
 
 	b2j := ICfg.(*Bool2JSON)
-	cmn.FailOnErrWhen(b2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
+	failOnErrWhen(b2j.Sep == "", "%v", fEf("Config-[Sep] loaded error"))
 
 	InitCfgBuf(*b2j, b2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {

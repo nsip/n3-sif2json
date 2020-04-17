@@ -41,6 +41,20 @@ var (
 	// 	left, right := s[:start], s[end:]
 	// 	return left + new + right
 	// }
+
+	rmTailFromLast     = cmn.RmTailFromLast
+	rmHeadToLast       = cmn.RmHeadToLast
+	rmTailFromFirstAny = cmn.RmTailFromFirstAny
+	failOnErrWhen      = cmn.FailOnErrWhen
+	failOnErr          = cmn.FailOnErr
+	isJSON             = cmn.IsJSON
+	md5Str             = cmn.MD5Str
+	replByPosGrp       = cmn.ReplByPosGrp
+	xmlRoot            = cmn.XMLRoot
+	mapsMerge          = cmn.MapsMerge
+	mustWriteFile      = cmn.MustWriteFile
+	setLog             = cmn.SetLog
+	resetLog           = cmn.ResetLog
 )
 
 var nGoTo = 0

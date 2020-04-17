@@ -6,7 +6,6 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
-	cmn "github.com/cdutwhu/json-util/common"
 	jkv "github.com/cdutwhu/json-util/jkv"
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
@@ -27,7 +26,7 @@ func eachFileContent(dir, ext string, indices ...int) (rt []string) {
 	}
 	for _, f := range files {
 		bytes, err := ioutil.ReadFile(f)
-		cmn.FailOnErr("%v", err)
+		failOnErr("%v", err)
 		rt = append(rt, string(bytes))
 	}
 	return
@@ -58,16 +57,16 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	)
 
 	ICfg := cfg.NewCfg(cfgPath)
-	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
+	failOnErrWhen(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
 	s2j := ICfg.(*cfg.SIF2JSON)
 
 	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
 	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM
 	SIFCfgDir4BOOL := s2j.SIFCfgDir4BOOL
 
-	cmn.FailOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
-	cmn.FailOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	failOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	failOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	failOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
 
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
@@ -76,7 +75,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 		// xj.WithAttrPrefix("-"),
 		// xj.WithContentPrefix("#"),
 	)
-	cmn.FailOnErr("That's embarrassing... %v", err)
+	failOnErr("That's embarrassing... %v", err)
 
 	// json = jsonBuf.String()
 	// return // --------------------------- test 3rd party lib --------------------------- //
@@ -93,11 +92,11 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 			posGrp = append(posGrp, []int{start, end})
 			values = append(values, sReplaceAll(json[start:end], k, v))
 		}
-		json = cmn.ReplByPosGrp(json, posGrp, values)
+		json = replByPosGrp(json, posGrp, values)
 	}
 
 	// Attributes Modification according to Config ----------------------------------------------------------
-	obj := cmn.XMLRoot(xml)          // infer object from xml root by default, use this object to search config json
+	obj := xmlRoot(xml)              // infer object from xml root by default, use this object to search config json
 	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
 		obj = subobj[0]
 	}
@@ -113,23 +112,23 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	SIFCfgDir4BOOL = sReplaceAll(SIFCfgDir4BOOL, SignSIFVer, ver)
 
 	// Check SIFCfg Version Directory
-	svDir := cmn.RmTailFromLastN(SIFCfgDir4LIST, "/", 2)
+	svDir := rmTailFromLastN(SIFCfgDir4LIST, "/", 2)
 	if _, err := os.Stat(svDir); err == nil {
-		sv = cmn.RmHeadToLast(svDir, "/")
+		sv = rmHeadToLast(svDir, "/")
 	} else {
 		return "", "", fEf("No %sSIF Spec @Version %s", dft, ver)
 	}
 
 	// LIST
-	rules := eachFileContent(SIFCfgDir4LIST+obj, "json", cmn.Iter2Slc(10)...)
+	rules := eachFileContent(SIFCfgDir4LIST+obj, "json", iter2Slc(10)...)
 	json = enforceConfig(json, rules...)
 
 	// NUMERIC
-	rules = eachFileContent(SIFCfgDir4NUM+obj, "json", cmn.Iter2Slc(2)...)
+	rules = eachFileContent(SIFCfgDir4NUM+obj, "json", iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
 	// BOOLEAN
-	rules = eachFileContent(SIFCfgDir4BOOL+obj, "json", cmn.Iter2Slc(2)...)
+	rules = eachFileContent(SIFCfgDir4BOOL+obj, "json", iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
 	// Deal with 'LF', 'TB'  Part2 --------------------------------------------------------------------------
@@ -159,7 +158,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	}
 
 	const mark = "value" // "#content"
-	json = cmn.ReplByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
+	json = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
 	json = jkv.FmtJSON(json, 2)
 
 	return

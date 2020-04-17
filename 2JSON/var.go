@@ -3,6 +3,8 @@ package cvt2json
 import (
 	"fmt"
 	"strings"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -31,4 +33,18 @@ var (
 	// 	left, right := s[:start], s[end:]
 	// 	return left + new + right
 	// }
+
+	failOnErr       = cmn.FailOnErr
+	failOnErrWhen   = cmn.FailOnErrWhen
+	replByPosGrp    = cmn.ReplByPosGrp
+	xmlRoot         = cmn.XMLRoot
+	jsonRoot        = cmn.JSONRoot
+	rmTailFromLastN = cmn.RmTailFromLastN
+	rmTailFromLast  = cmn.RmTailFromLast
+	rmHeadToLast    = cmn.RmHeadToLast
+	iter2Slc        = cmn.Iter2Slc
+	mustWriteFile   = cmn.MustWriteFile
+	setLog          = cmn.SetLog
+	resetLog        = cmn.ResetLog
+	xin             = cmn.XIn
 )

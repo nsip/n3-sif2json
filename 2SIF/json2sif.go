@@ -7,7 +7,6 @@ import (
 	"os"
 	"regexp"
 
-	cmn "github.com/cdutwhu/json-util/common"
 	"github.com/clbanning/mxj"
 	cfg "github.com/nsip/n3-sif2json/2SIF/config"
 )
@@ -147,7 +146,7 @@ func SortSimpleObject(xml, obj string, level int, trvsPath string) (paper string
 func iPath2SpecPath(iPath, oldSep, newSep string) string {
 	ss := sSpl(iPath, oldSep)
 	for i, s := range ss {
-		ss[i] = cmn.RmTailFromLast(s, "@")
+		ss[i] = rmTailFromLast(s, "@")
 	}
 	return sJoin(ss, newSep) + newSep
 }
@@ -175,7 +174,7 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 		default:
 			continue
 		}
-		oa := cmn.RmTailFromFirstAny(l[sl:], " ", ">")
+		oa := rmTailFromFirstAny(l[sl:], " ", ">")
 		lvlOAs = append(lvlOAs, oa)
 	}
 
@@ -211,14 +210,14 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 
 // JSON2SIF4LF : if JSON fields have special (LF, TBL), pick them up for later replacement
 func JSON2SIF4LF(json string) (string, map[string]string) {
-	cmn.FailOnErrWhen(!cmn.IsJSON(json), "", fEf("Input File is not a valid JSON File"))
+	failOnErrWhen(!isJSON(json), "", fEf("Input File is not a valid JSON File"))
 	mCodeStr := make(map[string]string)
 	strGrpWithLF := regexp.MustCompile(`".+": ".*(\\n)+.*"`).FindAllString(json, -1)
 	for _, s := range strGrpWithLF {
 		vLiteral := sSpl(s, `": "`)[1]
 		vLiteral = vLiteral[:len(vLiteral)-1]                              // literal \n \t
 		vEsc := sReplaceAll(sReplaceAll(vLiteral, `\n`, "\n"), `\t`, "\t") // escape \n \t
-		k4Esc := cmn.MD5Str(vEsc)
+		k4Esc := md5Str(vEsc)
 		mCodeStr[k4Esc] = vEsc
 		json = sReplaceAll(json, vLiteral, k4Esc)
 	}
@@ -228,11 +227,11 @@ func JSON2SIF4LF(json string) (string, map[string]string) {
 // JSON2SIF3RD : via 3rd lib converter, return Disordered, Formatted XML
 func JSON2SIF3RD(jsonstr string) string {
 	var f interface{}
-	cmn.FailOnErr("%v", json.Unmarshal([]byte(jsonstr), &f))
+	failOnErr("%v", json.Unmarshal([]byte(jsonstr), &f))
 	// fPln(f)
 
 	b, err := mxj.AnyXmlIndent(f, "", "    ", "")
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 
 	xmlstr := string(b)
 	xmlstr = sReplaceAll(xmlstr, "<>", "")
@@ -253,7 +252,7 @@ func InitOAs(SIFSpecPath string, tblSep, pathSep string) {
 
 	const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
 	bytes, err := ioutil.ReadFile(SIFSpecPath)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	spec := string(bytes)
 	for _, line := range sSplit(spec, "\n") {
 		switch {
@@ -264,8 +263,8 @@ func InitOAs(SIFSpecPath string, tblSep, pathSep string) {
 	}
 	for _, trvs := range TrvsGrpViaSpec {
 		path := sSplit(trvs, tblSep)[0]
-		key := cmn.RmTailFromLast(path, pathSep)
-		value := cmn.RmHeadToLast(path, pathSep)
+		key := rmTailFromLast(path, pathSep)
+		value := rmHeadToLast(path, pathSep)
 		mPathAttrs[key] = append(mPathAttrs[key], value)
 		mPathAttrIdx[key] = 0
 	}
@@ -294,7 +293,7 @@ func JSON2SIFSpec(xml, SIFSpecPath string) string {
 		tag, _ := TagFromXMLLine(xmlLine)
 		out := fSf("%s<%s %s>", mkIndent(CountHeadSpace(xmlLine, 4)), tag, attrs2write)
 		// xml = sReplByPos(xml, start, end, out)
-		xml = cmn.ReplByPosGrp(xml, [][]int{{start, end}}, []string{out})
+		xml = replByPosGrp(xml, [][]int{{start, end}}, []string{out})
 	}
 	// End adjusting attributes order
 
@@ -312,7 +311,7 @@ AGAIN:
 	if sContains(xml, "...") {
 		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xml), 0666)
 		nGoTo++
-		cmn.FailOnErrWhen(nGoTo > maxGoTo, "%v", fEf("goto AGAIN deadlock"))
+		failOnErrWhen(nGoTo > maxGoTo, "%v", fEf("goto AGAIN deadlock"))
 		goto AGAIN
 	}
 
@@ -335,7 +334,7 @@ func CountHeadSpace(s string, nGrp int) int {
 // TagFromXMLLine :
 func TagFromXMLLine(line string) (tag string, mKeyAttr map[string]string) {
 	line = sTrim(line, " \t\n\r")
-	cmn.FailOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "XML Err @ %v", fEf(line))
+	failOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "XML Err @ %v", fEf(line))
 	if tag := regexp.MustCompile(`<.+[> ]`).FindString(line); tag != "" {
 		tag = tag[1 : len(tag)-1] // remove '<' '>'
 		ss := sSplit(tag, " ")    // cut fields
@@ -365,7 +364,7 @@ func Hierarchy(searchArea string, lvl int, hierarchy *[]string) {
 
 // SearchTagWithAttr : where (get line from xml), tag-path (get info from spec), attribute-map (re-order attributes, reconstruct line)
 func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp []map[string]string, root string) {
-	root = cmn.XMLRoot(xml)
+	root = xmlRoot(xml)
 	TagOrAttr, minAttr := `[^ \t<>]+`, 2
 	r := regexp.MustCompile(fSf(`[ ]*<%[1]s[ ]+(%[1]s="%[1]s"[ ]*){%d,}>`, TagOrAttr, minAttr))
 	if loc := r.FindAllStringIndex(xml, -1); loc != nil {
@@ -408,7 +407,7 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	ICfg := cfg.NewCfg(cfgPath)
-	cmn.FailOnErrWhen(ICfg == nil, "%v", fEf("JSON2SIF config couldn't be Loaded"))
+	failOnErrWhen(ICfg == nil, "%v", fEf("JSON2SIF config couldn't be Loaded"))
 	j2s := ICfg.(*cfg.JSON2SIF)
 
 	SIFSpecDir := j2s.SIFSpecDir
@@ -418,12 +417,12 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	// looking for suitable SIFSpec txt
 	SIFSpec := ""
 	files, err := ioutil.ReadDir(SIFSpecDir)
-	cmn.FailOnErr("%v", err)
+	failOnErr("%v", err)
 	if SIFVer != "" {
 		for _, file := range files {
 			fullname := SIFSpecDir + file.Name()
 			f, err := os.Open(fullname)
-			cmn.FailOnErr("%v", err)
+			failOnErr("%v", err)
 			line := ""
 			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
 				if _, err = fmt.Fscan(f, &line); err == nil && line == SIFVer {
@@ -439,7 +438,7 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 		for _, file := range files {
 			fullname := SIFSpecDir + file.Name()
 			f, err := os.Open(fullname)
-			cmn.FailOnErr("%v", err)
+			failOnErr("%v", err)
 			line := ""
 			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
 				if _, err = fmt.Fscan(f, &line); err == nil && line == DefaultSIFVer {
@@ -464,6 +463,6 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 
 	ResetAll()
 	jsonWithCode, mCodeStr := JSON2SIF4LF(json)
-	mRepl := cmn.MapsMerge(getReplMap(ReplCfgPath), mCodeStr).(map[string]string)
+	mRepl := mapsMerge(getReplMap(ReplCfgPath), mCodeStr).(map[string]string)
 	return JSON2SIFRepl(JSON2SIFSpec(JSON2SIF3RD(jsonWithCode), SIFSpec), mRepl), SIFVer, nil
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	cmn "github.com/cdutwhu/json-util/common"
 )
 
 var (
@@ -16,4 +18,11 @@ var (
 	sReplace   = strings.Replace
 	sCount     = strings.Count
 	sTrim      = strings.Trim
+
+	mapKeys        = cmn.MapKeys
+	rmHeadToFirst  = cmn.RmHeadToFirst
+	rmHeadToLast   = cmn.RmHeadToLast
+	rmTailFromLast = cmn.RmTailFromLast
+	failOnErr      = cmn.FailOnErr
+	failOnErrWhen  = cmn.FailOnErrWhen
 )

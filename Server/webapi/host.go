@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	cmn "github.com/cdutwhu/json-util/common"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/nats-io/nats.go"
@@ -31,7 +30,7 @@ func HostHTTPAsync() {
 	}))
 
 	port := glb.Cfg.WebService.Port
-	fullIP := cmn.LocalIP() + fSf(":%d", port)
+	fullIP := localIP() + fSf(":%d", port)
 	route := glb.Cfg.Route
 	initMutex()
 
@@ -55,7 +54,7 @@ func HostHTTPAsync() {
 
 		bytes, err := ioutil.ReadAll(c.Request().Body)
 		// fPln("002. isXml")
-		if err != nil || !cmn.IsXML(string(bytes)) {
+		if err != nil || !isXML(string(bytes)) {
 			// fPln("002.1. error", err)
 			return c.JSON(http.StatusBadRequest, result{
 				Data:  nil,
@@ -139,7 +138,7 @@ func HostHTTPAsync() {
 		mMtx[path].Lock()
 
 		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
-			if !cmn.IsJSON(string(bytes)) {
+			if !isJSON(string(bytes)) {
 				goto ERR
 			}
 			sv := ""
