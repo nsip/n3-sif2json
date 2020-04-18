@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	cmn "github.com/cdutwhu/json-util/common"
+	jkv "github.com/cdutwhu/json-util/jkv"
+	"github.com/cdutwhu/json-util/n3json"
 )
 
 var (
@@ -47,4 +49,6 @@ var (
 	setLog          = cmn.SetLog
 	resetLog        = cmn.ResetLog
 	xin             = cmn.XIn
+	fmtJSON         = n3json.Fmt
+	newJKV          = jkv.NewJKV
 )

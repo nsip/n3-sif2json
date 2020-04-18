@@ -6,7 +6,6 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
-	jkv "github.com/cdutwhu/json-util/jkv"
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
@@ -40,12 +39,12 @@ func enforceConfig(json string, lsJSONCfg ...string) string {
 
 	for _, jsoncfg := range lsJSONCfg {
 		// make sure [jsoncfg] is formatted; Otherwise, do Fmt firstly
-		// jsoncfg = jkv.FmtJSON(jsoncfg, 2)
+		// jsoncfg = fmtJSON(jsoncfg, 2)
 
-		json, _ = jkv.NewJKV(json, "", false).Unfold(0, jkv.NewJKV(jsoncfg, "", false))
+		json, _ = newJKV(json, "", false).Unfold(0, newJKV(jsoncfg, "", false))
 		// make sure there is no double "[" OR "]"
 		bytes := rRB.ReplaceAll(rLB.ReplaceAll([]byte(json), []byte("[")), []byte("]"))
-		json = jkv.FmtJSON(string(bytes), 2)
+		json = fmtJSON(string(bytes), 2)
 	}
 	return json
 }
@@ -80,7 +79,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	// json = jsonBuf.String()
 	// return // --------------------------- test 3rd party lib --------------------------- //
 
-	json = jkv.FmtJSON(jsonBuf.String(), 2)
+	json = fmtJSON(jsonBuf.String(), 2)
 
 	// Deal with 'LF', 'TB', Part1 --------------------------------------------------------------------------
 	mRepl1 := map[string]string{"\n": "#LF#", "\t": "#TB#"}
@@ -159,7 +158,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 
 	const mark = "value" // "#content"
 	json = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
-	json = jkv.FmtJSON(json, 2)
+	json = fmtJSON(json, 2)
 
 	return
 }

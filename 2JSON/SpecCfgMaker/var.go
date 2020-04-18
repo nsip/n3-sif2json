@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	cmn "github.com/cdutwhu/json-util/common"
+	"github.com/cdutwhu/json-util/n3json"
 )
 
 var (
@@ -31,6 +32,7 @@ var (
 
 	failOnErr     = cmn.FailOnErr
 	failOnErrWhen = cmn.FailOnErrWhen
+	fmtJSON       = n3json.Fmt
 )
 
 var (

@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"sort"
 
-	jkv "github.com/cdutwhu/json-util/jkv"
 	"github.com/peterbourgon/mergemap"
 )
 
@@ -150,7 +149,7 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 					continue
 				}
 				jsonstr := MakeJSON(mm)
-				jsonfmt := jkv.FmtJSON(jsonstr, 2)
+				jsonfmt := fmtJSON(jsonstr, 2)
 				ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonfmt), 0666)
 			} else {
 				break
@@ -160,13 +159,13 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 		paths := GetAllFullPaths(obj, sep)
 		mm := MakeMap(paths, sep, jsonVal)
 		jsonstr := MakeJSON(mm)
-		jsonfmt := jkv.FmtJSON(jsonstr, 2)
+		jsonfmt := fmtJSON(jsonstr, 2)
 		ioutil.WriteFile(fSf("%s0.json", path), []byte(jsonfmt), 0666)
 
 		if extContent {
 			// extend jsonstr, such as xml->json '#content', "30" => { "#content": "30" }
 			jsonext := sReplaceAll(jsonstr, fSf(`"%s"`, jsonVal), fSf(`{"#content": "%s"}`, jsonVal))
-			jsonextfmt := jkv.FmtJSON(jsonext, 2)
+			jsonextfmt := fmtJSON(jsonext, 2)
 			ioutil.WriteFile(fSf("%s1.json", path), []byte(jsonextfmt), 0666)
 		}
 	}
