@@ -11,7 +11,6 @@ var (
 	fPln = fmt.Println
 	fPf  = fmt.Printf
 	fSf  = fmt.Sprintf
-	fEf  = fmt.Errorf
 
 	sHasPrefix = strings.HasPrefix
 	sSplit     = strings.Split

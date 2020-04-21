@@ -14,7 +14,6 @@ var (
 	fPf         = fmt.Printf
 	fSp         = fmt.Sprint
 	fSf         = fmt.Sprintf
-	fEf         = fmt.Errorf
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
 	sTrim       = strings.Trim
@@ -30,11 +29,6 @@ var (
 		}
 		return a
 	}
-	// sReplByPos = func(s string, start, end int, new string) string {
-	// 	cmn.FailOnErrWhen(end < start, "end must be greater than start%v", fEf(""))
-	// 	left, right := s[:start], s[end:]
-	// 	return left + new + right
-	// }
 
 	failOnErr       = cmn.FailOnErr
 	failOnErrWhen   = cmn.FailOnErrWhen

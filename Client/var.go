@@ -14,7 +14,6 @@ var (
 	fPf  = fmt.Printf
 	fPln = fmt.Println
 	fSf  = fmt.Sprintf
-	fEf  = fmt.Errorf
 
 	sJoin      = strings.Join
 	sHasSuffix = strings.HasSuffix
@@ -26,6 +25,7 @@ var (
 	warnOnErrWhen = cmn.WarnOnErrWhen
 	warnOnErr     = cmn.WarnOnErr
 	setLog        = cmn.SetLog
+	resetLog      = cmn.ResetLog
 	isXML         = cmn.IsXML
 	isJSON        = cmn.IsJSON
 )

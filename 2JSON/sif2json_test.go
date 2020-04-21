@@ -4,6 +4,8 @@ import (
 	"io/ioutil"
 	"sync"
 	"testing"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 func TestJSONRoot(t *testing.T) {
@@ -42,7 +44,7 @@ func TestSIF2JSON(t *testing.T) {
 	dir := `../data/examples/`
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
-	failOnErrWhen(len(files) == 0, "%v", fEf("no xml files prepared"))
+	failOnErrWhen(len(files) == 0, "%v", eg.FILE_NOT_FOUND)
 
 	wg := sync.WaitGroup{}
 	wg.Add(len(files))

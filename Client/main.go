@@ -9,17 +9,20 @@ import (
 	"os"
 	"time"
 
+	eg "github.com/cdutwhu/json-util/n3errs"
 	glb "github.com/nsip/n3-sif2json/Client/global"
 )
 
 func main() {
-	failOnErrWhen(!glb.Init(), "%v", fEf("Config File Init Failed"))
-	setLog(glb.Cfg.ELog)
-	if e := warnOnErrWhen(len(os.Args) < 2, "%v", fEf("Need Subcommands: ["+sJoin(getCfgRouteFields(), " ")+"]")); e != nil {
+	failOnErrWhen(!glb.Init(), "%v", eg.CFG_INIT_ERR)
+	elog, protocol, ip, port, timeout := glb.Cfg.ELog, glb.Cfg.Server.Protocol, glb.Cfg.Server.IP, glb.Cfg.Server.Port, glb.Cfg.Access.Timeout
+	setLog(elog)
+	resetLog()
+	if e := warnOnErrWhen(len(os.Args) < 2, "%v: Need ["+sJoin(getCfgRouteFields(), " ")+"]", eg.CLI_SUBCMD_ERR); e != nil {
 		fPln(e.Error())
 		return
 	}
-	failOnErrWhen(!initMapFnURL(glb.Cfg.Server.Protocol, glb.Cfg.Server.IP, glb.Cfg.Server.Port), "%v", fEf("initMapFnURL failed"))
+	failOnErrWhen(!initMapFnURL(protocol, ip, port), "%v: MapFnURL", eg.INTERNAL_INIT_ERR)
 
 	done := make(chan bool)
 
@@ -58,27 +61,27 @@ func main() {
 			resp, err = http.Get(url)
 
 		case "SIF2JSON", "JSON2SIF":
-			failOnErrWhen(*iPtr == "", "%v", fEf("[-i] must be provided"))
+			failOnErrWhen(*iPtr == "", "%v: [-i] is required", eg.CLI_FLAG_ERR)
 			data, err := ioutil.ReadFile(*iPtr)
 			failOnErr("%v: %v", err, "Is [-i] provided correctly?")
 			str := string(data)
 
 			if os.Args[1] == "SIF2JSON" {
-				failOnErrWhen(!isXML(str), "%v Abort", fEf("input file is invalid XML,"))
+				failOnErrWhen(!isXML(str), "%v: Abort", eg.PARAM_INVALID_XML)
 			} else {
-				failOnErrWhen(!isJSON(str), "%v About", fEf("input file is invalid JSON,"))
+				failOnErrWhen(!isJSON(str), "%v: About", eg.PARAM_INVALID_JSON)
 			}
 			resp, err = http.Post(url, "application/json", bytes.NewBuffer(data))
 
 		default:
-			if e := warnOnErr("%v", fEf("Unsupported Subcommand: %v", os.Args[1])); e != nil {
+			if e := warnOnErr("%v: %v", eg.CLI_SUBCMD_UNKNOWN, os.Args[1]); e != nil {
 				fPln(e.Error())
 				done <- true
 				return
 			}
 		}
 
-		failOnErrWhen(resp == nil, "HTTP Access Fatal: %v OR %v", err, fEf("Couldn't get Response"))
+		failOnErrWhen(resp == nil, "HTTP Access Fatal: %v OR %v", err, eg.NET_NO_RESPONSE)
 		defer resp.Body.Close()
 
 		data, err := ioutil.ReadAll(resp.Body)
@@ -110,8 +113,8 @@ func main() {
 	}()
 
 	select {
-	case <-time.After(time.Duration(glb.Cfg.Access.Timeout) * time.Second):
-		failOnErr("%v", fEf("Didn't Get Response in time. %d(s)", glb.Cfg.Access.Timeout))
+	case <-time.After(time.Duration(timeout) * time.Second):
+		failOnErr("%v: Didn't Get Response in time. %d(s)", eg.NET_TIMEOUT, timeout)
 	case <-done:
 	}
 }

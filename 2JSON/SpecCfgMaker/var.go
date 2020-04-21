@@ -13,7 +13,6 @@ var (
 	fPf         = fmt.Printf
 	fSp         = fmt.Sprint
 	fSf         = fmt.Sprintf
-	fEf         = fmt.Errorf
 	sHasPrefix  = strings.HasPrefix
 	sHasSuffix  = strings.HasSuffix
 	sTrim       = strings.Trim

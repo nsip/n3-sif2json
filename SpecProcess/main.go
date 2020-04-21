@@ -5,6 +5,8 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	eg "github.com/cdutwhu/json-util/n3errs"
 )
 
 // Println :
@@ -105,27 +107,27 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 	bytes, err := ioutil.ReadFile(baseGO)
 	failOnErr("%v", err)
 	goStruct := string(bytes)
-	failOnErrWhen(sCount(goStruct, SignGO4LIST+"\n") != 1, "%v", fEf("@SignGO4LIST"))
-	failOnErrWhen(sCount(goStruct, SignGO4NUM+"\n") != 1, "%v", fEf("@SignGO4NUM"))
-	failOnErrWhen(sCount(goStruct, SignGO4BOOL+"\n") != 1, "%v", fEf("@SignGO4BOOL"))
+	failOnErrWhen(sCount(goStruct, SignGO4LIST+"\n") != 1, "%v: goStruct SignGO4LIST", eg.SRC_SIGN_MISSING)
+	failOnErrWhen(sCount(goStruct, SignGO4NUM+"\n") != 1, "%v: goStruct SignGO4NUM", eg.SRC_SIGN_MISSING)
+	failOnErrWhen(sCount(goStruct, SignGO4BOOL+"\n") != 1, "%v: goStruct SignGO4BOOL", eg.SRC_SIGN_MISSING)
 
 	bytes, err = ioutil.ReadFile(baseToml4LIST)
 	failOnErr("%v", err)
 	tomlLIST := string(bytes)
-	failOnErrWhen(sCount(tomlLIST, SignTOML) != 1, "%v", fEf("@SignTOML"))
-	failOnErrWhen(sCount(tomlLIST, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
+	failOnErrWhen(sCount(tomlLIST, SignTOML) != 1, "%v: tomlLIST SignTOML", eg.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlLIST, SignSIFVer) != 1, "%v: tomlLIST SignSIFVer", eg.CFG_SIGN_MISSING)
 
 	bytes, err = ioutil.ReadFile(baseToml4NUM)
 	failOnErr("%v", err)
 	tomlNUM := string(bytes)
-	failOnErrWhen(sCount(tomlNUM, SignTOML) != 1, "%v", fEf("@SignTOML"))
-	failOnErrWhen(sCount(tomlNUM, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
+	failOnErrWhen(sCount(tomlNUM, SignTOML) != 1, "%v: tomlNUM SignTOML", eg.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlNUM, SignSIFVer) != 1, "%v: tomlNUM SignSIFVer", eg.CFG_SIGN_MISSING)
 
 	bytes, err = ioutil.ReadFile(baseToml4BOOL)
 	failOnErr("%v", err)
 	tomlBOOL := string(bytes)
-	failOnErrWhen(sCount(tomlBOOL, SignTOML) != 1, "%v", fEf("@SignTOML"))
-	failOnErrWhen(sCount(tomlBOOL, SignSIFVer) != 1, "%v", fEf("@SignSIFVer"))
+	failOnErrWhen(sCount(tomlBOOL, SignTOML) != 1, "%v: tomlBOOL SignTOML", eg.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlBOOL, SignSIFVer) != 1, "%v: tomlBOOL SignSIFVer", eg.CFG_SIGN_MISSING)
 
 	// ************************************** //
 
@@ -183,7 +185,6 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 		toml4Bool, goStruct4Bool := PrintGrp4Cfg(mBoolAttr, "BOOLEAN")
 
 		// fPln(SIFVer)
-		// failOnErrWhen(SIFVer != "3.4.5X", "%v", fEf("why?"))
 
 		toml := sReplace(tomlLIST, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4List, 1)

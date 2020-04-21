@@ -1,11 +1,13 @@
 package cvt2json
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
+	eg "github.com/cdutwhu/json-util/n3errs"
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
@@ -56,16 +58,16 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	)
 
 	ICfg := cfg.NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v", fEf("SIF2JSON config couldn't be Loaded"))
+	failOnErrWhen(ICfg == nil, "%v: SIF2JSON config", eg.CFG_INIT_ERR)
 	s2j := ICfg.(*cfg.SIF2JSON)
 
 	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
 	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM
 	SIFCfgDir4BOOL := s2j.SIFCfgDir4BOOL
 
-	failOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
-	failOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
-	failOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "Missing SignSIFVer @ %s, %v", cfgPath, fEf(""))
+	failOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "%v: %s", eg.CFG_SIGN_MISSING, cfgPath)
+	failOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "%v: %s", eg.CFG_SIGN_MISSING, cfgPath)
+	failOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "%v: %s", eg.CFG_SIGN_MISSING, cfgPath)
 
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
@@ -115,7 +117,7 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	if _, err := os.Stat(svDir); err == nil {
 		sv = rmHeadToLast(svDir, "/")
 	} else {
-		return "", "", fEf("No %sSIF Spec @Version %s", dft, ver)
+		return "", "", fmt.Errorf("No %sSIF Spec @Version %s", dft, ver)
 	}
 
 	// LIST

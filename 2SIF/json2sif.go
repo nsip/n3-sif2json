@@ -7,6 +7,7 @@ import (
 	"os"
 	"regexp"
 
+	eg "github.com/cdutwhu/json-util/n3errs"
 	"github.com/clbanning/mxj"
 	cfg "github.com/nsip/n3-sif2json/2SIF/config"
 )
@@ -210,7 +211,7 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 
 // JSON2SIF4LF : if JSON fields have special (LF, TBL), pick them up for later replacement
 func JSON2SIF4LF(json string) (string, map[string]string) {
-	failOnErrWhen(!isJSON(json), "", fEf("Input File is not a valid JSON File"))
+	failOnErrWhen(!isJSON(json), "%v", eg.PARAM_INVALID_JSON)
 	mCodeStr := make(map[string]string)
 	strGrpWithLF := regexp.MustCompile(`".+": ".*(\\n)+.*"`).FindAllString(json, -1)
 	for _, s := range strGrpWithLF {
@@ -311,7 +312,7 @@ AGAIN:
 	if sContains(xml, "...") {
 		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xml), 0666)
 		nGoTo++
-		failOnErrWhen(nGoTo > maxGoTo, "%v", fEf("goto AGAIN deadlock"))
+		failOnErrWhen(nGoTo > maxGoTo, "%v: goto AGAIN", eg.INTERNAL_DEADLOCK)
 		goto AGAIN
 	}
 
@@ -334,7 +335,7 @@ func CountHeadSpace(s string, nGrp int) int {
 // TagFromXMLLine :
 func TagFromXMLLine(line string) (tag string, mKeyAttr map[string]string) {
 	line = sTrim(line, " \t\n\r")
-	failOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "XML Err @ %v", fEf(line))
+	failOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "%v: %s", eg.PARAM_INVALID_FMT, line)
 	if tag := regexp.MustCompile(`<.+[> ]`).FindString(line); tag != "" {
 		tag = tag[1 : len(tag)-1] // remove '<' '>'
 		ss := sSplit(tag, " ")    // cut fields
@@ -407,7 +408,7 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	ICfg := cfg.NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v", fEf("JSON2SIF config couldn't be Loaded"))
+	failOnErrWhen(ICfg == nil, "%v: JSON2SIF", eg.CFG_INIT_ERR)
 	j2s := ICfg.(*cfg.JSON2SIF)
 
 	SIFSpecDir := j2s.SIFSpecDir
@@ -454,9 +455,9 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	if SIFSpec == "" { // couldn't find SIFSpec
 		switch {
 		case SIFVer != "":
-			return "", "", fEf("No SIF Spec @Version %s", SIFVer)
+			return "", "", fmt.Errorf("No SIF Spec @Version %s", SIFVer)
 		case SIFVer == "":
-			return "", "", fEf("No Default SIF Spec @Version %s", DefaultSIFVer)
+			return "", "", fmt.Errorf("No Default SIF Spec @Version %s", DefaultSIFVer)
 		}
 	}
 	// end looking
