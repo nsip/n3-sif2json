@@ -20,6 +20,7 @@ var (
 	sTrimRight = strings.TrimRight
 	sReplace   = strings.Replace
 
+	isFLog        = cmn.IsFLog
 	failOnErrWhen = cmn.FailOnErrWhen
 	failOnErr     = cmn.FailOnErr
 	warnOnErrWhen = cmn.WarnOnErrWhen

@@ -15,11 +15,16 @@ import (
 
 func main() {
 	failOnErrWhen(!glb.Init(), "%v", eg.CFG_INIT_ERR)
-	elog, protocol, ip, port, timeout := glb.Cfg.ELog, glb.Cfg.Server.Protocol, glb.Cfg.Server.IP, glb.Cfg.Server.Port, glb.Cfg.Access.Timeout
+
+	cfg := glb.Cfg
+	elog, protocol, ip, port, timeout := cfg.ELog, cfg.Server.Protocol, cfg.Server.IP, cfg.Server.Port, cfg.Access.Timeout
 	setLog(elog)
-	resetLog()
+	// resetLog()
+
 	if e := warnOnErrWhen(len(os.Args) < 2, "%v: Need ["+sJoin(getCfgRouteFields(), " ")+"]", eg.CLI_SUBCMD_ERR); e != nil {
-		fPln(e.Error())
+		if isFLog() {
+			fPf("*** %v  abort!\n", e)
+		}
 		return
 	}
 	failOnErrWhen(!initMapFnURL(protocol, ip, port), "%v: MapFnURL", eg.INTERNAL_INIT_ERR)
