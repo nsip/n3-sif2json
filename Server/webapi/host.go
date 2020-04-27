@@ -3,8 +3,10 @@ package webapi
 import (
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
+	eg "github.com/cdutwhu/json-util/n3errs"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/nats-io/nats.go"
@@ -32,19 +34,53 @@ func HostHTTPAsync() {
 	port := glb.Cfg.WebService.Port
 	fullIP := localIP() + fSf(":%d", port)
 	route := glb.Cfg.Route
+	file := glb.Cfg.File
+
+	setLog(glb.Cfg.LogFile)
+
 	initMutex()
 
+	// *************************************** List all APP, API *************************************** //
 	path := "/"
 	e.GET(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
 
 		return c.String(http.StatusOK,
-			fSf("POST %-40s-> %s\n"+
-				"POST %-40s-> %s\n",
-				fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
-				fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML). [sv]: SIF Spec. Version"))
+			fSf("wget %-55s-> %s\n", fullIP+"/client-linux64", "Get Client(Linux64)")+
+				fSf("wget %-55s-> %s\n", fullIP+"/client-mac", "Get Client(Mac)")+
+				fSf("wget %-55s-> %s\n", fullIP+"/client-win64", "Get Client(Windows64)")+
+				fSf("wget -O config.toml %-40s-> %s\n", fullIP+"/client-config", "Get Client Config")+
+				fSf("\n")+
+				fSf("POST %-40s-> %s\n"+
+					"POST %-40s-> %s\n",
+					fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
+					fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML). [sv]: SIF Spec. Version"))
 	})
+
+	mRouteRes := map[string]string{
+		"/client-linux64": file.ClientLinux64,
+		"/client-mac":     file.ClientMac,
+		"/client-win64":   file.ClientWin64,
+		"/client-config":  file.ClientConfig,
+	}
+
+	routeFun := func(rt, res string) func(c echo.Context) error {
+		return func(c echo.Context) (err error) {
+			if _, err = os.Stat(res); err == nil {
+				fPln(rt, res)
+				return c.File(res)
+			}
+			fPf("%v\n", warnOnErr("%v: [%s]  get [%s]", eg.FILE_NOT_FOUND, rt, res))
+			return err
+		}
+	}
+
+	for rt, res := range mRouteRes {
+		e.GET(rt, routeFun(rt, res))
+	}
+
+	// --------------------------------------------------------------------------- //
 
 	path = route.SIF2JSON
 	e.POST(path, func(c echo.Context) error {

@@ -28,6 +28,12 @@ type Config struct {
 		Subject string
 		Timeout int
 	}
+	File struct {
+		ClientLinux64 string
+		ClientMac     string
+		ClientWin64   string
+		ClientConfig  string
+	}
 }
 
 // NewCfg :

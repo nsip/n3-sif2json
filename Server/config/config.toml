@@ -16,3 +16,9 @@ Cfg2SIF = "../2SIF/config/JSON2SIF.toml"
   URL = "nats://192.168.78.130:4222"
   Subject = "SIF2JSON"
   Timeout = 500
+
+[File]
+  ClientLinux64 = "../../../Client/build/Linux64/client"
+  ClientMac = "../../../Client/build/Mac/client"
+  ClientWin64 = "../../../Client/build/Win64/client.exe"
+  ClientConfig = "../../../Client/build/Linux64/config.toml"
