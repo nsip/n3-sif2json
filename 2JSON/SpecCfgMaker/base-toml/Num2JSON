@@ -1,0 +1,6 @@
+Path = ""
+Sep = "/"
+CfgJSONOutDir = "../SpecCfg/#SIF-VER#/NUMERIC/"
+CfgJSONValue = "(N)"
+
+#AUTO-GEN#
