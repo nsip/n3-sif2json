@@ -40,7 +40,7 @@ func HostHTTPAsync() {
 
 	initMutex()
 
-	// *************************************** List all APP, API *************************************** //
+	// *************************************** List all API, FILE *************************************** //
 	path := "/"
 	e.GET(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
