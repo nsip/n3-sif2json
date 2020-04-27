@@ -19,7 +19,7 @@ var (
 // JSON2SIF :
 type JSON2SIF struct {
 	Path          string
-	ELog          string
+	LogFile       string
 	DefaultSIFVer string
 	SIFSpecDir    string
 	ReplCfgPath   string

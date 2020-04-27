@@ -21,7 +21,7 @@ var (
 // SIF2JSON :
 type SIF2JSON struct {
 	Path           string
-	ELog           string
+	LogFile        string
 	AttrPrefix     string
 	ContentPrefix  string
 	DefaultSIFVer  string

@@ -17,8 +17,8 @@ func main() {
 	failOnErrWhen(!glb.Init(), "%v", eg.CFG_INIT_ERR)
 
 	cfg := glb.Cfg
-	elog, protocol, ip, port, timeout := cfg.ELog, cfg.Server.Protocol, cfg.Server.IP, cfg.Server.Port, cfg.Access.Timeout
-	setLog(elog)
+	protocol, ip, port, timeout := cfg.Server.Protocol, cfg.Server.IP, cfg.Server.Port, cfg.Access.Timeout
+	setLog(cfg.LogFile)
 	// resetLog()
 
 	if e := warnOnErrWhen(len(os.Args) < 2, "%v: Need ["+sJoin(getCfgRouteFields(), " ")+"]", eg.CLI_SUBCMD_ERR); e != nil {
