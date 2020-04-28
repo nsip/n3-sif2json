@@ -1,12 +1,9 @@
  #!/bin/bash
 
-VERSION="v0.1.0"
+### Create toml files at building time ###
 
-go get
-
-GOARCH=amd64
-LDFLAGS="-s -w"
-OUT=SpecProcess
-
-OUTPATH=./
-GOOS="linux" GOARCH="$GOARCH" go build -ldflags="$LDFLAGS" -o $OUT
+SPEC=../SIFSpec/3.4.6.txt
+MAKER=../2JSON/SpecCfgMaker
+BASE_GO=$MAKER/base-go
+BASE_TOML=$MAKER/base-toml
+go run var.go main.go -- $SPEC $BASE_GO/config $BASE_TOML/List2JSON $BASE_TOML/Num2JSON $BASE_TOML/Bool2JSON $MAKER/

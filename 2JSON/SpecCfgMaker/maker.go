@@ -236,19 +236,6 @@ func YieldJSONBySIF(listCfg, numCfg, boolCfg string) {
 }
 
 func main() {
-	if len(os.Args) < 4 {
-		fPln("You are not allowed to use this tool to create JSON config files unless fully understand what you are doing.\n" +
-			"Project author or other admins are advised to do this for creating SIF Specifications JSON config files.\n" +
-			"If you still want to continue, make sure <List2JSON.toml>, <Num2JSON.toml> and <Bool2JSON.toml> are existing.\n" +
-			"Then input following arguments orderly:\n" +
-			"  1. path of List2JSON.toml\n" +
-			"  2. path of Num2JSON.toml\n" +
-			"  3. path of Bool2JSON.toml")
-		return
-	}
-	listCfgToml := os.Args[1]
-	numCfgToml := os.Args[2]
-	boolCfgToml := os.Args[3]
-	YieldJSONBySIF(listCfgToml, numCfgToml, boolCfgToml)
+	YieldJSONBySIF(os.Args[2], os.Args[3], os.Args[4])
 	fPln("JSON Config files are created")
 }

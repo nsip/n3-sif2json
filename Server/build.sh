@@ -9,6 +9,11 @@ ORIGINALPATH=`pwd`
 rm -rf ./build/*
 mkdir -p ./build/Linux64 ./build/Win64 ./build/Mac
 
+####
+cd ../SpecProcess && ./build.sh && cd -
+cd ../2JSON/SpecCfgMaker/ && ./build.sh && cd -
+####
+
 go get
 
 GOARCH=amd64
