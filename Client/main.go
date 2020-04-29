@@ -17,9 +17,10 @@ func main() {
 	failOnErrWhen(!glb.Init(), "%v", eg.CFG_INIT_ERR)
 
 	cfg := glb.Cfg
-	elog, protocol, ip, port, timeout := cfg.ELog, cfg.Server.Protocol, cfg.Server.IP, cfg.Server.Port, cfg.Access.Timeout
-	setLog(elog)
-	// resetLog()
+	protocol, ip, port, timeout := cfg.Server.Protocol, cfg.Server.IP, cfg.Server.Port, cfg.Access.Timeout
+	setLog(cfg.LogFile)
+
+	// fPln(cfg.LogFile)
 
 	if e := warnOnErrWhen(len(os.Args) < 2, "%v: Need ["+sJoin(getCfgRouteFields(), " ")+"]", eg.CLI_SUBCMD_ERR); e != nil {
 		if isFLog() {
@@ -62,7 +63,7 @@ func main() {
 		}
 
 		switch os.Args[1] { // Config - Route - each Field
-		case "API":
+		case "ROOT":
 			resp, err = http.Get(url)
 
 		case "SIF2JSON", "JSON2SIF":
@@ -92,7 +93,7 @@ func main() {
 		data, err := ioutil.ReadAll(resp.Body)
 		failOnErr("resp Body fatal: %v", err)
 		if data != nil {
-			if os.Args[1] == "API" {
+			if os.Args[1] == "ROOT" {
 				fPt(string(data))
 			} else {
 				m := make(map[string]interface{})

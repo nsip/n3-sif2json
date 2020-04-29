@@ -14,9 +14,9 @@ var (
 
 // Config is toml
 type Config struct {
-	Path   string
-	ELog   string
-	Server struct {
+	Path    string
+	LogFile string
+	Server  struct {
 		Protocol string
 		IP       string
 		Port     int
@@ -25,7 +25,7 @@ type Config struct {
 		Timeout int
 	}
 	Route struct {
-		API      string
+		ROOT     string
 		SIF2JSON string
 		JSON2SIF string
 	}
@@ -51,8 +51,8 @@ func (cfg *Config) set() *Config {
 		if abs, e := filepath.Abs(f); e == nil {
 			cfg.Path = abs
 		}
-		if eLog, e := filepath.Abs(cfg.ELog); e == nil {
-			cfg.ELog = eLog
+		if logfile, e := filepath.Abs(cfg.LogFile); e == nil {
+			cfg.LogFile = logfile
 		}
 		// save
 		cfg.save()

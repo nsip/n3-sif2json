@@ -1,7 +1,9 @@
-Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
-ELog = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/error.log"
-Cfg2JSON = "../2JSON/config/SIF2JSON.toml"
-Cfg2SIF = "../2SIF/config/JSON2SIF.toml"
+### Server Config ###
+
+Path = "/home/qing/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
+LogFile = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/error.log"
+Cfg2JSON = "../../../2JSON/config/Config.toml"
+Cfg2SIF = "../../../2SIF/config/Config.toml"
 
 [WebService]
   Port = 1324
@@ -16,3 +18,9 @@ Cfg2SIF = "../2SIF/config/JSON2SIF.toml"
   URL = "nats://192.168.78.130:4222"
   Subject = "SIF2JSON"
   Timeout = 500
+
+[File]
+  ClientLinux64 = "../../../Client/build/Linux64/client"
+  ClientMac = "../../../Client/build/Mac/client"
+  ClientWin64 = "../../../Client/build/Win64/client.exe"
+  ClientConfig = "../../../Client/build/Linux64/config.toml"

@@ -1,8 +1,0 @@
-Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/2JSON/config/SIF2JSON.toml"
-ELog = "./error.log"
-AttrPrefix = "-"
-ContentPrefix = "#"
-DefaultSIFVer = "3.4.6"
-SIFCfgDir4LIST = "../2JSON/SpecCfg/#SIFVER#/LIST/"
-SIFCfgDir4NUM = "../2JSON/SpecCfg/#SIFVER#/NUMERIC/"
-SIFCfgDir4BOOL = "../2JSON/SpecCfg/#SIFVER#/BOOLEAN/"

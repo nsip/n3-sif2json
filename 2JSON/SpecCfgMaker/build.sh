@@ -1,12 +1,5 @@
  #!/bin/bash
 
-VERSION="v0.1.0"
+### Create JSON files at building time ###
 
-go get
-
-GOARCH=amd64
-LDFLAGS="-s -w"
-OUT=mkSpecCfg
-
-OUTPATH=./
-GOOS="linux" GOARCH="$GOARCH" go build -ldflags="$LDFLAGS" -o $OUT
+go run var.go spec.go maker.go -- ./List2JSON.toml ./Num2JSON.toml ./Bool2JSON.toml

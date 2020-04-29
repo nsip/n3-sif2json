@@ -11,7 +11,7 @@ import (
 // Config is toml
 type Config struct {
 	Path       string
-	ELog       string
+	LogFile    string
 	Cfg2JSON   string
 	Cfg2SIF    string
 	WebService struct {
@@ -27,6 +27,12 @@ type Config struct {
 		URL     string
 		Subject string
 		Timeout int
+	}
+	File struct {
+		ClientLinux64 string
+		ClientMac     string
+		ClientWin64   string
+		ClientConfig  string
 	}
 }
 
@@ -50,8 +56,8 @@ func (cfg *Config) set() *Config {
 		if abs, e := filepath.Abs(f); e == nil {
 			cfg.Path = abs
 		}
-		if eLog, e := filepath.Abs(cfg.ELog); e == nil {
-			cfg.ELog = eLog
+		if logfile, e := filepath.Abs(cfg.LogFile); e == nil {
+			cfg.LogFile = logfile
 		}
 		// save
 		cfg.save()

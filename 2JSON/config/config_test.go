@@ -5,8 +5,8 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	if cfg := NewCfg("./SIF2JSON.toml"); cfg != nil {
-		cfg := cfg.(*SIF2JSON)
+	if cfg := NewCfg("./Config.toml"); cfg != nil {
+		cfg := cfg.(*Config)
 		fPf("%+v\n", *cfg)
 	}
 }

@@ -1,4 +1,4 @@
-package config
+package cfg
 
 import (
 	"fmt"
@@ -16,19 +16,19 @@ var (
 	sHasSuffix = strings.HasSuffix
 )
 
-// JSON2SIF :
-type JSON2SIF struct {
+// Config :
+type Config struct {
 	Path          string
-	ELog          string
+	LogFile       string
 	DefaultSIFVer string
 	SIFSpecDir    string
 	ReplCfgPath   string
 }
 
 var (
-	// toml file name must be identical to config struct definition name
+	// toml file name must be identical to Config struct definition name
 	lsCfg = []interface{}{
-		&JSON2SIF{},
+		&Config{},
 	}
 )
 

@@ -12,13 +12,16 @@ import (
 )
 
 var (
+	fPf         = fmt.Printf
 	fPln        = fmt.Println
 	fSf         = fmt.Sprintf
 	sReplaceAll = strings.ReplaceAll
 
-	localIP = cmn.LocalIP
-	isXML   = cmn.IsXML
-	isJSON  = cmn.IsJSON
+	localIP   = cmn.LocalIP
+	isXML     = cmn.IsXML
+	isJSON    = cmn.IsJSON
+	setLog    = cmn.SetLog
+	warnOnErr = cmn.WarnOnErr
 )
 
 var (

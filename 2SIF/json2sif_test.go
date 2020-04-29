@@ -31,7 +31,7 @@ func TestJSON2SIF(t *testing.T) {
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
 		failOnErr("%v", err)
 
-		sif, sv, err := JSON2SIF("./config/JSON2SIF.toml", string(bytes), ver)
+		sif, sv, err := JSON2SIF("./config/Config.toml", string(bytes), ver)
 		failOnErr("%v", err)
 
 		sif = xmlfmt.FormatXML(sif, "", "    ")
