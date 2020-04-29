@@ -20,6 +20,8 @@ func main() {
 	protocol, ip, port, timeout := cfg.Server.Protocol, cfg.Server.IP, cfg.Server.Port, cfg.Access.Timeout
 	setLog(cfg.LogFile)
 
+	// fPln(cfg.LogFile)
+
 	if e := warnOnErrWhen(len(os.Args) < 2, "%v: Need ["+sJoin(getCfgRouteFields(), " ")+"]", eg.CLI_SUBCMD_ERR); e != nil {
 		if isFLog() {
 			fPf("*** %v  abort!\n", e)

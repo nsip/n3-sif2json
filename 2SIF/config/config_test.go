@@ -1,10 +1,10 @@
-package config
+package cfg
 
 import "testing"
 
 func TestConfig(t *testing.T) {
-	if cfg := NewCfg("./JSON2SIF.toml"); cfg != nil {
-		cfg := cfg.(*JSON2SIF)
+	if cfg := NewCfg("./Config.toml"); cfg != nil {
+		cfg := cfg.(*Config)
 		fPf("%+v\n", *cfg)
 	}
 }

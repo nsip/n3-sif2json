@@ -18,8 +18,8 @@ var (
 
 // !!! toml file name must be identical to config struct name !!!
 
-// SIF2JSON :
-type SIF2JSON struct {
+// Config :
+type Config struct {
 	Path           string
 	LogFile        string
 	AttrPrefix     string
@@ -31,9 +31,9 @@ type SIF2JSON struct {
 }
 
 var (
-	// toml file name must be identical to config struct name
+	// toml file name must be identical to Config struct name
 	lsCfg = []interface{}{
-		&SIF2JSON{},
+		&Config{},
 	}
 )
 

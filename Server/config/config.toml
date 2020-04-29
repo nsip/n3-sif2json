@@ -1,7 +1,9 @@
+### Server Config ###
+
 Path = "/home/qing/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
 LogFile = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/error.log"
-Cfg2JSON = "../2JSON/config/SIF2JSON.toml"
-Cfg2SIF = "../2SIF/config/JSON2SIF.toml"
+Cfg2JSON = "../../../2JSON/config/Config.toml"
+Cfg2SIF = "../../../2SIF/config/Config.toml"
 
 [WebService]
   Port = 1324

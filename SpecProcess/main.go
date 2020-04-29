@@ -69,7 +69,7 @@ func main() {
 	GenTomlAndGoSrc(os.Args[2], os.Args[3], os.Args[4], os.Args[5], os.Args[6], os.Args[7])
 	abs, err := filepath.Abs(os.Args[7])
 	failOnErr("%v", err)
-	fPf("Dumped [config.go] [Bool2JSON.toml] [List2JSON.toml] [Num2JSON.toml] into %s\n", abs)
+	fPf("Dumped [spec.go] [Bool2JSON.toml] [List2JSON.toml] [Num2JSON.toml] into %s\n", abs)
 }
 
 // GenTomlAndGoSrc :
