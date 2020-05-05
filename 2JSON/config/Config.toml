@@ -1,4 +1,4 @@
-Path = "/home/qing/go/src/github.com/nsip/n3-sif2json/2JSON/config/Config.toml"
+Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/2JSON/config/Config.toml"
 LogFile = "./error.log"
 AttrPrefix = "-"
 ContentPrefix = "#"

@@ -12,4 +12,5 @@ func TestLoad(t *testing.T) {
 	fPln(cfg.Route)
 	fPln(cfg.NATS)
 	fPln(cfg.File)
+	fPln(cfg.ServiceName)
 }

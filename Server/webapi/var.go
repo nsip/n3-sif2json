@@ -22,6 +22,7 @@ var (
 	isJSON    = cmn.IsJSON
 	setLog    = cmn.SetLog
 	warnOnErr = cmn.WarnOnErr
+	failOnErr = cmn.FailOnErr
 )
 
 var (

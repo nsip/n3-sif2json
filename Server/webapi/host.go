@@ -13,6 +13,7 @@ import (
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
 	cvt2sif "github.com/nsip/n3-sif2json/2SIF"
 	glb "github.com/nsip/n3-sif2json/Server/global"
+	"github.com/opentracing-contrib/go-stdlib/nethttp"
 )
 
 // HostHTTPAsync : Host a HTTP Server for SIF or JSON
@@ -23,6 +24,11 @@ func HostHTTPAsync() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.BodyLimit("2G"))
+
+	// Add Jaeger Tracer into Middleware
+	tracer := createTracer(glb.Cfg.ServiceName)
+	tropt := nethttp.NewTrOpt(tracer)
+	e.Use(tropt.TraceMiddleware)
 
 	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{

@@ -10,11 +10,12 @@ import (
 
 // Config is toml
 type Config struct {
-	Path       string
-	LogFile    string
-	Cfg2JSON   string
-	Cfg2SIF    string
-	WebService struct {
+	Path        string
+	LogFile     string
+	Cfg2JSON    string
+	Cfg2SIF     string
+	ServiceName string
+	WebService  struct {
 		Port    int
 		Version string
 	}
