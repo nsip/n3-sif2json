@@ -4,9 +4,9 @@
 
 1. Create Web-Service executable.
 
-    Goto /Server, run `build.sh "sif-spec(txt) path"`, create executable and its dependencies.
+    Goto `/Server`, run `build.sh "sif-spec(txt) path"`, create executable and its dependencies.
 
-    Goto ./build/your-os/, make sure 'config.toml' is in same directory.
+    Goto `./build/your-os/`, make sure 'config.toml' is in same directory.
 
     Make sure 'config.toml' has correct settings, especially [Cfg2JSON], [Cfg2SIF] and all [File].    
 
@@ -16,9 +16,9 @@
     
 2. Create CLI executable.
 
-    Goto /Client, run 'build.sh', create executable.
+    Goto `/Client`, run 'build.sh', create executable.
 
-    Goto ./build/your-os/, make sure 'config.toml' is in same directory.
+    Goto `./build/your-os/`, make sure 'config.toml' is in same directory.
 
 3.  Run Web-Service executable with correct config.
 
@@ -37,3 +37,6 @@ SIF Specification Description File. Text readable format, and at least contains:
    2. LIST, NUMERIC, BOOLEAN attribute type description.
    
    3. Element TRAVERSE description.
+
+   4. `serverEcho.go` must be in `github.com/opentracing-contrib/go-stdlib/nethttp` if you want tracing is available.
+      a copy of `serverEcho.go` exists in `/X` folder.
