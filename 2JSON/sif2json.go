@@ -51,8 +51,8 @@ func enforceConfig(json string, lsJSONCfg ...string) string {
 	return json
 }
 
-// SIF2JSON : if [SIFVer] is "", use config's DefaultSIFVer
-func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (json, sv string, err error) {
+// SIF2JSON : if [SIFVer] is "", DefaultSIFVer applies
+func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (string, string, error) {
 	const (
 		SignSIFVer = "#SIFVER#"
 	)
@@ -78,10 +78,10 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	)
 	failOnErr("That's embarrassing... %v", err)
 
-	// json = jsonBuf.String()
+	// json, sv := jsonBuf.String(), ""
 	// return // --------------------------- test 3rd party lib --------------------------- //
 
-	json = fmtJSON(jsonBuf.String(), 2)
+	json, sv := fmtJSON(jsonBuf.String(), 2), ""
 
 	// Deal with 'LF', 'TB', Part1 --------------------------------------------------------------------------
 	mRepl1 := map[string]string{"\n": "#LF#", "\t": "#TB#"}
@@ -162,5 +162,5 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	json = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
 	json = fmtJSON(json, 2)
 
-	return
+	return json, sv, nil
 }

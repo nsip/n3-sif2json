@@ -6,6 +6,8 @@
 
     Goto `/Server`, run `build.sh "sif-spec(txt) path"`, create executable and its dependencies.
 
+    e.g. run `./build.sh ../SIFSpec/3.4.6.txt` to build a web service with SIF 3.4.6 for different OS.
+
     Goto `./build/your-os/`, make sure 'config.toml' is in same directory.
 
     Make sure 'config.toml' has correct settings, especially [Cfg2JSON], [Cfg2SIF] and all [File].    
@@ -22,11 +24,13 @@
 
 3.  Run Web-Service executable with correct config.
 
-4.  Fetch Client executable from `wget` once Web-Service is running. 
+4.  Fetch Client executable and its configure from `wget` when Web-Service is running. 
 
-    Client usage: e.g. ruled by SIF 3.4.6, want to get JSON from 'Activity.xml' SIF file.
+    e.g. `wget ip:port/client-linux64`, `wget -O config.toml ip:port/client-config`
 
-    run `./client SIF2JSON -i=../data/examples/Activity.xml -v=3.4.6`
+    Client Usage: e.g. for SIF-3.4.6, get JSON from 'Activity.xml' SIF file.
+
+    Run `./client SIF2JSON -i=../data/examples/Activity.xml -v=3.4.6`
 
 ## Prerequisites
 
