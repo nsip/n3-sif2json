@@ -9,7 +9,7 @@ ServiceName = "n3-sif2json"
   Version = "0.1.0"
 
 [Route]
-  ROOT = "/"
+  HELP = "/"
   SIF2JSON = "/sif2json/#v"
   JSON2SIF = "/json2sif/#v"
 

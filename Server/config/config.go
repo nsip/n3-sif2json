@@ -20,7 +20,7 @@ type Config struct {
 		Version string
 	}
 	Route struct {
-		ROOT     string
+		HELP     string
 		SIF2JSON string
 		JSON2SIF string
 	}

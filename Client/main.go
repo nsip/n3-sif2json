@@ -63,7 +63,7 @@ func main() {
 		}
 
 		switch os.Args[1] { // Config - Route - each Field
-		case "ROOT":
+		case "HELP":
 			resp, err = http.Get(url)
 
 		case "SIF2JSON", "JSON2SIF":
@@ -93,7 +93,7 @@ func main() {
 		data, err := ioutil.ReadAll(resp.Body)
 		failOnErr("resp Body fatal: %v", err)
 		if data != nil {
-			if os.Args[1] == "ROOT" {
+			if os.Args[1] == "HELP" {
 				fPt(string(data))
 			} else {
 				m := make(map[string]interface{})
