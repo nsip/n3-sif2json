@@ -7,7 +7,7 @@ GOPATH=`go env GOPATH`
 ORIGINALPATH=`pwd`
 
 rm -rf ./build/*
-mkdir -p ./build/Linux64 ./build/Win64 ./build/Mac
+mkdir -p ./build/Linux64 ./build/Win64 ./build/Mac ./build/LinuxArm
 
 go get
 
@@ -29,3 +29,11 @@ OUTPATH=./build/Linux64/
 GOOS="linux" GOARCH="$GOARCH" go build -ldflags="$LDFLAGS" -o $OUT
 mv $OUT $OUTPATH
 cp ./config/config.toml $OUTPATH
+
+GOARCH=arm
+OUTPATH=./build/LinuxArm/
+GOOS="linux" GOARCH="$GOARCH" GOARM=7 go build -ldflags="$LDFLAGS" -o $OUT
+mv $OUT $OUTPATH
+cp ./config/config.toml $OUTPATH
+
+echo "All Done"

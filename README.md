@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-1. Create Web-Service executable.
+1. Create Server (Web-Service) executable.
 
     Goto `/Server`, run `build.sh "sif-spec(txt) path"`, create executable and its dependencies.
 
@@ -16,13 +16,13 @@
 
     In [Cfg2SIF], make sure [SIFSpecDir], [ReplCfgPath] are correct.
     
-2. Create CLI executable.
+2. Create Client (CLI) executable.
 
     Goto `/Client`, run 'build.sh', create executable.
 
     Goto `./build/your-os/`, make sure 'config.toml' is in same directory.
 
-3.  Run Web-Service executable with correct config.
+3.  Run Server executable with correct config.
 
 4.  Fetch Client executable and its configure from `wget` when Web-Service is running. 
 
@@ -42,5 +42,3 @@ SIF Specification Description File. Text readable format, and at least contains:
    
    3. Element TRAVERSE description.
 
-   4. `serverEcho.go` must be in `github.com/opentracing-contrib/go-stdlib/nethttp` if you want tracing is available.
-      a copy of `serverEcho.go` exists in `/X` folder.
