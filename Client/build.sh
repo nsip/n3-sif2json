@@ -1,10 +1,9 @@
  #!/bin/bash
 
-VERSION="v0.1.0"
-
 set -e
 GOPATH=`go env GOPATH`
 ORIGINALPATH=`pwd`
+VERSION="v0.1.0"
 
 rm -rf ./build/*
 mkdir -p ./build/Linux64 ./build/Win64 ./build/Mac ./build/LinuxArm
@@ -35,5 +34,3 @@ OUTPATH=./build/LinuxArm/
 GOOS="linux" GOARCH="$GOARCH" GOARM=7 go build -ldflags="$LDFLAGS" -o $OUT
 mv $OUT $OUTPATH
 cp ./config/config.toml $OUTPATH
-
-echo "All Done"

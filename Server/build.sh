@@ -1,23 +1,8 @@
  #!/bin/bash
 
-####
-if [ $# -ne 1 ]; then
-    echo "Input SIF(txt) Spec File Path"
-    exit -1
-fi
-if [ ! -f $1 ]; then
-    echo "SIF txt Spec does not exist"
-    exit -1
-fi
-cd ../SpecProcess && ./build.sh $1 && cd -
-cd ../2JSON/SpecCfgMaker/ && ./build.sh && cd -
-####
+set -e
 
 VERSION="v0.1.0"
-
-set -e
-GOPATH=`go env GOPATH`
-ORIGINALPATH=`pwd`
 
 rm -rf ./build/*
 mkdir -p ./build/Linux64 ./build/Win64 ./build/Mac ./build/LinuxArm
@@ -48,5 +33,3 @@ OUTPATH=./build/LinuxArm/
 GOOS="linux" GOARCH="$GOARCH" GOARM=7 go build -ldflags="$LDFLAGS" -o $OUT
 mv $OUT $OUTPATH
 cp ./config/config.toml $OUTPATH
-
-echo "All Done"
