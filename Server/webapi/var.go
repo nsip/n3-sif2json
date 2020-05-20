@@ -17,12 +17,14 @@ var (
 	fSf         = fmt.Sprintf
 	sReplaceAll = strings.ReplaceAll
 
-	localIP   = cmn.LocalIP
-	isXML     = cmn.IsXML
-	isJSON    = cmn.IsJSON
-	setLog    = cmn.SetLog
-	warnOnErr = cmn.WarnOnErr
-	failOnErr = cmn.FailOnErr
+	localIP       = cmn.LocalIP
+	isXML         = cmn.IsXML
+	isJSON        = cmn.IsJSON
+	setLog        = cmn.SetLog
+	log           = cmn.Log
+	warnOnErr     = cmn.WarnOnErr
+	failOnErr     = cmn.FailOnErr
+	mustWriteFile = cmn.MustWriteFile
 )
 
 var (

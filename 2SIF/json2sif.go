@@ -443,7 +443,7 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 			line := ""
 			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
 				if _, err = fmt.Fscan(f, &line); err == nil && line == DefaultSIFVer {
-					SIFSpec = fullname
+					SIFSpec, SIFVer = fullname, DefaultSIFVer
 					f.Close()
 					break
 				}

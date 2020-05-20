@@ -96,7 +96,10 @@ func HostHTTPAsync() {
 		mMtx[path].Lock()
 
 		bytes, err := ioutil.ReadAll(c.Request().Body)
-		if err != nil || !isXML(string(bytes)) {
+		xmlstr := string(bytes)
+		// log("\n%s\n", xmlstr)
+
+		if err != nil || !isXML(xmlstr) {
 			return c.JSON(http.StatusBadRequest, result{
 				Data:  nil,
 				Info:  "",
@@ -118,12 +121,12 @@ func HostHTTPAsync() {
 			pub2nats = true
 		}
 
-		// json, svUsed, err := cvt2json.SIF2JSON(cfg.Cfg2JSON, string(bytes), sv, false)
+		// json, svUsed, err := cvt2json.SIF2JSON(cfg.Cfg2JSON, xmlstr, sv, false)
 
 		// Trace [cvt2json.SIF2JSON]
 		// [cvt2json.SIF2JSON] uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
 		results := jaegertracing.TraceFunction(c, func() (string, string, error) {
-			return cvt2json.SIF2JSON(cfg.Cfg2JSON, string(bytes), sv, false)
+			return cvt2json.SIF2JSON(cfg.Cfg2JSON, xmlstr, sv, false)
 		})
 		json := results[0].Interface().(string)
 		svUsed := results[1].Interface().(string)
@@ -177,6 +180,7 @@ func HostHTTPAsync() {
 			Info:  info,
 			Error: "",
 		})
+
 		// return c.String(http.StatusOK, json) // json string is already JSON String, so return String
 	})
 
@@ -188,18 +192,26 @@ func HostHTTPAsync() {
 		mMtx[path].Lock()
 
 		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
-			if !isJSON(string(bytes)) {
+			jsonstr := string(bytes)
+			// log("\n%s\n", jsonstr)
+
+			if len(bytes) == 0 {
+				warnOnErr("%v: \n%s", eg.HTTP_REQBODY_EMPTY, jsonstr)
+			}
+			if !isJSON(jsonstr) {
+				warnOnErr("%v: \n%s", eg.JSON_INVALID, jsonstr)
 				goto ERR
 			}
+
 			sv := ""
 			if ok, ver := url1Value(c.QueryParams(), 0, "sv"); ok {
 				sv = ver
 			}
 
-			// sif, svUsed, err := cvt2sif.JSON2SIF(cfg.Cfg2SIF, string(bytes), sv)
+			// sif, svUsed, err := cvt2sif.JSON2SIF(cfg.Cfg2SIF, jsonstr, sv)
 
 			// Trace [cvt2sif.JSON2SIF]
-			results := jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, cfg.Cfg2SIF, string(bytes), sv)
+			results := jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, cfg.Cfg2SIF, jsonstr, sv)
 			sif := results[0].Interface().(string)
 			svUsed := results[1].Interface().(string)
 			if !results[2].IsNil() {
