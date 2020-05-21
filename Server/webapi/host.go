@@ -42,9 +42,9 @@ func HostHTTPAsync() {
 	route := cfg.Route
 	file := cfg.File
 
-	setLog(cfg.LogFile)
-
 	initMutex()
+
+	defer e.Start(fSf(":%d", port))
 
 	// *************************************** List all API, FILE *************************************** //
 	path := "/"
@@ -240,6 +240,4 @@ func HostHTTPAsync() {
 			Error: "JSON Data must be provided via Request BODY as Valid JSON",
 		})
 	})
-
-	e.Start(fSf(":%d", port))
 }

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	g "github.com/nsip/n3-sif2json/Server/global"
 	api "github.com/nsip/n3-sif2json/Server/webapi"
@@ -10,7 +9,13 @@ import (
 
 func main() {
 	failOnErrWhen(!g.Init(), "%v", fmt.Errorf("Global Config Init Error"))
-	log.Printf("Working on: [%v]", g.Cfg.WebService)
+
+	cfg := g.Cfg
+	ws, logfile, servicename := cfg.WebService, cfg.LogFile, cfg.ServiceName
+
+	setLog(logfile)
+	logWhen(true, "[%s] Hosting on: [%v:%d], version [%v]", servicename, localIP(), ws.Port, ws.Version)
+
 	done := make(chan string)
 	go api.HostHTTPAsync()
 	<-done

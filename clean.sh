@@ -14,6 +14,7 @@ cd ./2SIF && ./clean.sh && cd $ORIGINALPATH && echo "2SIF clean"
 
 rm -rf ./2JSON/SpecCfg/*
 rm -rf ./data/json/ ./data/sif/
+rm -f ./*.log
 
 # delete all binary files
 find . -type f -executable -exec sh -c "file -i '{}' | grep -q 'x-executable; charset=binary'" \; -print | xargs rm -f
