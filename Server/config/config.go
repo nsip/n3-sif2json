@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"time"
 
 	"github.com/burntsushi/toml"
 )
@@ -41,8 +42,7 @@ type Config struct {
 func NewCfg(configs ...string) *Config {
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
-			cfg := &Config{Path: f}
-			return cfg.set()
+			return (&Config{Path: f}).set()
 		}
 	}
 	return nil
@@ -60,11 +60,15 @@ func (cfg *Config) set() *Config {
 		if logfile, e := filepath.Abs(cfg.LogFile); e == nil {
 			cfg.LogFile = logfile
 		}
+
 		// save
 		cfg.save()
+
 		// modify BUT not save
-		ver := fSf("%s", cfg.WebService.Version)
-		return cfg.modCfg(map[string]string{"#v": ver}) // *** replace version *** //
+		return cfg.modCfg(map[string]interface{}{
+			"[DATE]": time.Now().Format("2006-01-02"),
+			"[v]":    cfg.WebService.Version,
+		}) // *** replace version *** //
 	}
 	return nil
 }
@@ -76,15 +80,38 @@ func (cfg *Config) save() {
 	}
 }
 
-func (cfg *Config) modCfg(mRepl map[string]string) *Config {
+func (cfg *Config) modCfg(mRepl map[string]interface{}) *Config {
 	if mRepl == nil || len(mRepl) == 0 {
 		return cfg
 	}
-	nField := reflect.ValueOf(cfg.Route).NumField()
-	for i := 0; i < nField; i++ {
+
+	cfgElem := reflect.ValueOf(cfg).Elem()
+	for i, nField := 0, cfgElem.NumField(); i < nField; i++ {
 		for key, value := range mRepl {
-			replaced := sReplaceAll(reflect.ValueOf(cfg.Route).Field(i).Interface().(string), key, value)
-			reflect.ValueOf(&cfg.Route).Elem().Field(i).SetString(replaced)
+			field := cfgElem.Field(i)
+
+			// string replace
+			if oriVal, ok := field.Interface().(string); ok {
+				if replaced := sReplaceAll(oriVal, key, value.(string)); replaced != oriVal {
+					field.SetString(replaced)
+				}
+			}
+			// TODO : SetInt ... if needed
+
+			// go into struct, String replace
+			if field.Kind() == reflect.Struct {
+				for j, nFieldSub := 0, field.NumField(); j < nFieldSub; j++ {
+					fieldSub := field.Field(j)
+
+					// string replace
+					if oriVal, ok := fieldSub.Interface().(string); ok {
+						if replaced := sReplaceAll(oriVal, key, value.(string)); replaced != oriVal {
+							fieldSub.SetString(replaced)
+						}
+					}
+					// TODO : SetInt ... if needed
+				}
+			}
 		}
 	}
 	return cfg

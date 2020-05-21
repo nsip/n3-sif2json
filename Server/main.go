@@ -14,7 +14,7 @@ func main() {
 	ws, logfile, servicename := cfg.WebService, cfg.LogFile, cfg.ServiceName
 
 	setLog(logfile)
-	logWhen(true, "[%s] Hosting on: [%v:%d], version [%v]", servicename, localIP(), ws.Port, ws.Version)
+	fPln(logWhen(true, "[%s] Hosting on: [%v:%d], version [%v]", servicename, localIP(), ws.Port, ws.Version))
 
 	done := make(chan string)
 	go api.HostHTTPAsync()
