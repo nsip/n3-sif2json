@@ -57,9 +57,8 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 		SignSIFVer = "#SIFVER#"
 	)
 
-	ICfg := cfg.NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v", eg.CFG_INIT_ERR)
-	s2j := ICfg.(*cfg.Config)
+	s2j := cfg.NewCfg(cfgPath)
+	failOnErrWhen(s2j == nil, "%v: %s", eg.CFG_INIT_ERR, cfgPath)
 
 	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
 	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM

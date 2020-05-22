@@ -70,7 +70,6 @@ func set(f, abs string) interface{} {
 			if _, e := toml.DecodeFile(f, cfg); e == nil {
 				reflect.ValueOf(cfg).Elem().FieldByName("Path").SetString(abs)
 				save(f, cfg)
-				// modify for runtime
 				return cfg
 			}
 		}

@@ -57,9 +57,6 @@ func (cfg *Config) set() *Config {
 		if abs, e := filepath.Abs(f); e == nil {
 			cfg.Path = abs
 		}
-		if logfile, e := filepath.Abs(cfg.LogFile); e == nil {
-			cfg.LogFile = logfile
-		}
 
 		// save
 		cfg.save()
@@ -68,7 +65,7 @@ func (cfg *Config) set() *Config {
 		return cfg.modCfg(map[string]interface{}{
 			"[DATE]": time.Now().Format("2006-01-02"),
 			"[v]":    cfg.WebService.Version,
-		}) // *** replace version *** //
+		}) // *** replace some *** //
 	}
 	return nil
 }
