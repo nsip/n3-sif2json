@@ -35,8 +35,7 @@ type Config struct {
 func NewCfg(configs ...string) *Config {
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
-			cfg := &Config{Path: f}
-			return cfg.set()
+			return (&Config{Path: f}).set()
 		}
 	}
 	return nil
@@ -51,9 +50,7 @@ func (cfg *Config) set() *Config {
 		if abs, e := filepath.Abs(f); e == nil {
 			cfg.Path = abs
 		}
-		if logfile, e := filepath.Abs(cfg.LogFile); e == nil {
-			cfg.LogFile = logfile
-		}
+
 		// save
 		cfg.save()
 		return cfg

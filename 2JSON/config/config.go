@@ -3,7 +3,6 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"reflect"
 	"time"
 
 	"github.com/burntsushi/toml"
@@ -44,10 +43,11 @@ func (cfg *Config) set() *Config {
 		// save
 		cfg.save()
 
-		// modify BUT not save
-		return cfg.modCfg(map[string]interface{}{
+		ICfg, e := cfgRepl(cfg, map[string]interface{}{
 			"[DATE]": time.Now().Format("2006-01-02"),
-		}) // *** replace some *** //
+		})
+		failOnErr("%v", e)
+		return ICfg.(*Config)
 	}
 	return nil
 }
@@ -57,41 +57,4 @@ func (cfg *Config) save() {
 		defer f.Close()
 		toml.NewEncoder(f).Encode(cfg)
 	}
-}
-
-func (cfg *Config) modCfg(mRepl map[string]interface{}) *Config {
-	if mRepl == nil || len(mRepl) == 0 {
-		return cfg
-	}
-
-	cfgElem := reflect.ValueOf(cfg).Elem()
-	for i, nField := 0, cfgElem.NumField(); i < nField; i++ {
-		for key, value := range mRepl {
-			field := cfgElem.Field(i)
-
-			// string replace
-			if oriVal, ok := field.Interface().(string); ok {
-				if replaced := sReplaceAll(oriVal, key, value.(string)); replaced != oriVal {
-					field.SetString(replaced)
-				}
-			}
-			// TODO : SetInt ... if needed
-
-			// go into struct, String replace
-			if field.Kind() == reflect.Struct {
-				for j, nFieldSub := 0, field.NumField(); j < nFieldSub; j++ {
-					fieldSub := field.Field(j)
-
-					// string replace
-					if oriVal, ok := fieldSub.Interface().(string); ok {
-						if replaced := sReplaceAll(oriVal, key, value.(string)); replaced != oriVal {
-							fieldSub.SetString(replaced)
-						}
-					}
-					// TODO : SetInt ... if needed
-				}
-			}
-		}
-	}
-	return cfg
 }
