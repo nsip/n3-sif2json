@@ -7,7 +7,7 @@ import (
 	"os"
 	"regexp"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 	"github.com/clbanning/mxj"
 	cfg "github.com/nsip/n3-sif2json/2SIF/config"
 )

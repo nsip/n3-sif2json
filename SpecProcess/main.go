@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
 // Println :

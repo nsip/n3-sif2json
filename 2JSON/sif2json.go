@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 

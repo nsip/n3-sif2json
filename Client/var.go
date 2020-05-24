@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	cmn "github.com/cdutwhu/json-util/common"
+	cmn "github.com/cdutwhu/n3-util/common"
 	glb "github.com/nsip/n3-sif2json/Client/global"
 )
 

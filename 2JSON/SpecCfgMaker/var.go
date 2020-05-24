@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/json-util/common"
-	"github.com/cdutwhu/json-util/n3json"
+	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/n3-util/n3json"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	cmn "github.com/cdutwhu/json-util/common"
+	cmn "github.com/cdutwhu/n3-util/common"
 	glb "github.com/nsip/n3-sif2json/Server/global"
 )
 
