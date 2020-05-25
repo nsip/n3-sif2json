@@ -2,7 +2,7 @@ Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml
 LogFile = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/[DATE].log"
 Cfg2JSON = "../../../2JSON/config/config.toml"
 Cfg2SIF = "../../../2SIF/config/config.toml"
-ServiceName = "n3-sif2json"
+ServiceName = "N3-SIF2JSON"
 
 [WebService]
   Port = 1324
