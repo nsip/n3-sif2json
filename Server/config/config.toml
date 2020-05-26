@@ -1,0 +1,25 @@
+Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Server/config/config.toml"
+LogFile = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/[DATE].log"
+Cfg2JSON = "../../../2JSON/config/config.toml"
+Cfg2SIF = "../../../2SIF/config/config.toml"
+ServiceName = "N3-SIF2JSON"
+
+[WebService]
+  Port = 1324
+  Version = "0.1.0"
+
+[Route]
+  HELP = "/"
+  SIF2JSON = "/sif2json/[v]"
+  JSON2SIF = "/json2sif/[v]"
+
+[NATS]
+  URL = "nats://192.168.78.130:4222"
+  Subject = "SIF2JSON"
+  Timeout = 500
+
+[File]
+  ClientLinux64 = "../../../Client/build/Linux64/client"
+  ClientMac = "../../../Client/build/Mac/client"
+  ClientWin64 = "../../../Client/build/Win64/client.exe"
+  ClientConfig = "../../../Client/build/Linux64/config.toml"
