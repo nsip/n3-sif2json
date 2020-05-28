@@ -1,10 +1,10 @@
-Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Client/config/config.toml"
-LogFile = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/Client/error.log"
+Path = ""
+LogFile = "./go-client-[DATE].log"
 ServiceName = "N3-SIF2JSON"
 
 [Server]
   Protocol = "http"
-  IP = "127.0.0.1"
+  IP = "192.168.31.168"
   Port = 1324
 
 [Access]

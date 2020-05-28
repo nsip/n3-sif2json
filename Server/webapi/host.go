@@ -13,7 +13,7 @@ import (
 	"github.com/nats-io/nats.go"
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
 	cvt2sif "github.com/nsip/n3-sif2json/2SIF"
-	glb "github.com/nsip/n3-sif2json/Server/global"
+	cfg "github.com/nsip/n3-sif2json/Server/config"
 )
 
 // HostHTTPAsync : Host a HTTP Server for SIF or JSON
@@ -37,13 +37,12 @@ func HostHTTPAsync() {
 		AllowCredentials: true,
 	}))
 
-	cfg := glb.Cfg
-	port := cfg.WebService.Port
+	Cfg := env2Struct("Cfg", &cfg.Config{}).(*cfg.Config)
+	port := Cfg.WebService.Port
 	fullIP := localIP() + fSf(":%d", port)
-	route := cfg.Route
-	file := cfg.File
-
-	mMtx := initMutex()
+	route := Cfg.Route
+	file := Cfg.File
+	mMtx := initMutex(Cfg.Route)
 
 	defer e.Start(fSf(":%d", port))
 
@@ -128,7 +127,7 @@ func HostHTTPAsync() {
 		// Trace [cvt2json.SIF2JSON]
 		// [cvt2json.SIF2JSON] uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
 		results := jaegertracing.TraceFunction(c, func() (string, string, error) {
-			return cvt2json.SIF2JSON(cfg.Cfg2JSON, xmlstr, sv, false)
+			return cvt2json.SIF2JSON(Cfg.Cfg2JSON, xmlstr, sv, false)
 		})
 		json := results[0].Interface().(string)
 		svUsed := results[1].Interface().(string)
@@ -146,9 +145,9 @@ func HostHTTPAsync() {
 
 		// send a copy to NATS
 		if pub2nats {
-			url := cfg.NATS.URL
-			subj := cfg.NATS.Subject
-			timeout := time.Duration(cfg.NATS.Timeout)
+			url := Cfg.NATS.URL
+			subj := Cfg.NATS.Subject
+			timeout := time.Duration(Cfg.NATS.Timeout)
 
 			info += fSf(" | To NATS@Subject: [%s@%s]", url, subj)
 			nc, err := nats.Connect(url)
@@ -213,7 +212,7 @@ func HostHTTPAsync() {
 			// sif, svUsed, err := cvt2sif.JSON2SIF(cfg.Cfg2SIF, jsonstr, sv)
 
 			// Trace [cvt2sif.JSON2SIF]
-			results := jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, cfg.Cfg2SIF, jsonstr, sv)
+			results := jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, Cfg.Cfg2SIF, jsonstr, sv)
 			sif := results[0].Interface().(string)
 			svUsed := results[1].Interface().(string)
 			if !results[2].IsNil() {
