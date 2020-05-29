@@ -13,8 +13,8 @@ func TestLoad(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	initEnvVarFromTOML("Cfg", "./config.toml")
-	cfg := env2Struct("Cfg", &config{}).(*config)
+	initEnvVarFromTOML("Cfg-Clt-S2J", "./config.toml")
+	cfg := env2Struct("Cfg-Clt-S2J", &config{}).(*config)
 	fPln(cfg.Path)
 	fPln(cfg.LogFile)
 	fPln(cfg.Access)

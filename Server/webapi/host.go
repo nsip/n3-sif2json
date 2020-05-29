@@ -108,10 +108,7 @@ func HostHTTPAsync() {
 			})
 		}
 
-		var (
-			info      string
-			errIntSvr error
-		)
+		var errSvr error
 
 		pvalues := c.QueryParams()
 		sv, pub2nats := "", false
@@ -137,10 +134,10 @@ func HostHTTPAsync() {
 			err = nil
 		}
 
-		info = "[cvt2json.SIF2JSON]"
+		info := "[cvt2json.SIF2JSON]"
 		if err != nil {
-			errIntSvr = err
-			goto ERR_IS
+			errSvr = err
+			goto ERR
 		}
 
 		// send a copy to NATS
@@ -152,8 +149,8 @@ func HostHTTPAsync() {
 			info += fSf(" | To NATS@Subject: [%s@%s]", url, subj)
 			nc, err := nats.Connect(url)
 			if err != nil {
-				errIntSvr = err
-				goto ERR_IS
+				errSvr = err
+				goto ERR
 			}
 
 			msg, err := nc.Request(subj, []byte(json), timeout*time.Millisecond)
@@ -161,24 +158,23 @@ func HostHTTPAsync() {
 				info += fSf(" | NATS responded: [%s]", string(msg.Data))
 			}
 			if err != nil {
-				errIntSvr = err
-				goto ERR_IS
+				errSvr = err
+				goto ERR
 			}
 		}
 
-	ERR_IS:
-		if errIntSvr != nil {
+	ERR:
+		if errSvr != nil {
 			return c.JSON(http.StatusInternalServerError, result{
 				Data:  nil,
 				Info:  info,
-				Error: errIntSvr.Error(),
+				Error: errSvr.Error(),
 			})
 		}
 
-		info += fSf(" | SIF Ver: [%s]", svUsed)
 		return c.JSON(http.StatusOK, result{
 			Data:  &json,
-			Info:  info,
+			Info:  info + fSf(" | SIF Ver: [%s]", svUsed),
 			Error: "",
 		})
 

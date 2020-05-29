@@ -11,9 +11,9 @@ import (
 
 // DO : fn ["HELP", "SIF2JSON", "JSON2SIF"]
 func DO(configfile, fn string, args Args) (string, error) {
-	failOnErrWhen(!initEnvVarFromTOML("Cfg-Client", configfile), "%v", eg.CFG_INIT_ERR)
+	failOnErrWhen(!initEnvVarFromTOML("Cfg-Clt-S2J", configfile), "%v", eg.CFG_INIT_ERR)
 
-	Cfg := env2Struct("Cfg-Client", &config{}).(*config)
+	Cfg := env2Struct("Cfg-Clt-S2J", &config{}).(*config)
 	server := Cfg.Server
 	protocol, ip, port := server.Protocol, server.IP, server.Port
 	timeout := Cfg.Access.Timeout
