@@ -3,19 +3,16 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"io/ioutil"
 	"os"
 
 	eg "github.com/cdutwhu/n3-util/n3errs"
-	client "github.com/nsip/n3-sif2json/Server/go-client"
+	clt "github.com/nsip/n3-sif2json/Server/go-client"
 )
 
 func main() {
-	if e := warnOnErrWhen(len(os.Args) < 3, "%v: need [config.toml] [HELP SIF2JSON JSON2SIF]", eg.CLI_SUBCMD_ERR); e != nil {
-		if isFLog() {
-			fPf("%v\n", e)
-		}
-		return
-	}
+	fns := structFields(clt.Config{}.Route)
+	failOnErrWhen(len(os.Args) < 3, "%v: need [config.toml] %v", eg.CLI_SUBCMD_ERR, fns)
 
 	cltcfg, fn := os.Args[1], os.Args[2]
 
@@ -26,38 +23,32 @@ func main() {
 	nPtr := cmd.Bool("n", false, "indicate server to send a copy to NATS") // true: indicate server
 	cmd.Parse(os.Args[3:])
 
-	if fn == "SIF2JSON" || fn == "JSON2SIF" {
-		failOnErrWhen(*iPtr == "", "%v: [-i] is required", eg.CLI_FLAG_ERR)
-	}
+	data, err := ioutil.ReadFile(*iPtr)
+	failOnErrWhen(fn == "SIF2JSON" || fn == "JSON2SIF", "%v: %s", err, *iPtr)
 
-	str, err := client.DO(
+	str, err := clt.DO(
 		cltcfg,
 		fn,
-		client.Args{
-			File:      *iPtr,
+		clt.Args{
+			Data:      data,
 			Ver:       *vPtr,
 			WholeDump: *wPtr,
 			ToNATS:    *nPtr,
 		})
-	failOnErr("Access SIF2JSON Failed: %v", err)
+	failOnErr("Access SIF2JSON Service Failed: %v", err)
 
 	if fn == "HELP" {
 		fPt(str)
-	} else {
-		m := make(map[string]interface{})
-		failOnErr("json.Unmarshal ... %v", json.Unmarshal([]byte(str), &m))
-		if *wPtr {
-			if m["info"] != nil && m["info"] != "" {
-				fPf("INFO: %v\n", m["info"])
-			}
-			fPln("-----------------------------")
-			if m["error"] != nil && m["error"] != "" {
-				fPf("ERROR: %v\n", m["error"])
-			}
-			fPln("-----------------------------")
-		}
-		if m["data"] != nil && m["data"] != "" {
-			fPf("%s\n", m["data"])
-		}
+		return
 	}
+
+	m := make(map[string]interface{})
+	failOnErr("json.Unmarshal ... %v", json.Unmarshal([]byte(str), &m))
+	if *wPtr {
+		fPf("INFO: %v\n", m["info"])
+		fPln("-----------------------------")
+		fPf("ERROR: %v\n", m["error"])
+		fPln("-----------------------------")
+	}
+	fPf("%s\n", m["data"])
 }
