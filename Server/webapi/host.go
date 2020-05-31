@@ -102,7 +102,7 @@ func HostHTTPAsync() {
 
 		if err != nil || !isXML(xmlstr) {
 			return c.JSON(http.StatusBadRequest, result{
-				Data:  nil,
+				Data:  "",
 				Info:  "",
 				Error: err.Error() + " OR Is Request BODY Valid XML?",
 			})
@@ -166,14 +166,14 @@ func HostHTTPAsync() {
 	ERR:
 		if errSvr != nil {
 			return c.JSON(http.StatusInternalServerError, result{
-				Data:  nil,
+				Data:  "",
 				Info:  info,
 				Error: errSvr.Error(),
 			})
 		}
 
 		return c.JSON(http.StatusOK, result{
-			Data:  &json,
+			Data:  json,
 			Info:  info + fSf(" | SIF Ver: [%s]", svUsed),
 			Error: "",
 		})
@@ -219,20 +219,20 @@ func HostHTTPAsync() {
 
 			if err != nil {
 				return c.JSON(http.StatusInternalServerError, result{
-					Data:  nil,
+					Data:  "",
 					Info:  "",
 					Error: err.Error(),
 				})
 			}
 			return c.JSON(http.StatusOK, result{
-				Data:  &sif,
+				Data:  sif,
 				Info:  svUsed,
 				Error: "",
 			})
 		}
 	ERR:
 		return c.JSON(http.StatusBadRequest, result{
-			Data:  nil,
+			Data:  "",
 			Info:  "",
 			Error: "JSON Data must be provided via Request BODY as Valid JSON",
 		})

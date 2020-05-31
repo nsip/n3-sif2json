@@ -79,7 +79,7 @@ func (cfg *Config) save() {
 
 // InitEnvVarFromTOML : initialize the global variables
 func InitEnvVarFromTOML(key string, configs ...string) bool {
-	configs = append(configs, "./config.toml", "../config.toml", "../../config.toml", "./config/config.toml")
+	configs = append(configs, "./config.toml")
 	Cfg := newCfg(configs...)
 	if Cfg == nil {
 		return false

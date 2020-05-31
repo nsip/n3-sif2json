@@ -34,10 +34,9 @@ var (
 
 // Args is arguments for "Route"
 type Args struct {
-	Data      []byte
-	Ver       string
-	WholeDump bool
-	ToNATS    bool
+	Data   []byte
+	Ver    string
+	ToNATS bool
 }
 
 func initMapFnURL(protocol, ip string, port int, route interface{}) (map[string]string, []string) {

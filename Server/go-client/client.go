@@ -56,7 +56,7 @@ func rest(fn, url string, args Args, chStr chan string, chErr chan error) {
 	url = sReplace(url, "?&", "?", 1)
 	url = sTrimRight(url, "?&")
 
-	logWhen(args.WholeDump, "accessing ... %s", url)
+	logWhen(true, "accessing ... %s", url)
 
 	var (
 		Resp    *http.Response

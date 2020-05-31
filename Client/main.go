@@ -30,10 +30,9 @@ func main() {
 		cltcfg,
 		fn,
 		clt.Args{
-			Data:      data,
-			Ver:       *vPtr,
-			WholeDump: *wPtr,
-			ToNATS:    *nPtr,
+			Data:   data,
+			Ver:    *vPtr,
+			ToNATS: *nPtr,
 		})
 	failOnErr("Access SIF2JSON Service Failed: %v", err)
 
