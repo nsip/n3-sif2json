@@ -92,11 +92,14 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 			posGrp = append(posGrp, []int{start, end})
 			values = append(values, sReplaceAll(json[start:end], k, v))
 		}
-		json = replByPosGrp(json, posGrp, values)
+		var err error
+		json, err = replByPosGrp(json, posGrp, values)
+		failOnErr("%v", err)
 	}
 
 	// Attributes Modification according to Config ----------------------------------------------------------
-	obj := xmlRoot(xml)              // infer object from xml root by default, use this object to search config json
+	obj, err := xmlRoot(xml) // infer object from xml root by default, use this object to search config json
+	failOnErr("%v", err)
 	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
 		obj = subobj[0]
 	}
@@ -158,7 +161,8 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 	}
 
 	const mark = "value" // "#content"
-	json = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
+	json, err = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
+	failOnErr("%v", err)
 	json = fmtJSON(json, 2)
 
 	return json, sv, nil

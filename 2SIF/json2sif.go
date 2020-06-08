@@ -294,7 +294,9 @@ func JSON2SIFSpec(xml, SIFSpecPath string) string {
 		tag, _ := TagFromXMLLine(xmlLine)
 		out := fSf("%s<%s %s>", mkIndent(CountHeadSpace(xmlLine, 4)), tag, attrs2write)
 		// xml = sReplByPos(xml, start, end, out)
-		xml = replByPosGrp(xml, [][]int{{start, end}}, []string{out})
+		var err error
+		xml, err = replByPosGrp(xml, [][]int{{start, end}}, []string{out})
+		failOnErr("%v", err)
 	}
 	// End adjusting attributes order
 
@@ -365,7 +367,9 @@ func Hierarchy(searchArea string, lvl int, hierarchy *[]string) {
 
 // SearchTagWithAttr : where (get line from xml), tag-path (get info from spec), attribute-map (re-order attributes, reconstruct line)
 func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp []map[string]string, root string) {
-	root = xmlRoot(xml)
+	var err error
+	root, err = xmlRoot(xml)
+	failOnErr("%v", err)
 	TagOrAttr, minAttr := `[^ \t<>]+`, 2
 	r := regexp.MustCompile(fSf(`[ ]*<%[1]s[ ]+(%[1]s="%[1]s"[ ]*){%d,}>`, TagOrAttr, minAttr))
 	if loc := r.FindAllStringIndex(xml, -1); loc != nil {

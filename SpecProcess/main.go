@@ -31,7 +31,9 @@ func ObjGrp(sep string, listGrp ...string) []string {
 			m[obj] = true
 		}
 	}
-	return mapKeys(m).([]string)
+	IKeys, err := mapKeys(m)
+	failOnErr("%v", err)
+	return IKeys.([]string)
 }
 
 // MapOfGrp :

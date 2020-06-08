@@ -63,7 +63,7 @@ func TestSIF2JSON(t *testing.T) {
 			bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
 			failOnErr("%v", err)
 			sv := "3.4.6"
-			json, sv, err := SIF2JSON("./config/Config.toml", string(bytes), sv, false)
+			json, sv, err := SIF2JSON("./config/config.toml", string(bytes), sv, false)
 			fPln("end:", obj, sv, err)
 			failOnErr("%v", err)
 			if json != "" {
