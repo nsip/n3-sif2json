@@ -44,7 +44,7 @@ func HostHTTPAsync() {
 	fullIP := localIP() + fSf(":%d", port)
 	route := Cfg.Route
 	file := Cfg.File
-	mMtx := initMutex(Cfg.Route)
+	mMtx := initMutex(&Cfg.Route)
 
 	defer e.Start(fSf(":%d", port))
 
