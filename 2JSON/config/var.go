@@ -10,11 +10,10 @@ import (
 var (
 	fPf         = fmt.Printf
 	fPln        = fmt.Println
-	fSf         = fmt.Sprintf
+	sHasSuffix  = strings.HasSuffix
 	sReplaceAll = strings.ReplaceAll
-	failOnErr   = cmn.FailOnErr
-	localIP     = cmn.LocalIP
-	cfgRepl     = cmn.CfgRepl
-	struct2Env  = cmn.Struct2Env
-	env2Struct  = cmn.Env2Struct
+
+	failOnErr = cmn.FailOnErr
+	localIP   = cmn.LocalIP
+	cfgRepl   = cmn.CfgRepl
 )

@@ -1,22 +1,19 @@
-package cfg
+package client
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/burntsushi/toml"
 )
 
-var (
-	fPln = fmt.Println
-)
-
 // Config is toml
 type Config struct {
-	Path    string
-	LogFile string
-	Server  struct {
+	Path        string
+	LogFile     string
+	ServiceName string
+	Server      struct {
 		Protocol string
 		IP       string
 		Port     int
@@ -25,18 +22,17 @@ type Config struct {
 		Timeout int
 	}
 	Route struct {
-		ROOT     string
+		HELP     string
 		SIF2JSON string
 		JSON2SIF string
 	}
 }
 
-// NewCfg :
-func NewCfg(configs ...string) *Config {
+// newCfg :
+func newCfg(configs ...string) *Config {
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
-			cfg := &Config{Path: f}
-			return cfg.set()
+			return (&Config{Path: f}).set()
 		}
 	}
 	return nil
@@ -51,12 +47,15 @@ func (cfg *Config) set() *Config {
 		if abs, e := filepath.Abs(f); e == nil {
 			cfg.Path = abs
 		}
-		if logfile, e := filepath.Abs(cfg.LogFile); e == nil {
-			cfg.LogFile = logfile
-		}
+
 		// save
 		cfg.save()
-		return cfg
+
+		ICfg, e := cfgRepl(cfg, map[string]interface{}{
+			"[DATE]": time.Now().Format("2006-01-02"),
+		})
+		failOnErr("%v", e)
+		return ICfg.(*Config)
 	}
 	return nil
 }
@@ -66,4 +65,15 @@ func (cfg *Config) save() {
 		defer f.Close()
 		toml.NewEncoder(f).Encode(cfg)
 	}
+}
+
+// initEnvVarFromTOML : initialize the global variables
+func initEnvVarFromTOML(key string, configs ...string) bool {
+	configs = append(configs, "./config.toml")
+	Cfg := newCfg(configs...)
+	if Cfg == nil {
+		return false
+	}
+	struct2Env(key, Cfg)
+	return true
 }

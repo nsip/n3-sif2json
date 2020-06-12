@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"sort"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 	"github.com/peterbourgon/mergemap"
 )
 
@@ -176,7 +176,7 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 func YieldJSONBySIFList(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: LIST", eg.CFG_INIT_ERR)
+	failOnErrWhen(ICfg == nil, "%v: LIST, %s", eg.CFG_INIT_ERR, cfgPath)
 
 	l2j := ICfg.(*List2JSON)
 	failOnErrWhen(l2j.Sep == "", "%v: LIST-[Sep]", eg.CFG_INIT_ERR)
@@ -202,7 +202,7 @@ func YieldJSONBySIFList(cfgPath string) {
 func YieldJSONBySIFNum(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: NUMERIC", eg.CFG_INIT_ERR)
+	failOnErrWhen(ICfg == nil, "%v: NUMERIC, %s", eg.CFG_INIT_ERR, cfgPath)
 
 	n2j := ICfg.(*Num2JSON)
 	failOnErrWhen(n2j.Sep == "", "%v: NUMERIC-[Sep]", eg.CFG_INIT_ERR)
@@ -217,7 +217,7 @@ func YieldJSONBySIFNum(cfgPath string) {
 func YieldJSONBySIFBool(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: BOOLEAN", eg.CFG_INIT_ERR)
+	failOnErrWhen(ICfg == nil, "%v: BOOLEAN, %s", eg.CFG_INIT_ERR, cfgPath)
 
 	b2j := ICfg.(*Bool2JSON)
 	failOnErrWhen(b2j.Sep == "", "%v: BOOLEAN-[Sep]", eg.CFG_INIT_ERR)

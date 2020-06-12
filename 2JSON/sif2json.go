@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
@@ -51,15 +51,14 @@ func enforceConfig(json string, lsJSONCfg ...string) string {
 	return json
 }
 
-// SIF2JSON : if [SIFVer] is "", use config's DefaultSIFVer
-func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (json, sv string, err error) {
+// SIF2JSON : if [SIFVer] is "", DefaultSIFVer applies
+func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (string, string, error) {
 	const (
 		SignSIFVer = "#SIFVER#"
 	)
 
-	ICfg := cfg.NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v", eg.CFG_INIT_ERR)
-	s2j := ICfg.(*cfg.Config)
+	s2j := cfg.NewCfg(cfgPath)
+	failOnErrWhen(s2j == nil, "%v: %s", eg.CFG_INIT_ERR, cfgPath)
 
 	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
 	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM
@@ -78,10 +77,10 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	)
 	failOnErr("That's embarrassing... %v", err)
 
-	// json = jsonBuf.String()
+	// json, sv := jsonBuf.String(), ""
 	// return // --------------------------- test 3rd party lib --------------------------- //
 
-	json = fmtJSON(jsonBuf.String(), 2)
+	json, sv := fmtJSON(jsonBuf.String(), 2), ""
 
 	// Deal with 'LF', 'TB', Part1 --------------------------------------------------------------------------
 	mRepl1 := map[string]string{"\n": "#LF#", "\t": "#TB#"}
@@ -93,11 +92,14 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 			posGrp = append(posGrp, []int{start, end})
 			values = append(values, sReplaceAll(json[start:end], k, v))
 		}
-		json = replByPosGrp(json, posGrp, values)
+		var err error
+		json, err = replByPosGrp(json, posGrp, values)
+		failOnErr("%v", err)
 	}
 
 	// Attributes Modification according to Config ----------------------------------------------------------
-	obj := xmlRoot(xml)              // infer object from xml root by default, use this object to search config json
+	obj, err := xmlRoot(xml) // infer object from xml root by default, use this object to search config json
+	failOnErr("%v", err)
 	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
 		obj = subobj[0]
 	}
@@ -159,8 +161,9 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (jso
 	}
 
 	const mark = "value" // "#content"
-	json = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
+	json, err = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
+	failOnErr("%v", err)
 	json = fmtJSON(json, 2)
 
-	return
+	return json, sv, nil
 }

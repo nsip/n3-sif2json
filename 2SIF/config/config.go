@@ -1,19 +1,11 @@
-package cfg
+package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
-	"reflect"
-	"strings"
+	"time"
 
 	"github.com/burntsushi/toml"
-)
-
-var (
-	fPf        = fmt.Printf
-	fPln       = fmt.Println
-	sHasSuffix = strings.HasSuffix
 )
 
 // Config :
@@ -25,44 +17,40 @@ type Config struct {
 	ReplCfgPath   string
 }
 
-var (
-	// toml file name must be identical to Config struct definition name
-	lsCfg = []interface{}{
-		&Config{},
-	}
-)
-
-// ------------------------------------------------- //
-
 // NewCfg :
-func NewCfg(configs ...string) interface{} {
+func NewCfg(configs ...string) *Config {
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
-			if abs, e := filepath.Abs(f); e == nil {
-				return set(f, abs)
-			}
+			return (&Config{Path: f}).set()
 		}
 	}
 	return nil
 }
 
-func set(f, abs string) interface{} {
-	for _, cfg := range lsCfg {
-		name := reflect.TypeOf(cfg).Elem().Name()
-		if sHasSuffix(f, "/"+name+".toml") {
-			if _, e := toml.DecodeFile(f, cfg); e == nil {
-				reflect.ValueOf(cfg).Elem().FieldByName("Path").SetString(abs)
-				save(f, cfg)
-				// modify for runtime
-				return cfg
-			}
+// set is
+func (cfg *Config) set() *Config {
+	f := cfg.Path /* make a copy of original for restoring */
+	if _, e := toml.DecodeFile(f, cfg); e == nil {
+		// modify some to save
+		cfg.Path = f
+		if abs, e := filepath.Abs(f); e == nil {
+			cfg.Path = abs
 		}
+
+		// save
+		cfg.save()
+
+		ICfg, e := cfgRepl(cfg, map[string]interface{}{
+			"[DATE]": time.Now().Format("2006-01-02"),
+		})
+		failOnErr("%v", e)
+		return ICfg.(*Config)
 	}
 	return nil
 }
 
-func save(path string, cfg interface{}) {
-	if f, e := os.OpenFile(path, os.O_WRONLY|os.O_TRUNC, os.ModePerm); e == nil {
+func (cfg *Config) save() {
+	if f, e := os.OpenFile(cfg.Path, os.O_WRONLY|os.O_TRUNC, os.ModePerm); e == nil {
 		defer f.Close()
 		toml.NewEncoder(f).Encode(cfg)
 	}

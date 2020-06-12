@@ -7,7 +7,7 @@ import (
 	"os"
 	"regexp"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 	"github.com/clbanning/mxj"
 	cfg "github.com/nsip/n3-sif2json/2SIF/config"
 )
@@ -294,7 +294,9 @@ func JSON2SIFSpec(xml, SIFSpecPath string) string {
 		tag, _ := TagFromXMLLine(xmlLine)
 		out := fSf("%s<%s %s>", mkIndent(CountHeadSpace(xmlLine, 4)), tag, attrs2write)
 		// xml = sReplByPos(xml, start, end, out)
-		xml = replByPosGrp(xml, [][]int{{start, end}}, []string{out})
+		var err error
+		xml, err = replByPosGrp(xml, [][]int{{start, end}}, []string{out})
+		failOnErr("%v", err)
 	}
 	// End adjusting attributes order
 
@@ -365,7 +367,9 @@ func Hierarchy(searchArea string, lvl int, hierarchy *[]string) {
 
 // SearchTagWithAttr : where (get line from xml), tag-path (get info from spec), attribute-map (re-order attributes, reconstruct line)
 func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp []map[string]string, root string) {
-	root = xmlRoot(xml)
+	var err error
+	root, err = xmlRoot(xml)
+	failOnErr("%v", err)
 	TagOrAttr, minAttr := `[^ \t<>]+`, 2
 	r := regexp.MustCompile(fSf(`[ ]*<%[1]s[ ]+(%[1]s="%[1]s"[ ]*){%d,}>`, TagOrAttr, minAttr))
 	if loc := r.FindAllStringIndex(xml, -1); loc != nil {
@@ -407,9 +411,8 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
-	ICfg := cfg.NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v", eg.CFG_INIT_ERR)
-	j2s := ICfg.(*cfg.Config)
+	j2s := cfg.NewCfg(cfgPath)
+	failOnErrWhen(j2s == nil, "%v: %s", eg.CFG_INIT_ERR, cfgPath)
 
 	SIFSpecDir := j2s.SIFSpecDir
 	DefaultSIFVer := j2s.DefaultSIFVer
@@ -443,7 +446,7 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 			line := ""
 			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
 				if _, err = fmt.Fscan(f, &line); err == nil && line == DefaultSIFVer {
-					SIFSpec = fullname
+					SIFSpec, SIFVer = fullname, DefaultSIFVer
 					f.Close()
 					break
 				}

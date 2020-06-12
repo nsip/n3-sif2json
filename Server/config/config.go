@@ -1,25 +1,26 @@
-package cfg
+package config
 
 import (
 	"os"
 	"path/filepath"
-	"reflect"
+	"time"
 
 	"github.com/burntsushi/toml"
 )
 
 // Config is toml
 type Config struct {
-	Path       string
-	LogFile    string
-	Cfg2JSON   string
-	Cfg2SIF    string
-	WebService struct {
+	Path        string
+	LogFile     string
+	Cfg2JSON    string
+	Cfg2SIF     string
+	ServiceName string
+	WebService  struct {
 		Port    int
 		Version string
 	}
 	Route struct {
-		ROOT     string
+		HELP     string
 		SIF2JSON string
 		JSON2SIF string
 	}
@@ -36,12 +37,11 @@ type Config struct {
 	}
 }
 
-// NewCfg :
-func NewCfg(configs ...string) *Config {
+// newCfg :
+func newCfg(configs ...string) *Config {
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
-			cfg := &Config{Path: f}
-			return cfg.set()
+			return (&Config{Path: f}).set()
 		}
 	}
 	return nil
@@ -56,14 +56,16 @@ func (cfg *Config) set() *Config {
 		if abs, e := filepath.Abs(f); e == nil {
 			cfg.Path = abs
 		}
-		if logfile, e := filepath.Abs(cfg.LogFile); e == nil {
-			cfg.LogFile = logfile
-		}
+
 		// save
 		cfg.save()
-		// modify BUT not save
-		ver := fSf("%s", cfg.WebService.Version)
-		return cfg.modCfg(map[string]string{"#v": ver}) // *** replace version *** //
+
+		ICfg, e := cfgRepl(cfg, map[string]interface{}{
+			"[DATE]": time.Now().Format("2006-01-02"),
+			"[v]":    cfg.WebService.Version,
+		})
+		failOnErr("%v", e)
+		return ICfg.(*Config)
 	}
 	return nil
 }
@@ -75,16 +77,13 @@ func (cfg *Config) save() {
 	}
 }
 
-func (cfg *Config) modCfg(mRepl map[string]string) *Config {
-	if mRepl == nil || len(mRepl) == 0 {
-		return cfg
+// InitEnvVarFromTOML : initialize the global variables
+func InitEnvVarFromTOML(key string, configs ...string) bool {
+	configs = append(configs, "./config.toml")
+	Cfg := newCfg(configs...)
+	if Cfg == nil {
+		return false
 	}
-	nField := reflect.ValueOf(cfg.Route).NumField()
-	for i := 0; i < nField; i++ {
-		for key, value := range mRepl {
-			replaced := sReplaceAll(reflect.ValueOf(cfg.Route).Field(i).Interface().(string), key, value)
-			reflect.ValueOf(&cfg.Route).Elem().Field(i).SetString(replaced)
-		}
-	}
-	return cfg
+	struct2Env(key, Cfg)
+	return true
 }

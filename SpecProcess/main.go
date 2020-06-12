@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	eg "github.com/cdutwhu/json-util/n3errs"
+	eg "github.com/cdutwhu/n3-util/n3errs"
 )
 
 // Println :
@@ -31,7 +31,9 @@ func ObjGrp(sep string, listGrp ...string) []string {
 			m[obj] = true
 		}
 	}
-	return mapKeys(m).([]string)
+	IKeys, err := mapKeys(m)
+	failOnErr("%v", err)
+	return IKeys.([]string)
 }
 
 // MapOfGrp :
