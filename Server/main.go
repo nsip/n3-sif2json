@@ -21,7 +21,7 @@ func main() {
 	os.Setenv("JAEGER_SAMPLER_PARAM", "1")
 
 	setLog(logfile)
-	fPln(logWhen(true, "[%s] Hosting on: [%v:%d], version [%v]", servicename, localIP(), ws.Port, ws.Version))
+	fPln(logger("[%s] Hosting on: [%v:%d], version [%v]", servicename, localIP(), ws.Port, ws.Version))
 
 	done := make(chan string)
 	go api.HostHTTPAsync()

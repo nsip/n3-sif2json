@@ -16,4 +16,4 @@ SPEC=$1
 MAKER=../2JSON/SpecCfgMaker
 BASE_GO=$MAKER/base-go
 BASE_TOML=$MAKER/base-toml
-go run var.go main.go -- $SPEC $BASE_GO/spec $BASE_TOML/List2JSON $BASE_TOML/Num2JSON $BASE_TOML/Bool2JSON $MAKER/
+CGO_ENABLED=0 go run var.go main.go -- $SPEC $BASE_GO/spec $BASE_TOML/List2JSON $BASE_TOML/Num2JSON $BASE_TOML/Bool2JSON $MAKER/

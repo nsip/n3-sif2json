@@ -4,4 +4,4 @@
 
 go get
 
-go run var.go spec.go maker.go -- ./List2JSON.toml ./Num2JSON.toml ./Bool2JSON.toml
+CGO_ENABLED=0 go run var.go spec.go maker.go -- ./List2JSON.toml ./Num2JSON.toml ./Bool2JSON.toml

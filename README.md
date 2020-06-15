@@ -3,9 +3,9 @@
 ## Getting Started
 
 1. Create SIF JSON Configure, Server (Web-Service) and Client (CLI) executables.
-    
+  
     Run `build.sh "sif-spec(txt) path"`.  
-    
+  
     e.g. run `./build.sh ./SIFSpec/3.4.5.txt ./SIFSpec/3.4.6.txt` to build a web service with SIF 3.4.5 & 3.4.6 AND its CLI Client.
 
     SIF Config is under ./2JSON/SpecCfg/(version)
@@ -18,12 +18,12 @@
 
     Goto `./Server/build/your-os/`, make sure 'config.toml' is in this directory.
 
-    Make sure 'config.toml' has correct settings, especially [Cfg2JSON], [Cfg2SIF] and all [File].    
+    Make sure 'config.toml' has correct settings, especially [Cfg2JSON], [Cfg2SIF] and all [File].
 
     In [Cfg2JSON], make sure [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] are correct.
 
     In [Cfg2SIF], make sure [SIFSpecDir], [ReplCfgPath] are correct.
-    
+  
 3. Check Client (CLI) executable (optional).
 
     Goto `./Client/build/your-os/`, make sure 'config.toml' is in this directory.
@@ -43,5 +43,11 @@ SIF Specification Description File. Text readable format, and at least contains:
    1. Spec VERSION.
 
    2. LIST, NUMERIC, BOOLEAN attribute type description.
-   
+  
    3. Element TRAVERSE description.
+
+## Deployment
+
+   1. Copy `Dockerfile` to ../
+
+   2. Run `docker build --tag=n3-sif2json .`
