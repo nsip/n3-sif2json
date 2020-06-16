@@ -7,9 +7,9 @@ import (
 	"time"
 
 	eg "github.com/cdutwhu/n3-util/n3errs"
-	"github.com/labstack/echo"
 	"github.com/labstack/echo-contrib/jaegertracing"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/nats-io/nats.go"
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
 	cvt2sif "github.com/nsip/n3-sif2json/2SIF"

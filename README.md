@@ -2,6 +2,10 @@
 
 ## Getting Started
 
+0. If no go.mod, Run `go mod init github.com/nsip/n3-sif2json`
+  
+    If no go.sum, Run `go get -u ./...`
+
 1. Create SIF JSON Configure, Server (Web-Service) and Client (CLI) executables.
   
     Run `build.sh "sif-spec(txt) path"`.  
