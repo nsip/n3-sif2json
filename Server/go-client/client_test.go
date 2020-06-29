@@ -11,7 +11,7 @@ func TestDO(t *testing.T) {
 	str, err := DO(
 		"./config.toml",
 		"SIF2JSON",
-		Args{
+		&Args{
 			Data:   bytes,
 			Ver:    "3.4.5",
 			ToNATS: false,

@@ -31,7 +31,7 @@ func main() {
 	str, err := clt.DO(
 		cltcfg,
 		fn,
-		clt.Args{
+		&clt.Args{
 			Data:   data,
 			Ver:    *vPtr,
 			ToNATS: *nPtr,
