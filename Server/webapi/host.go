@@ -1,6 +1,7 @@
 package webapi
 
 import (
+	"context"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -16,10 +17,24 @@ import (
 	cfg "github.com/nsip/n3-sif2json/Server/config"
 )
 
+func shutdownAsync(e *echo.Echo, sig <-chan os.Signal, done chan<- string) {
+	<-sig
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	failOnErr("%v", e.Shutdown(ctx))
+	time.Sleep(20 * time.Millisecond)
+	done <- "Shutdown Successfully"
+}
+
 // HostHTTPAsync : Host a HTTP Server for SIF or JSON
-func HostHTTPAsync() {
+func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
+	defer func() { fPln(logger("HostHTTPAsync Exit")) }()
+
 	e := echo.New()
 	defer e.Close()
+
+	// waiting for shutdown
+	go shutdownAsync(e, sig, done)
 
 	// Middleware
 	e.Use(middleware.Logger())
