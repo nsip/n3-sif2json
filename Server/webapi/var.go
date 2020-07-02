@@ -18,7 +18,7 @@ var (
 	isXML         = cmn.IsXML
 	isJSON        = cmn.IsJSON
 	setLog        = cmn.SetLog
-	log           = cmn.Log
+	logger        = cmn.Log
 	warnOnErr     = cmn.WarnOnErr
 	failOnErr     = cmn.FailOnErr
 	mustWriteFile = cmn.MustWriteFile

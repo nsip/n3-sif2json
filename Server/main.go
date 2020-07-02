@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/signal"
 
 	eg "github.com/cdutwhu/n3-util/n3errs"
 	cfg "github.com/nsip/n3-sif2json/Server/config"
@@ -24,6 +25,8 @@ func main() {
 	fPln(logger("[%s] Hosting on: [%v:%d], version [%v]", servicename, localIP(), ws.Port, ws.Version))
 
 	done := make(chan string)
-	go api.HostHTTPAsync()
-	<-done
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Kill, os.Interrupt)
+	go api.HostHTTPAsync(c, done)
+	fPln(logger(<-done))
 }
