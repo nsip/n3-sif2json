@@ -10,7 +10,7 @@
   
     Run `build.sh "sif-spec(txt) path"`.  
   
-    e.g. run `./build.sh ./SIFSpec/3.4.5.txt ./SIFSpec/3.4.6.txt` to build a web service with SIF 3.4.5 & 3.4.6 AND its CLI Client.
+    e.g. run `./build.sh ./SIFSpec/3.4.6.txt ./SIFSpec/3.4.7.txt` to build a web service with SIF 3.4.6 & 3.4.7 AND its CLI Client.
 
     SIF Config is under ./2JSON/SpecCfg/(version)
 
@@ -44,14 +44,22 @@
 
 SIF Specification Description File. Text readable format, and at least contains:
 
-   1. Spec VERSION.
+1. Spec VERSION.
 
-   2. LIST, NUMERIC, BOOLEAN attribute type description.
+2. LIST, NUMERIC, BOOLEAN attribute type description.
   
-   3. Element TRAVERSE description.
+3. Element TRAVERSE description.
 
 ## Deployment
 
-   1. Copy `Dockerfile` to ../
+1. Copy `Dockerfile` to ../
 
-   2. Run `docker build --tag=n3-sif2json .`
+2. Run `docker build --tag=n3-sif2json .`
+
+## Others
+
+1. UnitTest, Set /2JSON/config/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../../../`; Set /2SIF/config/config.toml [SIFSpecDir], [ReplCfgPath] to `../../../`.
+
+2. Server, Set /2JSON/config/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../`; Set /2SIF/config/config.toml [SIFSpecDir], [ReplCfgPath] to `../`.
+
+3. Using go-client, Make sure its config.toml [Route] is correct.

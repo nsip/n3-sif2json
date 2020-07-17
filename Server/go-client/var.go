@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go/config"
+
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/n3-util/cfg"
 )
 
 var (
@@ -19,19 +23,19 @@ var (
 	sReplace   = strings.Replace
 	sTrimRight = strings.TrimRight
 
-	struct2Map    = cmn.Struct2Map
-	mapKeys       = cmn.MapKeys
-	failOnErrWhen = cmn.FailOnErrWhen
-	failOnErr     = cmn.FailOnErr
-	logWhen       = cmn.LogWhen
-	warnOnErr     = cmn.WarnOnErr
-	warnOnErrWhen = cmn.WarnOnErrWhen
-	env2Struct    = cmn.Env2Struct
-	struct2Env    = cmn.Struct2Env
-	setLog        = cmn.SetLog
-	isXML         = cmn.IsXML
-	isJSON        = cmn.IsJSON
-	cfgRepl       = cmn.CfgRepl
+	struct2Map    = rflx.Struct2Map
+	mapKeys       = rflx.MapKeys
+	env2Struct    = rflx.Env2Struct
+	struct2Env    = rflx.Struct2Env
+	setLog        = fn.SetLog
+	failOnErrWhen = fn.FailOnErrWhen
+	failOnErr     = fn.FailOnErr
+	logWhen       = fn.LoggerWhen
+	warnOnErr     = fn.WarnOnErr
+	warnOnErrWhen = fn.WarnOnErrWhen
+	isXML         = judge.IsXML
+	isJSON        = judge.IsJSON
+	cfgRepl       = cfg.Modify
 )
 
 const (
@@ -47,13 +51,10 @@ type Args struct {
 
 func initMapFnURL(protocol, ip string, port int, route interface{}) (map[string]string, []string) {
 	mFnURL := make(map[string]string)
-	m, err := struct2Map(route)
-	for k, v := range m {
+	for k, v := range struct2Map(route) {
 		mFnURL[k] = fSf("%s://%s:%d%s", protocol, ip, port, v)
 	}
-	IKeys, err := mapKeys(mFnURL)
-	failOnErr("%v", err)
-	return mFnURL, IKeys.([]string)
+	return mFnURL, mapKeys(mFnURL).([]string)
 }
 
 func initTracer(serviceName string) opentracing.Tracer {

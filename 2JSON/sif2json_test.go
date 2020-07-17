@@ -32,8 +32,7 @@ func TestSIF2JSON(t *testing.T) {
 	// bytes, err := ioutil.ReadFile("/home/qmiao/Desktop/attribute_test.xml")
 	// failOnErr("%v", err)
 	// obj := "Activity"
-	// sv := "3.4.6"
-	// json, sv, err := SIF2JSON("./config/Config.toml", string(bytes), sv, false)
+	// json, sv, err := SIF2JSON("./config/Config.toml", string(bytes), "3.4.7", false)
 	// // fPln("end:", obj, sv, err)
 	// failOnErr("%v", err)
 	// if json != "" {
@@ -62,10 +61,8 @@ func TestSIF2JSON(t *testing.T) {
 			fPln("start:", obj)
 			bytes, err := ioutil.ReadFile(fSf("../data/examples/%s.xml", obj))
 			failOnErr("%v", err)
-			sv := "3.4.6"
-			json, sv, err := SIF2JSON("./config/config.toml", string(bytes), sv, false)
+			json, sv, err := SIF2JSON("./config/config.toml", string(bytes), "3.4.7", false)
 			fPln("end:", obj, sv, err)
-			failOnErr("%v", err)
 			if json != "" {
 				mustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
 			}
@@ -74,4 +71,5 @@ func TestSIF2JSON(t *testing.T) {
 	}
 
 	wg.Wait()
+	fPln("OK")
 }

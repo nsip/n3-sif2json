@@ -1,8 +1,12 @@
 package config
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/davecgh/go-spew/spew"
+)
 
 func TestConfig(t *testing.T) {
 	cfg := NewCfg("./config.toml")
-	fPln(cfg)
+	spew.Dump(cfg)
 }

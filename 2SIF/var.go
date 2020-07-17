@@ -7,7 +7,13 @@ import (
 	"regexp"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/endec"
+	"github.com/cdutwhu/gotil/io"
+	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/gotil/str"
+	"github.com/cdutwhu/n3-util/n3xml"
 )
 
 var (
@@ -36,19 +42,21 @@ var (
 		return a
 	}
 
-	rmTailFromLast     = cmn.RmTailFromLast
-	rmHeadToLast       = cmn.RmHeadToLast
-	rmTailFromFirstAny = cmn.RmTailFromFirstAny
-	failOnErrWhen      = cmn.FailOnErrWhen
-	failOnErr          = cmn.FailOnErr
-	isJSON             = cmn.IsJSON
-	md5Str             = cmn.MD5Str
-	replByPosGrp       = cmn.ReplByPosGrp
-	xmlRoot            = cmn.XMLRoot
-	mapsMerge          = cmn.MapsMerge
-	mustWriteFile      = cmn.MustWriteFile
-	setLog             = cmn.SetLog
-	resetLog           = cmn.ResetLog
+	rmTailFromLast     = str.RmTailFromLast
+	rmHeadToLast       = str.RmHeadToLast
+	rmTailFromFirstAny = str.RmTailFromFirstAny
+	replByPosGrp       = str.ReplByPosGrp
+	failOnErrWhen      = fn.FailOnErrWhen
+	failOnErr          = fn.FailOnErr
+	failP1OnErrWhen    = fn.FailP1OnErrWhen
+	failP1OnErr        = fn.FailP1OnErr
+	setLog             = fn.SetLog
+	resetLog           = fn.ResetLog
+	isJSON             = judge.IsJSON
+	md5Str             = endec.MD5Str
+	mapsMerge          = rflx.MapMerge
+	mustWriteFile      = io.MustWriteFile
+	xmlRoot            = n3xml.XMLRoot
 )
 
 var nGoTo = 0
@@ -99,8 +107,8 @@ var (
 
 	getReplMap = func(jsonPath string) (m map[string]string) {
 		bytes, err := ioutil.ReadFile(jsonPath)
-		cmn.FailOnErr("%v", err)
-		cmn.FailOnErr("%v", json.Unmarshal(bytes, &m))
+		fn.FailOnErr("%v", err)
+		fn.FailOnErr("%v", json.Unmarshal(bytes, &m))
 		return
 	}
 )

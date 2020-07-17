@@ -1,5 +1,5 @@
-Path = "/home/qmiao/go/src/github.com/nsip/n3-sif2json/2SIF/config/config.toml"
+Path = "/home/qmiao/Desktop/n3/n3-sif2json/2SIF/config/config.toml"
 LogFile = "./[DATE].log"
-DefaultSIFVer = "3.4.6"
+DefaultSIFVer = "3.4.7"
 SIFSpecDir = "../../../SIFSpec/"
 ReplCfgPath = "../../../2SIF/config/replace.json"

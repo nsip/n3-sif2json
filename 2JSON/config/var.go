@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/net"
+	"github.com/cdutwhu/n3-util/cfg"
 )
 
 var (
@@ -13,7 +15,7 @@ var (
 	sHasSuffix  = strings.HasSuffix
 	sReplaceAll = strings.ReplaceAll
 
-	failOnErr = cmn.FailOnErr
-	localIP   = cmn.LocalIP
-	cfgRepl   = cmn.CfgRepl
+	failOnErr = fn.FailOnErr
+	localIP   = net.LocalIP
+	cfgRepl   = cfg.Modify
 )

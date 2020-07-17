@@ -52,9 +52,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		AllowCredentials: true,
 	}))
 
-	ICfg, err := env2Struct("Cfg", &cfg.Config{})
-	failOnErr("%v", err)
-	Cfg := ICfg.(*cfg.Config)
+	Cfg := env2Struct("Cfg", &cfg.Config{}).(*cfg.Config)
 	port := Cfg.WebService.Port
 	fullIP := localIP() + fSf(":%d", port)
 	route := Cfg.Route
@@ -97,7 +95,8 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 				fPln(rt, res)
 				return c.File(res)
 			}
-			fPf("%v\n", warnOnErr("%v: [%s]  get [%s]", eg.FILE_NOT_FOUND, rt, res))
+			_, err = warnOnErr("%v: [%s]  get [%s]", eg.FILE_NOT_FOUND, rt, res)
+			fPf("%v\n", err)
 			return err
 		}
 	}
@@ -136,7 +135,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			pub2nats = true
 		}
 
-		// json, svUsed, err := cvt2json.SIF2JSON(cfg.Cfg2JSON, xmlstr, sv, false)
+		// json, svUsed, err := cvt2json.SIF2JSON(Cfg.Cfg2JSON, xmlstr, sv, false)
 
 		// Trace [cvt2json.SIF2JSON]
 		// [cvt2json.SIF2JSON] uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
@@ -222,7 +221,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 				sv = ver
 			}
 
-			// sif, svUsed, err := cvt2sif.JSON2SIF(cfg.Cfg2SIF, jsonstr, sv)
+			// sif, svUsed, err := cvt2sif.JSON2SIF(Cfg.Cfg2SIF, jsonstr, sv)
 
 			// Trace [cvt2sif.JSON2SIF]
 			results := jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, Cfg.Cfg2SIF, jsonstr, sv)

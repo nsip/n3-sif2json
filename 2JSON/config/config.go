@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/burntsushi/toml"
@@ -20,8 +21,16 @@ type Config struct {
 	SIFCfgDir4BOOL string
 }
 
+var (
+	mux sync.Mutex
+)
+
 // NewCfg :
 func NewCfg(configs ...string) *Config {
+	defer func() {
+		mux.Unlock()
+	}()
+	mux.Lock()
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
 			return (&Config{Path: f}).set()
@@ -43,11 +52,9 @@ func (cfg *Config) set() *Config {
 		// save
 		cfg.save()
 
-		ICfg, e := cfgRepl(cfg, map[string]interface{}{
+		return cfgRepl(cfg, map[string]interface{}{
 			"[DATE]": time.Now().Format("2006-01-02"),
-		})
-		failOnErr("%v", e)
-		return ICfg.(*Config)
+		}).(*Config)
 	}
 	return nil
 }

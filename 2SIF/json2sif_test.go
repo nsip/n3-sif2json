@@ -12,7 +12,7 @@ func TestJSON2SIF(t *testing.T) {
 	setLog("./error.log")
 	defer resetLog()
 
-	ver := "3.4.6"
+	ver := "3.4.7"
 	dir := `../data/json/` + ver
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
@@ -31,7 +31,7 @@ func TestJSON2SIF(t *testing.T) {
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
 		failOnErr("%v", err)
 
-		sif, sv, err := JSON2SIF("./config/Config.toml", string(bytes), ver)
+		sif, sv, err := JSON2SIF("./config/config.toml", string(bytes), ver)
 		failOnErr("%v", err)
 
 		sif = xmlfmt.FormatXML(sif, "", "    ")
@@ -57,6 +57,8 @@ func TestJSON2SIF(t *testing.T) {
 		// 	ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(xml2), 0666)
 		// }
 	}
+
+	fPln("OK")
 }
 
 func TestSortSimpleObject(t *testing.T) {

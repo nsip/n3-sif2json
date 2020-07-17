@@ -294,9 +294,7 @@ func JSON2SIFSpec(xml, SIFSpecPath string) string {
 		tag, _ := TagFromXMLLine(xmlLine)
 		out := fSf("%s<%s %s>", mkIndent(CountHeadSpace(xmlLine, 4)), tag, attrs2write)
 		// xml = sReplByPos(xml, start, end, out)
-		var err error
-		xml, err = replByPosGrp(xml, [][]int{{start, end}}, []string{out})
-		failOnErr("%v", err)
+		xml = replByPosGrp(xml, [][]int{{start, end}}, []string{out})
 	}
 	// End adjusting attributes order
 
@@ -367,9 +365,7 @@ func Hierarchy(searchArea string, lvl int, hierarchy *[]string) {
 
 // SearchTagWithAttr : where (get line from xml), tag-path (get info from spec), attribute-map (re-order attributes, reconstruct line)
 func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp []map[string]string, root string) {
-	var err error
-	root, err = xmlRoot(xml)
-	failOnErr("%v", err)
+	root = xmlRoot(xml)
 	TagOrAttr, minAttr := `[^ \t<>]+`, 2
 	r := regexp.MustCompile(fSf(`[ ]*<%[1]s[ ]+(%[1]s="%[1]s"[ ]*){%d,}>`, TagOrAttr, minAttr))
 	if loc := r.FindAllStringIndex(xml, -1); loc != nil {
@@ -412,7 +408,7 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	j2s := cfg.NewCfg(cfgPath)
-	failOnErrWhen(j2s == nil, "%v: %s", eg.CFG_INIT_ERR, cfgPath)
+	failP1OnErrWhen(j2s == nil, "%v: %s", eg.CFG_INIT_ERR, cfgPath)
 
 	SIFSpecDir := j2s.SIFSpecDir
 	DefaultSIFVer := j2s.DefaultSIFVer
@@ -455,13 +451,13 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 		}
 	}
 
-	if SIFSpec == "" { // couldn't find SIFSpec
-		switch {
-		case SIFVer != "":
-			return "", "", fmt.Errorf("No SIF Spec @Version %s", SIFVer)
-		case SIFVer == "":
-			return "", "", fmt.Errorf("No Default SIF Spec @Version %s", DefaultSIFVer)
-		}
+	// couldn't find SIFSpec
+	// failOnErrWhen(SIFSpec == "" && SIFVer != "", "%v", fmt.Errorf("No SIF Spec @Version %s", SIFVer))
+	// failOnErrWhen(SIFSpec == "" && SIFVer == "", "%v", fmt.Errorf("No Default SIF Spec @Version %s", DefaultSIFVer))
+	if SIFSpec == "" && SIFVer != "" {
+		return "", "", fmt.Errorf("No SIF Spec @Version %s", SIFVer)
+	} else if SIFSpec == "" && SIFVer == "" {
+		return "", "", fmt.Errorf("No Default SIF Spec @Version %s", DefaultSIFVer)
 	}
 	// end looking
 

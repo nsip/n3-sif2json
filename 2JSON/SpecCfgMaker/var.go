@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/n3-util/n3json"
 )
 
@@ -29,8 +29,8 @@ var (
 		return a
 	}
 
-	failOnErr     = cmn.FailOnErr
-	failOnErrWhen = cmn.FailOnErrWhen
+	failOnErr     = fn.FailOnErr
+	failOnErrWhen = fn.FailOnErrWhen
 	fmtJSON       = n3json.Fmt
 )
 

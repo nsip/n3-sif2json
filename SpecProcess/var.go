@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/gotil/str"
 )
 
 var (
@@ -18,10 +20,10 @@ var (
 	sCount     = strings.Count
 	sTrim      = strings.Trim
 
-	mapKeys        = cmn.MapKeys
-	rmHeadToFirst  = cmn.RmHeadToFirst
-	rmHeadToLast   = cmn.RmHeadToLast
-	rmTailFromLast = cmn.RmTailFromLast
-	failOnErr      = cmn.FailOnErr
-	failOnErrWhen  = cmn.FailOnErrWhen
+	mapKeys        = rflx.MapKeys
+	rmHeadToFirst  = str.RmHeadToFirst
+	rmHeadToLast   = str.RmHeadToLast
+	rmTailFromLast = str.RmTailFromLast
+	failOnErr      = fn.FailOnErr
+	failOnErrWhen  = fn.FailOnErrWhen
 )

@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/burntsushi/toml"
@@ -37,8 +38,16 @@ type Config struct {
 	}
 }
 
+var (
+	mux sync.Mutex
+)
+
 // newCfg :
 func newCfg(configs ...string) *Config {
+	defer func() {
+		mux.Unlock()
+	}()
+	mux.Lock()
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
 			return (&Config{Path: f}).set()
@@ -57,15 +66,17 @@ func (cfg *Config) set() *Config {
 			cfg.Path = abs
 		}
 
+		if ver, e := gitver(); e == nil && ver != "" { /* successfully got git ver */
+			cfg.WebService.Version = ver
+		}
+
 		// save
 		cfg.save()
 
-		ICfg, e := cfgRepl(cfg, map[string]interface{}{
+		return cfgRepl(cfg, map[string]interface{}{
 			"[DATE]": time.Now().Format("2006-01-02"),
 			"[v]":    cfg.WebService.Version,
-		})
-		failOnErr("%v", e)
-		return ICfg.(*Config)
+		}).(*Config)
 	}
 	return nil
 }

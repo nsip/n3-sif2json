@@ -4,9 +4,14 @@ import (
 	"fmt"
 	"strings"
 
-	cmn "github.com/cdutwhu/n3-util/common"
-	jkv "github.com/cdutwhu/n3-util/jkv"
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
+	"github.com/cdutwhu/gotil/iter"
+	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/str"
+	"github.com/cdutwhu/n3-util/jkv"
 	"github.com/cdutwhu/n3-util/n3json"
+	"github.com/cdutwhu/n3-util/n3xml"
 )
 
 var (
@@ -30,19 +35,19 @@ var (
 		return a
 	}
 
-	failOnErr       = cmn.FailOnErr
-	failOnErrWhen   = cmn.FailOnErrWhen
-	replByPosGrp    = cmn.ReplByPosGrp
-	xmlRoot         = cmn.XMLRoot
-	jsonRoot        = cmn.JSONRoot
-	rmTailFromLastN = cmn.RmTailFromLastN
-	rmTailFromLast  = cmn.RmTailFromLast
-	rmHeadToLast    = cmn.RmHeadToLast
-	iter2Slc        = cmn.Iter2Slc
-	mustWriteFile   = cmn.MustWriteFile
-	setLog          = cmn.SetLog
-	resetLog        = cmn.ResetLog
-	xin             = cmn.XIn
+	setLog          = fn.SetLog
+	resetLog        = fn.ResetLog
+	failOnErr       = fn.FailOnErr
+	failOnErrWhen   = fn.FailOnErrWhen
+	replByPosGrp    = str.ReplByPosGrp
+	rmTailFromLastN = str.RmTailFromLastN
+	rmTailFromLast  = str.RmTailFromLast
+	rmHeadToLast    = str.RmHeadToLast
+	iter2Slc        = iter.Iter2Slc
+	mustWriteFile   = io.MustWriteFile
+	exist           = judge.Exist
+	xmlRoot         = n3xml.XMLRoot
+	jsonRoot        = n3json.JSONRoot
 	fmtJSON         = n3json.Fmt
 	newJKV          = jkv.NewJKV
 )
