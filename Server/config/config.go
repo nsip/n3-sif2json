@@ -65,11 +65,9 @@ func (cfg *Config) set() *Config {
 		if abs, e := filepath.Abs(f); e == nil {
 			cfg.Path = abs
 		}
-
 		if ver, e := gitver(); e == nil && ver != "" { /* successfully got git ver */
 			cfg.WebService.Version = ver
 		}
-
 		// save
 		cfg.save()
 

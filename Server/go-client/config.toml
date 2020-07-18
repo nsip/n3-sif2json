@@ -12,5 +12,5 @@ ServiceName = "N3-SIF2JSON"
 
 [Route]
   HELP = "/"
-  SIF2JSON = "/sif2json/v0.1.1"
-  JSON2SIF = "/json2sif/v0.1.1"
+  SIF2JSON = "/sif2json/v0.2.0"
+  JSON2SIF = "/json2sif/v0.2.0"
