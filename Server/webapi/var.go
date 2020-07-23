@@ -10,6 +10,7 @@ import (
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/net"
 	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/n3-util/n3log"
 	"github.com/cdutwhu/n3-util/rest"
 )
 
@@ -30,6 +31,7 @@ var (
 	struct2Map    = rflx.Struct2Map
 	env2Struct    = rflx.Env2Struct
 	url1Value     = rest.URL1Value
+	lrOut         = n3log.LrOut
 )
 
 func initMutex(route interface{}) map[string]*sync.Mutex {

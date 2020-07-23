@@ -15,6 +15,7 @@ import (
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
 	cvt2sif "github.com/nsip/n3-sif2json/2SIF"
 	cfg "github.com/nsip/n3-sif2json/Server/config"
+	"github.com/sirupsen/logrus"
 )
 
 func shutdownAsync(e *echo.Echo, sig <-chan os.Signal, done chan<- string) {
@@ -28,7 +29,11 @@ func shutdownAsync(e *echo.Echo, sig <-chan os.Signal, done chan<- string) {
 
 // HostHTTPAsync : Host a HTTP Server for SIF or JSON
 func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
-	defer func() { logger("HostHTTPAsync Exit") }()
+	defer func() {
+		msg := "HostHTTPAsync Exit"
+		logger(msg)
+		lrOut(logrus.Infof, msg) // --> LOGGLY
+	}()
 
 	e := echo.New()
 	defer e.Close()

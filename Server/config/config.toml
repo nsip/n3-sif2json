@@ -3,7 +3,10 @@ Log = "~/.[s]/log/[DATE].log"
 Cfg2JSON = "../../../2JSON/config/config.toml"
 Cfg2SIF = "../../../2SIF/config/config.toml"
 Service = "n3-sif2json"
-Version = "v0.2.2"
+Version = "v0.2.3"
+
+[Loggly]
+  Token = "54290728-93e0-425a-a49c-c9e834288026"
 
 [WebService]
   Port = 1324

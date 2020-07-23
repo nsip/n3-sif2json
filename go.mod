@@ -20,6 +20,7 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/peterbourgon/mergemap v0.0.0-20130613134717-e21c03b7a721
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/sirupsen/logrus v1.6.0
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/valyala/fasttemplate v1.2.0 // indirect
 	go.uber.org/atomic v1.6.0 // indirect

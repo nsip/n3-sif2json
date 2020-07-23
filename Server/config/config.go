@@ -11,25 +11,33 @@ import (
 
 // Config is toml
 type Config struct {
-	Path       string
-	Log        string
-	Cfg2JSON   string
-	Cfg2SIF    string
-	Service    string
-	Version    string
+	Path     string
+	Log      string
+	Cfg2JSON string
+	Cfg2SIF  string
+	Service  string
+	Version  string
+
+	Loggly struct {
+		Token string
+	}
+
 	WebService struct {
 		Port int
 	}
+
 	Route struct {
 		HELP     string
 		SIF2JSON string
 		JSON2SIF string
 	}
+
 	NATS struct {
 		URL     string
 		Subject string
 		Timeout int
 	}
+
 	File struct {
 		ClientLinux64 string
 		ClientMac     string
