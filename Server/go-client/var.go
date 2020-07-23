@@ -27,7 +27,7 @@ var (
 	mapKeys       = rflx.MapKeys
 	env2Struct    = rflx.Env2Struct
 	struct2Env    = rflx.Struct2Env
-	setLog        = fn.SetLog
+	enableLog2F   = fn.EnableLog2F
 	failOnErrWhen = fn.FailOnErrWhen
 	failOnErr     = fn.FailOnErr
 	logWhen       = fn.LoggerWhen

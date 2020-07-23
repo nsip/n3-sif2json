@@ -9,8 +9,8 @@ import (
 )
 
 func TestJSON2SIF(t *testing.T) {
-	setLog("./error.log")
-	defer resetLog()
+	enableLog2F(true, "./error.log")
+	defer enableLog2F(false, "")
 
 	ver := "3.4.7"
 	dir := `../data/json/` + ver

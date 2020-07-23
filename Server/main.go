@@ -13,18 +13,18 @@ func main() {
 	failOnErrWhen(!cfg.InitEnvVarFromTOML("Cfg"), "%v: Config Init Error", eg.CFG_INIT_ERR)
 
 	Cfg := env2Struct("Cfg", &cfg.Config{}).(*cfg.Config)
-	ws, logfile, servicename := Cfg.WebService, Cfg.LogFile, Cfg.ServiceName
+	ws, service := Cfg.WebService, Cfg.Service
 
-	os.Setenv("JAEGER_SERVICE_NAME", servicename)
+	os.Setenv("JAEGER_SERVICE_NAME", service)
 	os.Setenv("JAEGER_SAMPLER_TYPE", "const")
 	os.Setenv("JAEGER_SAMPLER_PARAM", "1")
 
-	setLog(logfile)
-	fPln(logger("[%s] Hosting on: [%v:%d], version [%v]", servicename, localIP(), ws.Port, ws.Version))
+	enableLog2F(true, Cfg.Log)
+	logger("[%s] Hosting on: [%v:%d], version [%v]", service, localIP(), ws.Port, Cfg.Version)
 
 	done := make(chan string)
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Kill, os.Interrupt)
 	go api.HostHTTPAsync(c, done)
-	fPln(logger(<-done))
+	logger(<-done)
 }

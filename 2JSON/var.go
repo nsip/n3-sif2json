@@ -35,8 +35,7 @@ var (
 		return a
 	}
 
-	setLog          = fn.SetLog
-	resetLog        = fn.ResetLog
+	enableLog2F     = fn.EnableLog2F
 	failOnErr       = fn.FailOnErr
 	failOnErrWhen   = fn.FailOnErrWhen
 	replByPosGrp    = str.ReplByPosGrp

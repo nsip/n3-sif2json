@@ -26,8 +26,8 @@ func TestEachFileContent(t *testing.T) {
 }
 
 func TestSIF2JSON(t *testing.T) {
-	setLog("./error.log")
-	defer resetLog()
+	enableLog2F(true, "./error.log")
+	defer enableLog2F(false, "")
 
 	// bytes, err := ioutil.ReadFile("/home/qmiao/Desktop/attribute_test.xml")
 	// failOnErr("%v", err)

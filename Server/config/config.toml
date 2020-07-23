@@ -1,17 +1,17 @@
 Path = "/home/qmiao/Desktop/n3/n3-sif2json/Server/config/config.toml"
-LogFile = "./[DATE].log"
+Log = "~/.[s]/log/[DATE].log"
 Cfg2JSON = "../../../2JSON/config/config.toml"
 Cfg2SIF = "../../../2SIF/config/config.toml"
-ServiceName = "N3-SIF2JSON"
+Service = "n3-sif2json"
+Version = "v0.2.2"
 
 [WebService]
   Port = 1324
-  Version = "v0.1.1"
 
 [Route]
   HELP = "/"
-  SIF2JSON = "/sif2json/[v]"
-  JSON2SIF = "/json2sif/[v]"
+  SIF2JSON = "/[s]/[v]/sif2json"
+  JSON2SIF = "/[s]/[v]/json2sif"
 
 [NATS]
   URL = "nats://192.168.78.130:4222"

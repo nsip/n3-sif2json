@@ -50,8 +50,7 @@ var (
 	failOnErr          = fn.FailOnErr
 	failP1OnErrWhen    = fn.FailP1OnErrWhen
 	failP1OnErr        = fn.FailP1OnErr
-	setLog             = fn.SetLog
-	resetLog           = fn.ResetLog
+	enableLog2F        = fn.EnableLog2F
 	isJSON             = judge.IsJSON
 	md5Str             = endec.MD5Str
 	mapsMerge          = rflx.MapMerge

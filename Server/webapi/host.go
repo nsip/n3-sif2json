@@ -28,7 +28,7 @@ func shutdownAsync(e *echo.Echo, sig <-chan os.Signal, done chan<- string) {
 
 // HostHTTPAsync : Host a HTTP Server for SIF or JSON
 func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
-	defer func() { fPln(logger("HostHTTPAsync Exit")) }()
+	defer func() { logger("HostHTTPAsync Exit") }()
 
 	e := echo.New()
 	defer e.Close()
@@ -95,9 +95,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 				fPln(rt, res)
 				return c.File(res)
 			}
-			_, err = warnOnErr("%v: [%s]  get [%s]", eg.FILE_NOT_FOUND, rt, res)
-			fPf("%v\n", err)
-			return err
+			return warnOnErr("%v: [%s]  get [%s]", eg.FILE_NOT_FOUND, rt, res)
 		}
 	}
 

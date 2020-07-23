@@ -22,7 +22,7 @@ var (
 	localIP       = net.LocalIP
 	isXML         = judge.IsXML
 	isJSON        = judge.IsJSON
-	setLog        = fn.SetLog
+	enableLog2F   = fn.EnableLog2F
 	logger        = fn.Logger
 	warnOnErr     = fn.WarnOnErr
 	failOnErr     = fn.FailOnErr

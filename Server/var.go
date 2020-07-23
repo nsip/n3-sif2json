@@ -12,7 +12,7 @@ var (
 	fPln          = fmt.Println
 	failOnErr     = fn.FailOnErr
 	failOnErrWhen = fn.FailOnErrWhen
-	setLog        = fn.SetLog
+	enableLog2F   = fn.EnableLog2F
 	logWhen       = fn.LoggerWhen
 	logger        = fn.Logger
 	localIP       = net.LocalIP

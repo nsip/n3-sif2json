@@ -16,13 +16,13 @@ import (
 func DOwithTrace(ctx context.Context, configfile, fn string, args *Args) (string, error) {
 	failOnErrWhen(!initEnvVarFromTOML(envVarName, configfile), "%v", eg.CFG_INIT_ERR)
 	Cfg := env2Struct(envVarName, &Config{}).(*Config)
-	serviceName := Cfg.ServiceName
+	service := Cfg.Service
 
 	if span := opentracing.SpanFromContext(ctx); span != nil {
-		tracer := initTracer(serviceName)
+		tracer := initTracer(service)
 		span := tracer.StartSpan(fn, opentracing.ChildOf(span.Context()))
 		tags.SpanKindRPCClient.Set(span)
-		tags.PeerService.Set(span, serviceName)
+		tags.PeerService.Set(span, service)
 		if args != nil {
 			span.SetTag(fn, *args)
 		}
@@ -39,12 +39,11 @@ func DO(configfile, fn string, args *Args) (string, error) {
 	server := Cfg.Server
 	protocol, ip, port := server.Protocol, server.IP, server.Port
 	timeout := Cfg.Access.Timeout
-	setLog(Cfg.LogFile)
 
 	mFnURL, fields := initMapFnURL(protocol, ip, port, &Cfg.Route)
 	url, ok := mFnURL[fn]
-	if where, err := warnOnErrWhen(!ok, "%v: Need %v", eg.PARAM_NOT_SUPPORTED, fields); err != nil {
-		return where, err
+	if err := warnOnErrWhen(!ok, "%v: Need %v", eg.PARAM_NOT_SUPPORTED, fields); err != nil {
+		return "", err
 	}
 
 	chStr, chErr := make(chan string), make(chan error)
@@ -54,7 +53,7 @@ func DO(configfile, fn string, args *Args) (string, error) {
 
 	select {
 	case <-time.After(time.Duration(timeout) * time.Second):
-		return warnOnErr("%v: Didn't get response in %d(s)", eg.NET_TIMEOUT, timeout)
+		return "", warnOnErr("%v: Didn't get response in %d(s)", eg.NET_TIMEOUT, timeout)
 	case str := <-chStr:
 		err := <-chErr
 		if err == eg.NO_ERROR {

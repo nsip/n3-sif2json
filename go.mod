@@ -5,9 +5,9 @@ go 1.14
 require (
 	github.com/basgys/goxml2json v1.1.0
 	github.com/burntsushi/toml v0.3.1
-	github.com/cdutwhu/debog v0.1.3
+	github.com/cdutwhu/debog v0.2.1
 	github.com/cdutwhu/gotil v0.0.6
-	github.com/cdutwhu/n3-util v0.2.3
+	github.com/cdutwhu/n3-util v0.2.6
 	github.com/clbanning/mxj v1.8.4
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b
@@ -25,6 +25,6 @@ require (
 	go.uber.org/atomic v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20200709230013-948cd5f35899 // indirect
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
-	golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae // indirect
+	golang.org/x/sys v0.0.0-20200722175500-76b94024e4b6 // indirect
 	golang.org/x/text v0.3.3 // indirect
 )

@@ -1,6 +1,6 @@
 Path = "/home/qmiao/Desktop/n3/n3-sif2json/Server/go-client/config.toml"
-LogFile = "./go-clt-SIF2JSON-[DATE].log"
-ServiceName = "N3-SIF2JSON"
+Service = "n3-sif2json"
+Version = "v0.2.2"
 
 [Server]
   Protocol = "http"
@@ -12,5 +12,5 @@ ServiceName = "N3-SIF2JSON"
 
 [Route]
   HELP = "/"
-  SIF2JSON = "/sif2json/v0.2.1"
-  JSON2SIF = "/json2sif/v0.2.1"
+  SIF2JSON = "/[s]/[v]/sif2json"
+  JSON2SIF = "/[s]/[v]/json2sif"
