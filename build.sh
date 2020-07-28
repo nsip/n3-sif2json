@@ -2,7 +2,6 @@
 
 set -e
 ORIGINALPATH=`pwd`
-VERSION="v0.1.0"
 
 ####
 # if [ $# -ne 1 ]; then

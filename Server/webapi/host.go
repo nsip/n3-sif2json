@@ -61,7 +61,6 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	port := Cfg.WebService.Port
 	fullIP := localIP() + fSf(":%d", port)
 	route := Cfg.Route
-	file := Cfg.File
 	mMtx := initMutex(&Cfg.Route)
 
 	defer e.Start(fSf(":%d", port))
@@ -74,39 +73,39 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		mMtx[path].Lock()
 
 		return c.String(http.StatusOK,
-			fSf("wget %-55s-> %s\n", fullIP+"/client-linux64", "Get Client(Linux64)")+
-				fSf("wget %-55s-> %s\n", fullIP+"/client-mac", "Get Client(Mac)")+
-				fSf("wget %-55s-> %s\n", fullIP+"/client-win64", "Get Client(Windows64)")+
-				fSf("wget -O config.toml %-40s-> %s\n", fullIP+"/client-config", "Get Client Config")+
-				fSf("\n")+
-				fSf("POST %-40s-> %s\n"+
-					"POST %-40s-> %s\n",
-					fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
-					fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML). [sv]: SIF Spec. Version"))
+			// fSf("wget %-55s-> %s\n", fullIP+"/client-linux64", "Get Client(Linux64)")+
+			// 	fSf("wget %-55s-> %s\n", fullIP+"/client-mac", "Get Client(Mac)")+
+			// 	fSf("wget %-55s-> %s\n", fullIP+"/client-win64", "Get Client(Windows64)")+
+			// 	fSf("wget -O config.toml %-40s-> %s\n", fullIP+"/client-config", "Get Client Config")+
+			// 	fSf("\n")+
+			fSf("POST %-40s-> %s\n"+
+				"POST %-40s-> %s\n",
+				fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
+				fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML). [sv]: SIF Spec. Version"))
 	})
 
 	// ------------------------------------------------------------------------------------ //
 
-	mRouteRes := map[string]string{
-		"/client-linux64": file.ClientLinux64,
-		"/client-mac":     file.ClientMac,
-		"/client-win64":   file.ClientWin64,
-		"/client-config":  file.ClientConfig,
-	}
+	// mRouteRes := map[string]string{
+	// 	"/client-linux64": Cfg.File.ClientLinux64,
+	// 	"/client-mac":     Cfg.File.ClientMac,
+	// 	"/client-win64":   Cfg.File.ClientWin64,
+	// 	"/client-config":  Cfg.File.ClientConfig,
+	// }
 
-	routeFun := func(rt, res string) func(c echo.Context) error {
-		return func(c echo.Context) (err error) {
-			if _, err = os.Stat(res); err == nil {
-				fPln(rt, res)
-				return c.File(res)
-			}
-			return warnOnErr("%v: [%s]  get [%s]", n3err.FILE_NOT_FOUND, rt, res)
-		}
-	}
+	// routeFun := func(rt, res string) func(c echo.Context) error {
+	// 	return func(c echo.Context) (err error) {
+	// 		if _, err = os.Stat(res); err == nil {
+	// 			fPln(rt, res)
+	// 			return c.File(res)
+	// 		}
+	// 		return warnOnErr("%v: [%s]  get [%s]", n3err.FILE_NOT_FOUND, rt, res)
+	// 	}
+	// }
 
-	for rt, res := range mRouteRes {
-		e.GET(rt, routeFun(rt, res))
-	}
+	// for rt, res := range mRouteRes {
+	// 	e.GET(rt, routeFun(rt, res))
+	// }
 
 	// ------------------------------------------------------------------------------------ //
 
