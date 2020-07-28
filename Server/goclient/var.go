@@ -1,24 +1,22 @@
-package client
+package goclient
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/opentracing/opentracing-go"
-	"github.com/uber/jaeger-client-go/config"
-
 	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/rflx"
-	"github.com/cdutwhu/n3-util/cfg"
+	"github.com/cdutwhu/n3-util/n3cfg"
+	"github.com/opentracing/opentracing-go"
+	"github.com/uber/jaeger-client-go/config"
 )
 
 var (
-	fPt  = fmt.Print
-	fPf  = fmt.Printf
-	fPln = fmt.Println
-	fSf  = fmt.Sprintf
-
+	fPt        = fmt.Print
+	fPf        = fmt.Printf
+	fPln       = fmt.Println
+	fSf        = fmt.Sprintf
 	sJoin      = strings.Join
 	sReplace   = strings.Replace
 	sTrimRight = strings.TrimRight
@@ -35,7 +33,7 @@ var (
 	warnOnErrWhen = fn.WarnOnErrWhen
 	isXML         = judge.IsXML
 	isJSON        = judge.IsJSON
-	cfgRepl       = cfg.Modify
+	cfgRepl       = n3cfg.Modify
 )
 
 const (

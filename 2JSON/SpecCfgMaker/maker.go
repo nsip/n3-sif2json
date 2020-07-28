@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"sort"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/peterbourgon/mergemap"
 )
 
@@ -176,10 +176,10 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 func YieldJSONBySIFList(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: LIST, %s", eg.CFG_INIT_ERR, cfgPath)
+	failOnErrWhen(ICfg == nil, "%v: LIST, %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	l2j := ICfg.(*List2JSON)
-	failOnErrWhen(l2j.Sep == "", "%v: LIST-[Sep]", eg.CFG_INIT_ERR)
+	failOnErrWhen(l2j.Sep == "", "%v: LIST-[Sep]", n3err.CFG_INIT_ERR)
 
 	InitCfgBuf(*l2j, l2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
@@ -202,10 +202,10 @@ func YieldJSONBySIFList(cfgPath string) {
 func YieldJSONBySIFNum(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: NUMERIC, %s", eg.CFG_INIT_ERR, cfgPath)
+	failOnErrWhen(ICfg == nil, "%v: NUMERIC, %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	n2j := ICfg.(*Num2JSON)
-	failOnErrWhen(n2j.Sep == "", "%v: NUMERIC-[Sep]", eg.CFG_INIT_ERR)
+	failOnErrWhen(n2j.Sep == "", "%v: NUMERIC-[Sep]", n3err.CFG_INIT_ERR)
 
 	InitCfgBuf(*n2j, n2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {
@@ -217,10 +217,10 @@ func YieldJSONBySIFNum(cfgPath string) {
 func YieldJSONBySIFBool(cfgPath string) {
 
 	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: BOOLEAN, %s", eg.CFG_INIT_ERR, cfgPath)
+	failOnErrWhen(ICfg == nil, "%v: BOOLEAN, %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	b2j := ICfg.(*Bool2JSON)
-	failOnErrWhen(b2j.Sep == "", "%v: BOOLEAN-[Sep]", eg.CFG_INIT_ERR)
+	failOnErrWhen(b2j.Sep == "", "%v: BOOLEAN-[Sep]", n3err.CFG_INIT_ERR)
 
 	InitCfgBuf(*b2j, b2j.Sep) // Init Global Maps
 	for _, obj := range GetLoadedObjects() {

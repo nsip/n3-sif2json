@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 // Println :
@@ -89,27 +89,27 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 	bytes, err := ioutil.ReadFile(baseGO)
 	failOnErr("%v", err)
 	goStruct := string(bytes)
-	failOnErrWhen(sCount(goStruct, SignGO4LIST+"\n") != 1, "%v: goStruct SignGO4LIST", eg.SRC_SIGN_MISSING)
-	failOnErrWhen(sCount(goStruct, SignGO4NUM+"\n") != 1, "%v: goStruct SignGO4NUM", eg.SRC_SIGN_MISSING)
-	failOnErrWhen(sCount(goStruct, SignGO4BOOL+"\n") != 1, "%v: goStruct SignGO4BOOL", eg.SRC_SIGN_MISSING)
+	failOnErrWhen(sCount(goStruct, SignGO4LIST+"\n") != 1, "%v: goStruct SignGO4LIST", n3err.SRC_SIGN_MISSING)
+	failOnErrWhen(sCount(goStruct, SignGO4NUM+"\n") != 1, "%v: goStruct SignGO4NUM", n3err.SRC_SIGN_MISSING)
+	failOnErrWhen(sCount(goStruct, SignGO4BOOL+"\n") != 1, "%v: goStruct SignGO4BOOL", n3err.SRC_SIGN_MISSING)
 
 	bytes, err = ioutil.ReadFile(baseToml4LIST)
 	failOnErr("%v", err)
 	tomlLIST := string(bytes)
-	failOnErrWhen(sCount(tomlLIST, SignTOML) != 1, "%v: tomlLIST SignTOML", eg.CFG_SIGN_MISSING)
-	failOnErrWhen(sCount(tomlLIST, SignSIFVer) != 1, "%v: tomlLIST SignSIFVer", eg.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlLIST, SignTOML) != 1, "%v: tomlLIST SignTOML", n3err.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlLIST, SignSIFVer) != 1, "%v: tomlLIST SignSIFVer", n3err.CFG_SIGN_MISSING)
 
 	bytes, err = ioutil.ReadFile(baseToml4NUM)
 	failOnErr("%v", err)
 	tomlNUM := string(bytes)
-	failOnErrWhen(sCount(tomlNUM, SignTOML) != 1, "%v: tomlNUM SignTOML", eg.CFG_SIGN_MISSING)
-	failOnErrWhen(sCount(tomlNUM, SignSIFVer) != 1, "%v: tomlNUM SignSIFVer", eg.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlNUM, SignTOML) != 1, "%v: tomlNUM SignTOML", n3err.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlNUM, SignSIFVer) != 1, "%v: tomlNUM SignSIFVer", n3err.CFG_SIGN_MISSING)
 
 	bytes, err = ioutil.ReadFile(baseToml4BOOL)
 	failOnErr("%v", err)
 	tomlBOOL := string(bytes)
-	failOnErrWhen(sCount(tomlBOOL, SignTOML) != 1, "%v: tomlBOOL SignTOML", eg.CFG_SIGN_MISSING)
-	failOnErrWhen(sCount(tomlBOOL, SignSIFVer) != 1, "%v: tomlBOOL SignSIFVer", eg.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlBOOL, SignTOML) != 1, "%v: tomlBOOL SignTOML", n3err.CFG_SIGN_MISSING)
+	failOnErrWhen(sCount(tomlBOOL, SignSIFVer) != 1, "%v: tomlBOOL SignSIFVer", n3err.CFG_SIGN_MISSING)
 
 	// ************************************** //
 

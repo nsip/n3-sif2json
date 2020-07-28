@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/go-xmlfmt/xmlfmt"
 )
 
@@ -16,7 +16,7 @@ func TestJSON2SIF(t *testing.T) {
 	dir := `../data/json/` + ver
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
-	failOnErrWhen(len(files) == 0, "%v", eg.FILE_NOT_FOUND)
+	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
 
 	for _, file := range files {
 		ResetAll()

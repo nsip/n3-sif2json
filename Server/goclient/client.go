@@ -1,4 +1,4 @@
-package client
+package goclient
 
 import (
 	"bytes"
@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"time"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/opentracing/opentracing-go"
 	tags "github.com/opentracing/opentracing-go/ext"
 )
 
 // DOwithTrace :
 func DOwithTrace(ctx context.Context, configfile, fn string, args *Args) (string, error) {
-	failOnErrWhen(!initEnvVarFromTOML(envVarName, configfile), "%v", eg.CFG_INIT_ERR)
+	failOnErrWhen(!initEnvVarFromTOML(envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
 	Cfg := env2Struct(envVarName, &Config{}).(*Config)
 	service := Cfg.Service
 
@@ -34,7 +34,7 @@ func DOwithTrace(ctx context.Context, configfile, fn string, args *Args) (string
 
 // DO : fn ["HELP", "SIF2JSON", "JSON2SIF"]
 func DO(configfile, fn string, args *Args) (string, error) {
-	failOnErrWhen(!initEnvVarFromTOML(envVarName, configfile), "%v", eg.CFG_INIT_ERR)
+	failOnErrWhen(!initEnvVarFromTOML(envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
 	Cfg := env2Struct(envVarName, &Config{}).(*Config)
 	server := Cfg.Server
 	protocol, ip, port := server.Protocol, server.IP, server.Port
@@ -42,7 +42,7 @@ func DO(configfile, fn string, args *Args) (string, error) {
 
 	mFnURL, fields := initMapFnURL(protocol, ip, port, &Cfg.Route)
 	url, ok := mFnURL[fn]
-	if err := warnOnErrWhen(!ok, "%v: Need %v", eg.PARAM_NOT_SUPPORTED, fields); err != nil {
+	if err := warnOnErrWhen(!ok, "%v: Need %v", n3err.PARAM_NOT_SUPPORTED, fields); err != nil {
 		return "", err
 	}
 
@@ -53,10 +53,10 @@ func DO(configfile, fn string, args *Args) (string, error) {
 
 	select {
 	case <-time.After(time.Duration(timeout) * time.Second):
-		return "", warnOnErr("%v: Didn't get response in %d(s)", eg.NET_TIMEOUT, timeout)
+		return "", warnOnErr("%v: Didn't get response in %d(s)", n3err.NET_TIMEOUT, timeout)
 	case str := <-chStr:
 		err := <-chErr
-		if err == eg.NO_ERROR {
+		if err == n3err.NO_ERROR {
 			return str, nil
 		}
 		return str, err
@@ -93,17 +93,17 @@ func rest(fn, url string, args *Args, chStr chan string, chErr chan error) {
 
 	case "SIF2JSON", "JSON2SIF":
 		if args == nil {
-			Err = eg.PARAM_INVALID
+			Err = n3err.PARAM_INVALID
 			goto ERR_RET
 		}
 
 		str := string(args.Data)
 		if fn == "SIF2JSON" && !isXML(str) {
-			Err = eg.PARAM_INVALID_XML
+			Err = n3err.PARAM_INVALID_XML
 			goto ERR_RET
 
 		} else if fn == "JSON2SIF" && !isJSON(str) {
-			Err = eg.PARAM_INVALID_JSON
+			Err = n3err.PARAM_INVALID_JSON
 			goto ERR_RET
 		}
 		if Resp, Err = http.Post(url, "application/json", bytes.NewBuffer(args.Data)); Err != nil {
@@ -112,7 +112,7 @@ func rest(fn, url string, args *Args, chStr chan string, chErr chan error) {
 	}
 
 	if Resp == nil {
-		Err = eg.NET_NO_RESPONSE
+		Err = n3err.NET_NO_RESPONSE
 		goto ERR_RET
 	}
 	defer Resp.Body.Close()
@@ -129,6 +129,6 @@ ERR_RET:
 	}
 
 	chStr <- string(RetData)
-	chErr <- eg.NO_ERROR
+	chErr <- n3err.NO_ERROR
 	return
 }

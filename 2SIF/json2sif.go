@@ -7,7 +7,7 @@ import (
 	"os"
 	"regexp"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/clbanning/mxj"
 	cfg "github.com/nsip/n3-sif2json/2SIF/config"
 )
@@ -211,7 +211,7 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 
 // JSON2SIF4LF : if JSON fields have special (LF, TBL), pick them up for later replacement
 func JSON2SIF4LF(json string) (string, map[string]string) {
-	failOnErrWhen(!isJSON(json), "%v", eg.PARAM_INVALID_JSON)
+	failOnErrWhen(!isJSON(json), "%v", n3err.PARAM_INVALID_JSON)
 	mCodeStr := make(map[string]string)
 	strGrpWithLF := regexp.MustCompile(`".+": ".*(\\n)+.*"`).FindAllString(json, -1)
 	for _, s := range strGrpWithLF {
@@ -312,7 +312,7 @@ AGAIN:
 	if sContains(xml, "...") {
 		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xml), 0666)
 		nGoTo++
-		failOnErrWhen(nGoTo > maxGoTo, "%v: goto AGAIN", eg.INTERNAL_DEADLOCK)
+		failOnErrWhen(nGoTo > maxGoTo, "%v: goto AGAIN", n3err.INTERNAL_DEADLOCK)
 		goto AGAIN
 	}
 
@@ -335,7 +335,7 @@ func CountHeadSpace(s string, nGrp int) int {
 // TagFromXMLLine :
 func TagFromXMLLine(line string) (tag string, mKeyAttr map[string]string) {
 	line = sTrim(line, " \t\n\r")
-	failOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "%v: %s", eg.PARAM_INVALID_FMT, line)
+	failOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "%v: %s", n3err.PARAM_INVALID_FMT, line)
 	if tag := regexp.MustCompile(`<.+[> ]`).FindString(line); tag != "" {
 		tag = tag[1 : len(tag)-1] // remove '<' '>'
 		ss := sSplit(tag, " ")    // cut fields
@@ -408,7 +408,7 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	j2s := cfg.NewCfg(cfgPath)
-	failP1OnErrWhen(j2s == nil, "%v: %s", eg.CFG_INIT_ERR, cfgPath)
+	failP1OnErrWhen(j2s == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	SIFSpecDir := j2s.SIFSpecDir
 	DefaultSIFVer := j2s.DefaultSIFVer

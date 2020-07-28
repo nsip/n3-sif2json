@@ -62,4 +62,4 @@ SIF Specification Description File. Text readable format, and at least contains:
 
 2. Server, Set /2JSON/config/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../`; Set /2SIF/config/config.toml [SIFSpecDir], [ReplCfgPath] to `../`.
 
-3. Using go-client, Make sure its config.toml [Route] is correct.
+3. Using goclient, Make sure its config.toml [Route] is correct.

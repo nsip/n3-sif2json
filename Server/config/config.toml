@@ -1,9 +1,9 @@
 Path = "/home/qmiao/Desktop/n3/n3-sif2json/Server/config/config.toml"
+Service = "n3-sif2json"
 Log = "~/.[s]/log/[DATE].log"
 Cfg2JSON = "../../../2JSON/config/config.toml"
 Cfg2SIF = "../../../2SIF/config/config.toml"
-Service = "n3-sif2json"
-Version = "v0.2.3"
+Version = "v0.2.4"
 
 [Loggly]
   Token = "54290728-93e0-425a-a49c-c9e834288026"
@@ -17,12 +17,20 @@ Version = "v0.2.3"
   JSON2SIF = "/[s]/[v]/json2sif"
 
 [NATS]
+  Timeout = 500
   URL = "nats://192.168.78.130:4222"
   Subject = "SIF2JSON"
-  Timeout = 500
 
 [File]
+  ClientConfig = "../../../Client/build/linux64/cfg-clt-sif2json.toml"
   ClientLinux64 = "../../../Client/build/linux64/client"
   ClientMac = "../../../Client/build/mac/client"
   ClientWin64 = "../../../Client/build/win64/client.exe"
-  ClientConfig = "../../../Client/build/linux64/cfg-clt-sif2json.toml"
+
+[Server]
+  IP = "[IP]"
+  Port = 1324
+  Protocol = "http"
+
+[Access]
+  Timeout = 3

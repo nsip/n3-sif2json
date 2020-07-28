@@ -2,10 +2,12 @@
 
 set -e
 
-VERSION="v0.1.0"
-
 rm -rf ./build
 
+PROJECTPATH="github.com/nsip/n3-sif2json/Server"
+go test -v -timeout 2s $PROJECTPATH/preprocess -run TestGenSvrCfgStruct
+go test -v -timeout 2s $PROJECTPATH/config -run TestGenCltCfg -args "Log" "Cfg2JSON" "Cfg2SIF" "Version" "Loggly" "WebService" "NATS" "File"
+go test -v -timeout 2s $PROJECTPATH/preprocess -run TestGenCltCfgStruct
 go get
 
 GOARCH=amd64

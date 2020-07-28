@@ -1,6 +1,7 @@
 package config
 
 import (
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sync"
@@ -9,52 +10,13 @@ import (
 	"github.com/burntsushi/toml"
 )
 
-// Config is toml
-type Config struct {
-	Path     string
-	Log      string
-	Cfg2JSON string
-	Cfg2SIF  string
-	Service  string
-	Version  string
-
-	Loggly struct {
-		Token string
-	}
-
-	WebService struct {
-		Port int
-	}
-
-	Route struct {
-		HELP     string
-		SIF2JSON string
-		JSON2SIF string
-	}
-
-	NATS struct {
-		URL     string
-		Subject string
-		Timeout int
-	}
-
-	File struct {
-		ClientLinux64 string
-		ClientMac     string
-		ClientWin64   string
-		ClientConfig  string
-	}
-}
-
 var (
 	mux sync.Mutex
 )
 
 // newCfg :
 func newCfg(configs ...string) *Config {
-	defer func() {
-		mux.Unlock()
-	}()
+	defer func() { mux.Unlock() }()
 	mux.Lock()
 	for _, f := range configs {
 		if _, e := os.Stat(f); e == nil {
@@ -98,6 +60,17 @@ func (cfg *Config) save() {
 		defer f.Close()
 		toml.NewEncoder(f).Encode(cfg)
 	}
+}
+
+// SaveAs :
+func (cfg *Config) SaveAs(filename string) {
+	bytes, err := ioutil.ReadFile(cfg.Path)
+	failOnErr("%v", err)
+	if !sHasSuffix(filename, ".toml") {
+		filename += ".toml"
+	}
+	failOnErr("%v", ioutil.WriteFile(filename, bytes, 0666))
+	newCfg(filename).save()
 }
 
 // InitEnvVarFromTOML : initialize the global variables

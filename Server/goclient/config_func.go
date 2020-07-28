@@ -1,32 +1,11 @@
-package client
+package goclient
 
 import (
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/burntsushi/toml"
 )
-
-// Config is toml
-type Config struct {
-	Path    string
-	Service string
-	Version string
-	Server  struct {
-		Protocol string
-		IP       string
-		Port     int
-	}
-	Access struct {
-		Timeout int
-	}
-	Route struct {
-		HELP     string
-		SIF2JSON string
-		JSON2SIF string
-	}
-}
 
 // newCfg :
 func newCfg(configs ...string) *Config {
@@ -50,12 +29,7 @@ func (cfg *Config) set() *Config {
 
 		// save
 		cfg.save()
-
-		return cfgRepl(cfg, map[string]interface{}{
-			"[DATE]": time.Now().Format("2006-01-02"),
-			"[s]":    cfg.Service,
-			"[v]":    cfg.Version,
-		}).(*Config)
+		return cfg
 	}
 	return nil
 }

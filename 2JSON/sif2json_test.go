@@ -5,7 +5,7 @@ import (
 	"sync"
 	"testing"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 )
 
 func TestJSONRoot(t *testing.T) {
@@ -43,7 +43,7 @@ func TestSIF2JSON(t *testing.T) {
 	dir := `../data/examples/`
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
-	failOnErrWhen(len(files) == 0, "%v", eg.FILE_NOT_FOUND)
+	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
 
 	wg := sync.WaitGroup{}
 	wg.Add(len(files))

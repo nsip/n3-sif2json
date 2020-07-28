@@ -7,7 +7,7 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
@@ -58,15 +58,15 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 	)
 
 	s2j := cfg.NewCfg(cfgPath)
-	failOnErrWhen(s2j == nil, "%v: %s", eg.CFG_INIT_ERR, cfgPath)
+	failOnErrWhen(s2j == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
 	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM
 	SIFCfgDir4BOOL := s2j.SIFCfgDir4BOOL
 
-	failOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "%v: %s", eg.CFG_SIGN_MISSING, cfgPath)
-	failOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "%v: %s", eg.CFG_SIGN_MISSING, cfgPath)
-	failOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "%v: %s", eg.CFG_SIGN_MISSING, cfgPath)
+	failOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "%v: %s", n3err.CFG_SIGN_MISSING, cfgPath)
+	failOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "%v: %s", n3err.CFG_SIGN_MISSING, cfgPath)
+	failOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "%v: %s", n3err.CFG_SIGN_MISSING, cfgPath)
 
 	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(

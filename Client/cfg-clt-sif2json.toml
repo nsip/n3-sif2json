@@ -1,5 +1,5 @@
 Path = ""
-LogFile = "./go-client-[DATE].log"
+LogFile = "./goclient-[DATE].log"
 ServiceName = "N3-SIF2JSON"
 
 [Server]

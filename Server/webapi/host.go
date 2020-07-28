@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	eg "github.com/cdutwhu/n3-util/n3errs"
+	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -100,7 +100,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 				fPln(rt, res)
 				return c.File(res)
 			}
-			return warnOnErr("%v: [%s]  get [%s]", eg.FILE_NOT_FOUND, rt, res)
+			return warnOnErr("%v: [%s]  get [%s]", n3err.FILE_NOT_FOUND, rt, res)
 		}
 	}
 
@@ -212,10 +212,10 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			// log("\n%s\n", jsonstr)
 
 			if len(bytes) == 0 {
-				warnOnErr("%v: \n%s", eg.HTTP_REQBODY_EMPTY, jsonstr)
+				warnOnErr("%v: \n%s", n3err.HTTP_REQBODY_EMPTY, jsonstr)
 			}
 			if !isJSON(jsonstr) {
-				warnOnErr("%v: \n%s", eg.JSON_INVALID, jsonstr)
+				warnOnErr("%v: \n%s", n3err.JSON_INVALID, jsonstr)
 				goto ERR
 			}
 

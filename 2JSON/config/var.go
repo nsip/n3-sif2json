@@ -6,7 +6,7 @@ import (
 
 	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/gotil/net"
-	"github.com/cdutwhu/n3-util/cfg"
+	"github.com/cdutwhu/n3-util/n3cfg"
 )
 
 var (
@@ -17,5 +17,5 @@ var (
 
 	failOnErr = fn.FailOnErr
 	localIP   = net.LocalIP
-	cfgRepl   = cfg.Modify
+	cfgRepl   = n3cfg.Modify
 )
