@@ -1,4 +1,4 @@
-Version = "v0.2.5"
+Version = "v0.2.6"
 Path = "/home/qmiao/Desktop/n3/n3-sif2json/Server/config/config.toml"
 Service = "n3-sif2json"
 Log = "~/.[s]/log/[DATE].log"
@@ -12,19 +12,19 @@ Cfg2SIF = "../../../2SIF/config/config.toml"
   Port = 1324
 
 [Route]
+  JSON2SIF = "/[s]/[v]/json2sif"
   HELP = "/"
   SIF2JSON = "/[s]/[v]/sif2json"
-  JSON2SIF = "/[s]/[v]/json2sif"
 
 [NATS]
-  Timeout = 500
   URL = "nats://192.168.78.130:4222"
   Subject = "SIF2JSON"
+  Timeout = 500
 
 [Server]
-  Port = 1324
   Protocol = "http"
   IP = "[IP]"
+  Port = 1324
 
 [Access]
   Timeout = 3
