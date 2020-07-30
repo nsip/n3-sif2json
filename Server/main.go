@@ -16,9 +16,7 @@ func main() {
 	ws, service := Cfg.WebService, Cfg.Service
 
 	// --- LOGGLY ---
-	enableLoggly(true)
-	setLogglyToken(Cfg.Loggly.Token)
-	lrInit()
+	setLoggly(true, Cfg.Loggly.Token, service)
 
 	os.Setenv("JAEGER_SERVICE_NAME", service)
 	os.Setenv("JAEGER_SAMPLER_TYPE", "const")
