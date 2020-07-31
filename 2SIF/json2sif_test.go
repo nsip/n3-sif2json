@@ -2,11 +2,37 @@ package cvt2sif
 
 import (
 	"io/ioutil"
+	"os"
 	"testing"
 
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/go-xmlfmt/xmlfmt"
 )
+
+func j2s(dim int, tid int, done chan int, params ...interface{}) {
+	defer func() { done <- tid }()
+	files := params[0].([]os.FileInfo)
+	ver := params[1].(string)
+	L := len(files)
+	for i := tid; i < L; i += dim {
+		ResetAll()
+
+		obj := rmTailFromLast(files[i].Name(), ".")
+		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
+		failOnErr("%v", err)
+
+		sif, sv, err := JSON2SIF("./config/config.toml", string(bytes), ver)
+		failOnErr("%v", err)
+
+		sif = xmlfmt.FormatXML(sif, "", "    ")
+		sif = sTrim(sif, " \t\n\r")
+
+		fPln(obj, sv, " applied")
+		if sif != "" {
+			mustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
+		}
+	}
+}
 
 func TestJSON2SIF(t *testing.T) {
 	enableLog2F(true, "./error.log")
@@ -18,45 +44,47 @@ func TestJSON2SIF(t *testing.T) {
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
 
-	for _, file := range files {
-		ResetAll()
+	Go(1, j2s, files, ver) // only dispatch 1 goroutine, otherwise, crash
 
-		obj := rmTailFromLast(file.Name(), ".")
+	// for _, file := range files {
+	// 	ResetAll()
 
-		// if obj == "Activity2" {
-		// 	continue
-		// }
+	// 	obj := rmTailFromLast(file.Name(), ".")
 
-		fPln("------------", obj)
-		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
-		failOnErr("%v", err)
+	// 	// if obj == "Activity2" {
+	// 	// 	continue
+	// 	// }
 
-		sif, sv, err := JSON2SIF("./config/config.toml", string(bytes), ver)
-		failOnErr("%v", err)
+	// 	fPln("------------", obj)
+	// 	bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
+	// 	failOnErr("%v", err)
 
-		sif = xmlfmt.FormatXML(sif, "", "    ")
-		sif = sTrim(sif, " \t\n\r")
+	// 	sif, sv, err := JSON2SIF("./config/config.toml", string(bytes), ver)
+	// 	failOnErr("%v", err)
 
-		fPln(sv + " is used")
-		if sif != "" {
-			mustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
-		}
+	// 	sif = xmlfmt.FormatXML(sif, "", "    ")
+	// 	sif = sTrim(sif, " \t\n\r")
 
-		// {
-		// 	// JSON2SIF4LF : deal with XML multiple-line content
-		// 	jsonWithCode, mCodeStr := JSON2SIF4LF(string(bytes))
+	// 	fPln(sv + " is used")
+	// 	if sif != "" {
+	// 		mustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
+	// 	}
 
-		// 	xml := JSON2SIF3RD(jsonWithCode)
-		// 	// ioutil.WriteFile(fSf("../data/sif/%s_0_out.xml", obj), []byte(xml), 0666)
+	// 	// {
+	// 	// 	// JSON2SIF4LF : deal with XML multiple-line content
+	// 	// 	jsonWithCode, mCodeStr := JSON2SIF4LF(string(bytes))
 
-		// 	xml1 := JSON2SIFSpec(xml, "../SIFSpec/out.txt") // sv is here
-		// 	// ioutil.WriteFile(fSf("../data/sif/%s_1_out.xml", obj), []byte(xml1), 0666)
+	// 	// 	xml := JSON2SIF3RD(jsonWithCode)
+	// 	// 	// ioutil.WriteFile(fSf("../data/sif/%s_0_out.xml", obj), []byte(xml), 0666)
 
-		// 	mRepl := mapsMerge(getReplMap("./config/replace.json"), mCodeStr).(map[string]string)
-		// 	xml2 := JSON2SIFRepl(xml1, mRepl)
-		// 	ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(xml2), 0666)
-		// }
-	}
+	// 	// 	xml1 := JSON2SIFSpec(xml, "../SIFSpec/out.txt") // sv is here
+	// 	// 	// ioutil.WriteFile(fSf("../data/sif/%s_1_out.xml", obj), []byte(xml1), 0666)
+
+	// 	// 	mRepl := mapsMerge(getReplMap("./config/replace.json"), mCodeStr).(map[string]string)
+	// 	// 	xml2 := JSON2SIFRepl(xml1, mRepl)
+	// 	// 	ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(xml2), 0666)
+	// 	// }
+	// }
 
 	fPln("OK")
 }

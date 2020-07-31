@@ -3,7 +3,7 @@ Service = "n3-sif2json"
 Log = "~/.[s]/log/[DATE].log"
 Cfg2JSON = "../../../2JSON/config/config.toml"
 Cfg2SIF = "../../../2SIF/config/config.toml"
-Version = "v0.2.7"
+Version = "v0.2.8"
 
 [Loggly]
   Token = "54290728-93e0-425a-a49c-c9e834288026"
@@ -17,14 +17,14 @@ Version = "v0.2.7"
   JSON2SIF = "/[s]/[v]/json2sif"
 
 [NATS]
-  Subject = "SIF2JSON"
   Timeout = 500
   URL = "nats://192.168.78.130:4222"
+  Subject = "SIF2JSON"
 
 [Server]
-  IP = "[IP]"
   Port = 1324
   Protocol = "http"
+  IP = "[IP]"
 
 [Access]
   Timeout = 3

@@ -11,6 +11,7 @@ import (
 	"github.com/cdutwhu/gotil/endec"
 	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/misc"
 	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/gotil/str"
 	"github.com/cdutwhu/n3-util/n3xml"
@@ -18,6 +19,7 @@ import (
 
 var (
 	fPln = fmt.Println
+	fPt  = fmt.Print
 	fSp  = fmt.Sprint
 	fSf  = fmt.Sprintf
 
@@ -54,6 +56,7 @@ var (
 	isJSON             = judge.IsJSON
 	md5Str             = endec.MD5Str
 	mapsMerge          = rflx.MapMerge
+	Go                 = misc.Go
 	mustWriteFile      = io.MustWriteFile
 	xmlRoot            = n3xml.XMLRoot
 )

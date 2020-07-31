@@ -8,6 +8,7 @@ import (
 	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/iter"
 	"github.com/cdutwhu/gotil/judge"
+	"github.com/cdutwhu/gotil/misc"
 	"github.com/cdutwhu/gotil/str"
 	"github.com/cdutwhu/n3-util/jkv"
 	"github.com/cdutwhu/n3-util/n3json"
@@ -45,6 +46,7 @@ var (
 	iter2Slc        = iter.Iter2Slc
 	mustWriteFile   = io.MustWriteFile
 	exist           = judge.Exist
+	Go              = misc.Go
 	xmlRoot         = n3xml.XMLRoot
 	jsonRoot        = n3json.JSONRoot
 	fmtJSON         = n3json.Fmt

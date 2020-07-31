@@ -6,10 +6,11 @@ require (
 	github.com/basgys/goxml2json v1.1.0
 	github.com/burntsushi/toml v0.3.1
 	github.com/cdutwhu/debog v0.2.2
-	github.com/cdutwhu/gotil v0.0.6
+	github.com/cdutwhu/gotil v0.0.7
 	github.com/cdutwhu/n3-util v0.2.18
 	github.com/clbanning/mxj v1.8.4
 	github.com/davecgh/go-spew v1.1.1
+	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b
 	github.com/labstack/echo-contrib v0.9.0
 	github.com/labstack/echo/v4 v4.1.16
 	github.com/mattn/go-colorable v0.1.7 // indirect
