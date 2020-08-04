@@ -10,16 +10,14 @@ import (
 )
 
 var (
-	fPt  = fmt.Print
-	fPf  = fmt.Printf
-	fPln = fmt.Println
-	fSf  = fmt.Sprintf
-
-	sJoin      = strings.Join
-	sHasSuffix = strings.HasSuffix
-	sTrimRight = strings.TrimRight
-	sReplace   = strings.Replace
-
+	fPt           = fmt.Print
+	fPf           = fmt.Printf
+	fPln          = fmt.Println
+	fSf           = fmt.Sprintf
+	sJoin         = strings.Join
+	sHasSuffix    = strings.HasSuffix
+	sTrimRight    = strings.TrimRight
+	sReplace      = strings.Replace
 	failOnErrWhen = fn.FailOnErrWhen
 	failOnErr     = fn.FailOnErr
 	warnOnErrWhen = fn.WarnOnErrWhen

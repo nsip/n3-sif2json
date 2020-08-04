@@ -3,11 +3,11 @@ module github.com/nsip/n3-sif2json
 go 1.14
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/basgys/goxml2json v1.1.0
-	github.com/burntsushi/toml v0.3.1
 	github.com/cdutwhu/debog v0.2.2
-	github.com/cdutwhu/gotil v0.0.7
-	github.com/cdutwhu/n3-util v0.2.18
+	github.com/cdutwhu/gotil v0.0.8
+	github.com/cdutwhu/n3-util v0.2.21
 	github.com/clbanning/mxj v1.8.4
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b

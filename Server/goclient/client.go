@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/opentracing/opentracing-go"
 	tags "github.com/opentracing/opentracing-go/ext"
@@ -14,8 +15,8 @@ import (
 
 // DOwithTrace :
 func DOwithTrace(ctx context.Context, configfile, fn string, args *Args) (string, error) {
-	failOnErrWhen(!initEnvVarFromTOML(envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
-	Cfg := env2Struct(envVarName, &Config{}).(*Config)
+	Cfg := &Config{}
+	failOnErrWhen(!n3cfg.InitEnvVar(Cfg, nil, envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
 	service := Cfg.Service
 
 	if span := opentracing.SpanFromContext(ctx); span != nil {
@@ -34,8 +35,8 @@ func DOwithTrace(ctx context.Context, configfile, fn string, args *Args) (string
 
 // DO : fn ["HELP", "SIF2JSON", "JSON2SIF"]
 func DO(configfile, fn string, args *Args) (string, error) {
-	failOnErrWhen(!initEnvVarFromTOML(envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
-	Cfg := env2Struct(envVarName, &Config{}).(*Config)
+	Cfg := &Config{}
+	failOnErrWhen(!n3cfg.InitEnvVar(Cfg, nil, envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
 	server := Cfg.Server
 	protocol, ip, port := server.Protocol, server.IP, server.Port
 	timeout := Cfg.Access.Timeout
@@ -65,7 +66,6 @@ func DO(configfile, fn string, args *Args) (string, error) {
 
 // rest :
 func rest(fn, url string, args *Args, chStr chan string, chErr chan error) {
-
 	paramV, paramN := "", ""
 	if args != nil && args.Ver != "" {
 		paramV = fSf("sv=%s", args.Ver)

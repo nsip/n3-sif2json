@@ -5,9 +5,17 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
+	"github.com/davecgh/go-spew/spew"
 	"github.com/go-xmlfmt/xmlfmt"
 )
+
+func TestConfig(t *testing.T) {
+	cfg := &Config{}
+	n3cfg.New(cfg, nil, "./config.toml")
+	spew.Dump(cfg)
+}
 
 func j2s(dim int, tid int, done chan int, params ...interface{}) {
 	defer func() { done <- tid }()
@@ -21,7 +29,7 @@ func j2s(dim int, tid int, done chan int, params ...interface{}) {
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
 		failOnErr("%v", err)
 
-		sif, sv, err := JSON2SIF("./config/config.toml", string(bytes), ver)
+		sif, sv, err := JSON2SIF("./config.toml", string(bytes), ver)
 		failOnErr("%v", err)
 
 		sif = xmlfmt.FormatXML(sif, "", "    ")

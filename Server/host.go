@@ -1,10 +1,11 @@
-package webapi
+package main
 
 import (
 	"context"
 	"io/ioutil"
 	"net/http"
 	"os"
+	"reflect"
 	"time"
 
 	"github.com/cdutwhu/n3-util/n3err"
@@ -14,7 +15,6 @@ import (
 	"github.com/nats-io/nats.go"
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
 	cvt2sif "github.com/nsip/n3-sif2json/2SIF"
-	cfg "github.com/nsip/n3-sif2json/Server/config"
 )
 
 func shutdownAsync(e *echo.Echo, sig <-chan os.Signal, done chan<- string) {
@@ -52,7 +52,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		AllowCredentials: true,
 	}))
 
-	Cfg := env2Struct("Cfg", &cfg.Config{}).(*cfg.Config)
+	Cfg := env2Struct("Cfg", &Config{}).(*Config)
 	port := Cfg.WebService.Port
 	fullIP := localIP() + fSf(":%d", port)
 	route := Cfg.Route
@@ -110,19 +110,15 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
 
-		bytes, err := ioutil.ReadAll(c.Request().Body)
-		xmlstr := string(bytes)
-		// log("\n%s\n", xmlstr)
+		var (
+			status  = http.StatusOK
+			errSvr  error
+			infoSvr string
+			jsonRet string
 
-		if err != nil || !isXML(xmlstr) {
-			return c.JSON(http.StatusBadRequest, result{
-				Data:  "",
-				Info:  "",
-				Error: err.Error() + " OR Is Request BODY Valid XML?",
-			})
-		}
-
-		var errSvr error
+			results []reflect.Value
+			svUsed  string
+		)
 
 		pvalues := c.QueryParams()
 		sv, pub2nats := "", false
@@ -133,66 +129,71 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			pub2nats = true
 		}
 
-		// json, svUsed, err := cvt2json.SIF2JSON(Cfg.Cfg2JSON, xmlstr, sv, false)
+		infoSvr = "Read Request Body"
+		bytes, errSvr := ioutil.ReadAll(c.Request().Body)
+		if errSvr != nil {
+			status = http.StatusInternalServerError
+			goto ERR
+		}
+		if !isXML(string(bytes)) {
+			errSvr = n3err.PARAM_INVALID_XML
+			status = http.StatusBadRequest
+			goto ERR
+		}
+
+		infoSvr = "[cvt2json.SIF2JSON]"
+		// jsonRet, svUsed, errSvr = cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
 
 		// Trace [cvt2json.SIF2JSON]
 		// [cvt2json.SIF2JSON] uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
-		results := jaegertracing.TraceFunction(c, func() (string, string, error) {
-			return cvt2json.SIF2JSON(Cfg.Cfg2JSON, xmlstr, sv, false)
+		results = jaegertracing.TraceFunction(c, func() (string, string, error) {
+			return cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
 		})
-		json := results[0].Interface().(string)
-		svUsed := results[1].Interface().(string)
+		jsonRet = results[0].Interface().(string)
+		svUsed = results[1].Interface().(string)
 		if !results[2].IsNil() {
-			err = results[2].Interface().(error)
-		} else {
-			err = nil
-		}
-
-		info := "[cvt2json.SIF2JSON]"
-		if err != nil {
-			errSvr = err
+			errSvr = results[2].Interface().(error)
+			status = http.StatusInternalServerError
 			goto ERR
 		}
 
 		// send a copy to NATS
 		if pub2nats {
-			url := Cfg.NATS.URL
-			subj := Cfg.NATS.Subject
-			timeout := time.Duration(Cfg.NATS.Timeout)
+			url, subj, timeout := Cfg.NATS.URL, Cfg.NATS.Subject, time.Duration(Cfg.NATS.Timeout)
 
-			info += fSf(" | To NATS@Subject: [%s@%s]", url, subj)
-			nc, err := nats.Connect(url)
-			if err != nil {
-				errSvr = err
+			infoSvr += fSf(" | To NATS@Subject: [%s@%s]", url, subj)
+			nc, errSvr := nats.Connect(url)
+			if errSvr != nil {
+				status = http.StatusInternalServerError
 				goto ERR
 			}
 
-			msg, err := nc.Request(subj, []byte(json), timeout*time.Millisecond)
+			msg, errSvr := nc.Request(subj, []byte(jsonRet), timeout*time.Millisecond)
 			if msg != nil {
-				info += fSf(" | NATS responded: [%s]", string(msg.Data))
+				infoSvr += fSf(" | NATS responded: [%s]", string(msg.Data))
 			}
-			if err != nil {
-				errSvr = err
+			if errSvr != nil {
+				status = http.StatusInternalServerError
 				goto ERR
 			}
 		}
 
 	ERR:
 		if errSvr != nil {
-			return c.JSON(http.StatusInternalServerError, result{
+			return c.JSON(status, result{
 				Data:  "",
-				Info:  info,
+				Info:  infoSvr,
 				Error: errSvr.Error(),
 			})
 		}
 
-		return c.JSON(http.StatusOK, result{
-			Data:  json,
-			Info:  info + fSf(" | SIF Ver: [%s]", svUsed),
+		return c.JSON(status, result{
+			Data:  jsonRet,
+			Info:  infoSvr + fSf(" | SIF Ver: [%s]", svUsed),
 			Error: "",
 		})
 
-		// return c.String(http.StatusOK, json) // json string is already JSON String, so return String
+		// return c.String(http.StatusOK, jsonRet) // jsonRet is already JSON String, so return String
 	})
 
 	// ------------------------------------------------------------------------------------ //

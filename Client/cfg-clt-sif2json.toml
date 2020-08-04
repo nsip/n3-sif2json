@@ -1,16 +1,15 @@
-Path = ""
-LogFile = "./goclient-[DATE].log"
-ServiceName = "N3-SIF2JSON"
-
-[Server]
-  Protocol = "http"
-  IP = "192.168.31.168"
-  Port = 1324
-
-[Access]
-  Timeout = 3
+Path = "/home/qmiao/Desktop/n3/n3-sif2json/Server/config.toml"
+Service = "n3-sif2json"
 
 [Route]
-  HELP = "/"
-  SIF2JSON = "/sif2json/v0.1.1"
-  JSON2SIF = "/json2sif/v0.1.1"
+HELP = "/"
+JSON2SIF = "/n3-sif2json/v0.2.8/json2sif"
+SIF2JSON = "/n3-sif2json/v0.2.8/sif2json"
+
+[Server]
+IP = "192.168.31.168"
+Port = 1324
+Protocol = "http"
+
+[Access]
+Timeout = 3

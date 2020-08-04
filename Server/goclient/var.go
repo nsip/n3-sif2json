@@ -7,20 +7,18 @@ import (
 	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/rflx"
-	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go/config"
 )
 
 var (
-	fPt        = fmt.Print
-	fPf        = fmt.Printf
-	fPln       = fmt.Println
-	fSf        = fmt.Sprintf
-	sJoin      = strings.Join
-	sReplace   = strings.Replace
-	sTrimRight = strings.TrimRight
-
+	fPt           = fmt.Print
+	fPf           = fmt.Printf
+	fPln          = fmt.Println
+	fSf           = fmt.Sprintf
+	sJoin         = strings.Join
+	sReplace      = strings.Replace
+	sTrimRight    = strings.TrimRight
 	struct2Map    = rflx.Struct2Map
 	mapKeys       = rflx.MapKeys
 	env2Struct    = rflx.Env2Struct
@@ -33,7 +31,6 @@ var (
 	warnOnErrWhen = fn.WarnOnErrWhen
 	isXML         = judge.IsXML
 	isJSON        = judge.IsJSON
-	cfgRepl       = n3cfg.Modify
 )
 
 const (

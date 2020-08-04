@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"reflect"
 
-	"github.com/burntsushi/toml"
+	"github.com/BurntSushi/toml"
 )
 
 // !!! toml file name must be identical to config struct name !!!

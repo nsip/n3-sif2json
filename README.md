@@ -58,8 +58,16 @@ SIF Specification Description File. Text readable format, and at least contains:
 
 ## Others
 
-1. UnitTest, Set /2JSON/config/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../../../`; Set /2SIF/config/config.toml [SIFSpecDir], [ReplCfgPath] to `../../../`.
+1. Make sure /Server/config.toml [Cfg2JSON] [Cfg2SIF] are correct.
 
-2. Server, Set /2JSON/config/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../`; Set /2SIF/config/config.toml [SIFSpecDir], [ReplCfgPath] to `../`.
+2. UnitTest Mode, Set /2JSON/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../`;
 
-3. Using goclient, Make sure its config.toml [Route] is correct.
+3. UnitTest Mode, Set /2SIF/config.toml [SIFSpecDir], [ReplCfgPath] to `../`.
+
+4. Server Mode, Set /2JSON/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../../../`;
+
+5. Server Mode, Set /2SIF/config.toml [SIFSpecDir], [ReplCfgPath] to `../../../`.
+
+6. Server Mode, Make sure /Preprocess/genStruct_test.go `flag.Args()` is working.
+
+7. Using goclient, Make sure its config.toml [Route] is correct.

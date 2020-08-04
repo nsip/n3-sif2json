@@ -5,8 +5,16 @@ import (
 	"os"
 	"testing"
 
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
+	"github.com/davecgh/go-spew/spew"
 )
+
+func TestConfig(t *testing.T) {
+	cfg := &Config{}
+	n3cfg.New(cfg, nil, "./config_auto.toml")
+	spew.Dump(cfg)
+}
 
 func TestJSONRoot(t *testing.T) {
 	bytes, err := ioutil.ReadFile("../data/Activity.json")
@@ -15,7 +23,7 @@ func TestJSONRoot(t *testing.T) {
 }
 
 func TestXMLRoot(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/Activity.xml")
+	bytes, err := ioutil.ReadFile("../data/examples347/Activity_0.xml")
 	failOnErr("%v", err)
 	// fPln(string(bytes))
 	fPln(xmlRoot(string(bytes)))
@@ -38,7 +46,7 @@ func s2j(dim int, tid int, done chan int, params ...interface{}) {
 		// }
 		bytes, err := ioutil.ReadFile(fSf("../data/examples347/%s.xml", obj))
 		failOnErr("%v", err)
-		json, sv, err := SIF2JSON("./config/config.toml", string(bytes), "3.4.7", false)
+		json, sv, err := SIF2JSON("./config.toml", string(bytes), "3.4.7", false)
 		fPln("end:", obj, sv, err)
 		if json != "" {
 			mustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
@@ -53,7 +61,7 @@ func TestSIF2JSON(t *testing.T) {
 	// bytes, err := ioutil.ReadFile("/home/qmiao/Desktop/attribute_test.xml")
 	// failOnErr("%v", err)
 	// obj := "Activity"
-	// json, sv, err := SIF2JSON("./config/Config.toml", string(bytes), "3.4.7", false)
+	// json, sv, err := SIF2JSON("./config.toml", string(bytes), "3.4.7", false)
 	// // fPln("end:", obj, sv, err)
 	// failOnErr("%v", err)
 	// if json != "" {
@@ -66,28 +74,7 @@ func TestSIF2JSON(t *testing.T) {
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
 
-	// wg := sync.WaitGroup{}
-	// wg.Add(len(files))
-	// for _, file := range files {
-	// 	obj := rmTailFromLast(file.Name(), ".")
-	// 	// if exist(obj, "LearningStandardDocument", "StudentAttendanceTimeList") {
-	// 	// 	continue
-	// 	// }
-	// 	go func(obj string) {
-	// 		defer wg.Done()
-	// 		fPln("start:", obj)
-	// 		bytes, err := ioutil.ReadFile(fSf("../data/examples347/%s.xml", obj))
-	// 		failOnErr("%v", err)
-	// 		json, sv, err := SIF2JSON("./config/config.toml", string(bytes), "3.4.7", false)
-	// 		fPln("end:", obj, sv, err)
-	// 		if json != "" {
-	// 			mustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
-	// 		}
-	// 	}(obj)
-	// }
-	// wg.Wait()
-
-	// Go(1, s2j, files)
-	Go(len(files), s2j, files)
+	Go(1, s2j, files)
+	// Go(len(files), s2j, files)
 	fPln("OK")
 }

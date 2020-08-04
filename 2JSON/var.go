@@ -9,6 +9,7 @@ import (
 	"github.com/cdutwhu/gotil/iter"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/misc"
+	"github.com/cdutwhu/gotil/net"
 	"github.com/cdutwhu/gotil/str"
 	"github.com/cdutwhu/n3-util/jkv"
 	"github.com/cdutwhu/n3-util/n3json"
@@ -16,29 +17,23 @@ import (
 )
 
 var (
-	fPln        = fmt.Println
-	fPf         = fmt.Printf
-	fSp         = fmt.Sprint
-	fSf         = fmt.Sprintf
-	sHasPrefix  = strings.HasPrefix
-	sHasSuffix  = strings.HasSuffix
-	sTrim       = strings.Trim
-	sCount      = strings.Count
-	sReplaceAll = strings.ReplaceAll
-	sSplit      = strings.Split
-	sNewReader  = strings.NewReader
-	sJoin       = strings.Join
-	sSplitRev   = func(s, sep string) []string {
-		a := sSplit(s, sep)
-		for i, j := 0, len(a)-1; i < j; i, j = i+1, j-1 {
-			a[i], a[j] = a[j], a[i]
-		}
-		return a
-	}
-
-	enableLog2F     = fn.EnableLog2F
+	fPf             = fmt.Printf
+	fPln            = fmt.Println
+	fSp             = fmt.Sprint
+	fSf             = fmt.Sprintf
+	sHasPrefix      = strings.HasPrefix
+	sHasSuffix      = strings.HasSuffix
+	sReplaceAll     = strings.ReplaceAll
 	failOnErr       = fn.FailOnErr
+	enableLog2F     = fn.EnableLog2F
 	failOnErrWhen   = fn.FailOnErrWhen
+	localIP         = net.LocalIP
+	sTrim           = strings.Trim
+	sCount          = strings.Count
+	sSplit          = strings.Split
+	sNewReader      = strings.NewReader
+	sJoin           = strings.Join
+	splitRev        = str.SplitRev
 	replByPosGrp    = str.ReplByPosGrp
 	rmTailFromLastN = str.RmTailFromLastN
 	rmTailFromLast  = str.RmTailFromLast

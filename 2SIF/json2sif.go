@@ -7,9 +7,9 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/clbanning/mxj"
-	cfg "github.com/nsip/n3-sif2json/2SIF/config"
 )
 
 // ----------------------------------------- //
@@ -239,9 +239,8 @@ func JSON2SIF3RD(jsonstr string) string {
 	xmlstr = sReplaceAll(xmlstr, "</>", "")
 	xmlstr = re1.ReplaceAllString(xmlstr, "")
 	xmlstr = re2.ReplaceAllString(xmlstr, "")
-	xmlstr, _ = Indent(xmlstr, -4, false)
+	xmlstr = indent(xmlstr, -4, false)
 	xmlstr = sTrim(xmlstr, " \t\n")
-
 	return xmlstr
 }
 
@@ -407,8 +406,8 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
-	j2s := cfg.NewCfg(cfgPath)
-	failP1OnErrWhen(j2s == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
+	j2s := &Config{}
+	failP1OnErrWhen(n3cfg.New(j2s, nil, cfgPath) == "", "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	SIFSpecDir := j2s.SIFSpecDir
 	DefaultSIFVer := j2s.DefaultSIFVer

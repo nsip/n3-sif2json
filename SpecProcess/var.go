@@ -10,16 +10,14 @@ import (
 )
 
 var (
-	fPln = fmt.Println
-	fPf  = fmt.Printf
-	fSf  = fmt.Sprintf
-
-	sHasPrefix = strings.HasPrefix
-	sSplit     = strings.Split
-	sReplace   = strings.Replace
-	sCount     = strings.Count
-	sTrim      = strings.Trim
-
+	fPln           = fmt.Println
+	fPf            = fmt.Printf
+	fSf            = fmt.Sprintf
+	sHasPrefix     = strings.HasPrefix
+	sSplit         = strings.Split
+	sReplace       = strings.Replace
+	sCount         = strings.Count
+	sTrim          = strings.Trim
 	mapKeys        = rflx.MapKeys
 	rmHeadToFirst  = str.RmHeadToFirst
 	rmHeadToLast   = str.RmHeadToLast

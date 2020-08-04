@@ -1,8 +1,8 @@
-Path = "/home/qmiao/Desktop/n3/n3-sif2json/Server/config/config.toml"
+Path = "[PATH]"
 Service = "n3-sif2json"
 Log = "~/.[s]/log/[DATE].log"
-Cfg2JSON = "../../../2JSON/config/config.toml"
-Cfg2SIF = "../../../2SIF/config/config.toml"
+Cfg2JSON = "../../../2JSON/config.toml"
+Cfg2SIF = "../../../2SIF/config.toml"
 Version = "v0.2.8"
 
 [Loggly]
@@ -22,7 +22,7 @@ Version = "v0.2.8"
   Subject = "SIF2JSON"
 
 [Server]
-  Port = 1324
+  Port = "[port]"
   Protocol = "http"
   IP = "[IP]"
 

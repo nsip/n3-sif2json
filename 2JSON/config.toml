@@ -1,0 +1,6 @@
+Path = "/home/qmiao/Desktop/n3/n3-sif2json/2JSON/config/config.toml"
+LogFile = "./[DATE].log"
+DefaultSIFVer = "3.4.7"
+SIFCfgDir4LIST = "../../../2JSON/SpecCfg/#SIFVER#/LIST/"
+SIFCfgDir4NUM = "../../../2JSON/SpecCfg/#SIFVER#/NUMERIC/"
+SIFCfgDir4BOOL = "../../../2JSON/SpecCfg/#SIFVER#/BOOLEAN/"

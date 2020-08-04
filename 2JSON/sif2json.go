@@ -7,8 +7,8 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
-	cfg "github.com/nsip/n3-sif2json/2JSON/config"
 )
 
 func eachFileContent(dir, ext string, indices ...int) (rt []string) {
@@ -57,8 +57,8 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 		SignSIFVer = "#SIFVER#"
 	)
 
-	s2j := cfg.NewCfg(cfgPath)
-	failOnErrWhen(s2j == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
+	s2j := &Config{}
+	failOnErrWhen(n3cfg.New(s2j, nil, cfgPath) == "", "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
 	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM

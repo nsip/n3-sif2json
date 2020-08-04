@@ -36,6 +36,23 @@ for f in $FILES; do
         exit -1
     fi
 done
+
+####
+
+PROJECTPATH="github.com/nsip/n3-sif2json"
+
+# generate config.go for [2JSON] [2SIF] [Server]
+go test -v -timeout 1s $PROJECTPATH/Preprocess -run TestGenCfgStruct -args "2JSON" "2SIF" "Server"
+echo "${green}[2JSON] [2SIF] [Server] Config.go Generated${reset}"
+
+# Trim Server config.toml for [goclient]
+go test -v -timeout 1s $PROJECTPATH/Server -run TestGenCltCfg -args "Path" "Service" "Route" "Server" "Access"
+echo "${green}goclient Config.toml Generated${reset}"
+
+# generate config.go fo [goclient]
+go test -v -timeout 1s $PROJECTPATH/Preprocess -run TestGenCfgStruct -args "goclient"
+echo "${green}[goclient] Config.go Generated${reset}"
+
 ####
 
 cd Server && ./build.sh && cd $ORIGINALPATH && echo "${green}Server Built${reset}"
