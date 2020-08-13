@@ -1,9 +1,9 @@
 Path = "[PATH]"
-Service = "n3-sif2json"
-Log = "~/.[s]/log/[DATE].log"
+Service = "[PRJ]"
+Log = "~/.[PRJ]/log/[DATE].log"
 Cfg2JSON = "../../../2JSON/config.toml"
 Cfg2SIF = "../../../2SIF/config.toml"
-Version = "v0.2.8"
+Version = "[VER]"
 
 [Loggly]
   Token = "54290728-93e0-425a-a49c-c9e834288026"
@@ -13,8 +13,8 @@ Version = "v0.2.8"
 
 [Route]
   HELP = "/"
-  SIF2JSON = "/[s]/[v]/sif2json"
-  JSON2SIF = "/[s]/[v]/json2sif"
+  SIF2JSON = "/[PRJ]/[VER]/sif2json"
+  JSON2SIF = "/[PRJ]/[VER]/json2sif"
 
 [NATS]
   Timeout = 500

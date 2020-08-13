@@ -7,7 +7,6 @@ ORIGINALPATH=`pwd`
 
 cd ./Server && ./clean.sh && cd $ORIGINALPATH && echo "Server clean"
 cd ./Client && ./clean.sh && cd $ORIGINALPATH && echo "Client clean"
-cd ./data && ./clean.sh && cd $ORIGINALPATH && echo "data clean"
 cd ./2JSON && rm -f *auto*.go *.json && cd $ORIGINALPATH && echo "2JSON clean"
 cd ./2JSON/SpecCfgMaker && ./clean.sh && cd $ORIGINALPATH && echo "SpecCfgMaker clean"
 cd ./2SIF && rm -f *auto*.go *.xml && cd $ORIGINALPATH && echo "2SIF clean"

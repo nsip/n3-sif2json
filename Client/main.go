@@ -6,14 +6,14 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/cdutwhu/n3-util/n3err"
+	// "github.com/cdutwhu/n3-util/n3err"
 	clt "github.com/nsip/n3-sif2json/Server/goclient"
 )
 
 func main() {
-	route := clt.Config{}.Route
-	fns := structFields(&route)
-	failOnErrWhen(len(os.Args) < 3, "%v: need [config.toml] %v", n3err.CLI_SUBCMD_ERR, fns)
+	// route := auto.Config{}.Route
+	// fns := structFields(&route)
+	// failOnErrWhen(len(os.Args) < 3, "%v: need [config.toml] %v", n3err.CLI_SUBCMD_ERR, fns)
 
 	cltcfg, fn := os.Args[1], os.Args[2]
 

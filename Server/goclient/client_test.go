@@ -9,18 +9,16 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	cfg := &Config{}
-	n3cfg.New(cfg, nil, "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "Test1Goclient", "./config.toml")
 	spew.Dump(cfg)
 }
 
 func TestInit(t *testing.T) {
-	cfg := &Config{}
-	n3cfg.InitEnvVar(cfg, nil, "Cfg-Clt-S2J", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "Cfg-Clt-S2J", "./config.toml")
 	spew.Dump(cfg)
 	fPln(" ------------------------------- ")
-	ICfg := env2Struct("Cfg-Clt-S2J", &Config{}) //
-	spew.Dump(ICfg.(*Config))
+	cfg1 := n3cfg.FromEnvN3sif2jsonGoclient("Cfg-Clt-S2J")
+	spew.Dump(cfg1)
 }
 
 func TestDO(t *testing.T) {

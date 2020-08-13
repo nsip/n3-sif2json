@@ -11,8 +11,7 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	cfg := &Config{}
-	n3cfg.New(cfg, nil, "./config_auto.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonCvt2json(nil, "./config.toml")
 	spew.Dump(cfg)
 }
 

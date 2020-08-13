@@ -406,8 +406,9 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
-	j2s := &Config{}
-	failP1OnErrWhen(n3cfg.New(j2s, nil, cfgPath) == "", "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
+
+	j2s := n3cfg.ToEnvN3sif2jsonCvt2sif(nil, "2SIF", cfgPath)
+	failP1OnErrWhen(j2s == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	SIFSpecDir := j2s.SIFSpecDir
 	DefaultSIFVer := j2s.DefaultSIFVer

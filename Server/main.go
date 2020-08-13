@@ -9,31 +9,24 @@ import (
 )
 
 func main() {
-	Cfg := &Config{}
-	failOnErrWhen(
-		!n3cfg.InitEnvVar(Cfg,
-			map[string]string{
-				"[s]": "Service",
-				"[v]": "Version",
-			}, "Cfg"),
-		"%v: Config Init Error",
-		n3err.CFG_INIT_ERR,
-	)
-	ws, service := Cfg.WebService, Cfg.Service
+	Cfg := n3cfg.ToEnvN3sif2jsonServer(map[string]string{
+		"[s]": "Service",
+		"[v]": "Version",
+	}, "Cfg")
+	failOnErrWhen(Cfg == nil, "%v: Config Init Error", n3err.CFG_INIT_ERR)
 
-	// --- LOGGLY ---
-	setLoggly(true, Cfg.Loggly.Token, service)
-
+	ws, service := Cfg.WebService, Cfg.Service.(string)
 	os.Setenv("JAEGER_SERVICE_NAME", service)
 	os.Setenv("JAEGER_SAMPLER_TYPE", "const")
 	os.Setenv("JAEGER_SAMPLER_PARAM", "1")
 
-	msg := fSf("[%s] Hosting on: [%v:%d], version [%v]", service, localIP(), ws.Port, Cfg.Version)
-	logBind(logger, loggly("info")).Do(msg)
+	// --- LOGGLY --- //
+	setLoggly(true, Cfg.Loggly.Token, service)
+
+	logBind(logger, loggly("info")).Do(fSf("[%s] Hosting on: [%v:%d], version [%v]", service, localIP(), ws.Port, Cfg.Version))
 
 	enableLog2F(true, Cfg.Log)
-	msg = fSf("local log file @ [%s]", Cfg.Log)
-	logBind(logger, loggly("info")).Do(msg)
+	logBind(logger, loggly("info")).Do(fSf("local log file @ [%s]", Cfg.Log))
 
 	done := make(chan string)
 	c := make(chan os.Signal)

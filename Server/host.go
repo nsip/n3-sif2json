@@ -8,6 +8,7 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo/v4"
@@ -36,15 +37,14 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	// waiting for shutdown
 	go shutdownAsync(e, sig, done)
 
-	// Middleware
-	e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.Use(middleware.BodyLimit("2G"))
-
 	// Add Jaeger Tracer into Middleware
 	c := jaegertracing.New(e, nil)
 	defer c.Close()
 
+	// Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.BodyLimit("2G"))
 	// CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"*"},
@@ -52,7 +52,10 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		AllowCredentials: true,
 	}))
 
-	Cfg := env2Struct("Cfg", &Config{}).(*Config)
+	e.Logger.SetOutput(os.Stdout)
+	e.Logger.Infof(" ------------------------ e.Logger.Infof ------------------------ ")
+
+	Cfg := n3cfg.FromEnvN3sif2jsonServer("Cfg")
 	port := Cfg.WebService.Port
 	fullIP := localIP() + fSf(":%d", port)
 	route := Cfg.Route

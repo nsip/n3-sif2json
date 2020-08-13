@@ -1,13 +1,13 @@
 module github.com/nsip/n3-sif2json
 
-go 1.14
+go 1.15
 
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/basgys/goxml2json v1.1.0
-	github.com/cdutwhu/debog v0.2.2
-	github.com/cdutwhu/gotil v0.0.8
-	github.com/cdutwhu/n3-util v0.2.21
+	github.com/cdutwhu/debog v0.2.6
+	github.com/cdutwhu/gotil v0.0.10
+	github.com/cdutwhu/n3-util v0.2.39
 	github.com/clbanning/mxj v1.8.4
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b
@@ -23,5 +23,6 @@ require (
 	github.com/valyala/fasttemplate v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20200728195943-123391ffb6de // indirect
 	golang.org/x/net v0.0.0-20200707034311-ab3426394381 // indirect
+	golang.org/x/sys v0.0.0-20200812155832-6a926be9bd1d // indirect
 	golang.org/x/text v0.3.3 // indirect
 )

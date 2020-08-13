@@ -57,8 +57,8 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 		SignSIFVer = "#SIFVER#"
 	)
 
-	s2j := &Config{}
-	failOnErrWhen(n3cfg.New(s2j, nil, cfgPath) == "", "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
+	s2j := n3cfg.ToEnvN3sif2jsonCvt2json(nil, "2JSON", cfgPath)
+	failOnErrWhen(s2j == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
 
 	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
 	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM

@@ -14,11 +14,12 @@ import (
 )
 
 // DOwithTrace :
-func DOwithTrace(ctx context.Context, configfile, fn string, args *Args) (string, error) {
-	Cfg := &Config{}
-	failOnErrWhen(!n3cfg.InitEnvVar(Cfg, nil, envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
-	service := Cfg.Service
+func DOwithTrace(ctx context.Context, config, fn string, args *Args) (string, error) {
 
+	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envVarName, config)
+	failOnErrWhen(Cfg == nil, "%v", n3err.CFG_INIT_ERR)
+
+	service := Cfg.Service
 	if span := opentracing.SpanFromContext(ctx); span != nil {
 		tracer := initTracer(service)
 		span := tracer.StartSpan(fn, opentracing.ChildOf(span.Context()))
@@ -30,13 +31,15 @@ func DOwithTrace(ctx context.Context, configfile, fn string, args *Args) (string
 		defer span.Finish()
 		ctx = opentracing.ContextWithSpan(ctx, span)
 	}
-	return DO(configfile, fn, args)
+	return DO(config, fn, args)
 }
 
 // DO : fn ["HELP", "SIF2JSON", "JSON2SIF"]
-func DO(configfile, fn string, args *Args) (string, error) {
-	Cfg := &Config{}
-	failOnErrWhen(!n3cfg.InitEnvVar(Cfg, nil, envVarName, configfile), "%v", n3err.CFG_INIT_ERR)
+func DO(config, fn string, args *Args) (string, error) {
+
+	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envVarName, config)
+	failOnErrWhen(Cfg == nil, "%v", n3err.CFG_INIT_ERR)
+
 	server := Cfg.Server
 	protocol, ip, port := server.Protocol, server.IP, server.Port
 	timeout := Cfg.Access.Timeout

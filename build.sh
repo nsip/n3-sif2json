@@ -39,19 +39,20 @@ done
 
 ####
 
-PROJECTPATH="github.com/nsip/n3-sif2json"
+WORKPATH="github.com/nsip/n3-sif2json/Preprocess"
 
-# generate config.go for [2JSON] [2SIF] [Server]
-go test -v -timeout 1s $PROJECTPATH/Preprocess -run TestGenCfgStruct -args "2JSON" "2SIF" "Server"
-echo "${green}[2JSON] [2SIF] [Server] Config.go Generated${reset}"
+# sudo password
+sudopwd="password"
+
+# generate config.go for [Server] [2JSON] [2SIF]
+echo $sudopwd | sudo -S env "PATH=$PATH" go test -v -timeout 1s -count=1 $WORKPATH/CfgReg -run TestRegCfg -args `whoami` "server" "cvt2json" "cvt2sif"
 
 # Trim Server config.toml for [goclient]
-go test -v -timeout 1s $PROJECTPATH/Server -run TestGenCltCfg -args "Path" "Service" "Route" "Server" "Access"
+go test -v -timeout 1s -count=1 $WORKPATH/CfgGen -run TestMkCltCfg -args "Path" "Service" "Route" "Server" "Access"
 echo "${green}goclient Config.toml Generated${reset}"
 
 # generate config.go fo [goclient]
-go test -v -timeout 1s $PROJECTPATH/Preprocess -run TestGenCfgStruct -args "goclient"
-echo "${green}[goclient] Config.go Generated${reset}"
+echo $sudopwd | sudo -S env "PATH=$PATH" go test -v -timeout 1s -count=1 $WORKPATH/CfgReg -run TestRegCfg -args `whoami` "goclient"
 
 ####
 

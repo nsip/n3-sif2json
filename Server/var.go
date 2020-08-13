@@ -15,11 +15,10 @@ import (
 )
 
 var (
-	fPln        = fmt.Println
-	fSf         = fmt.Sprintf
-	fPf         = fmt.Printf
-	sReplaceAll = strings.ReplaceAll
-
+	fPln          = fmt.Println
+	fSf           = fmt.Sprintf
+	fPf           = fmt.Printf
+	sReplaceAll   = strings.ReplaceAll
 	failOnErr     = fn.FailOnErr
 	failOnErrWhen = fn.FailOnErrWhen
 	enableLog2F   = fn.EnableLog2F
@@ -29,6 +28,7 @@ var (
 	localIP       = net.LocalIP
 	env2Struct    = rflx.Env2Struct
 	struct2Map    = rflx.Struct2Map
+	tryInvoke     = rflx.TryInvoke
 	loggly        = n3log.Loggly
 	logBind       = n3log.Bind
 	setLoggly     = n3log.SetLoggly
