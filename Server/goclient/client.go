@@ -83,9 +83,9 @@ func rest(fn, url string, args *Args, chStr chan string, chErr chan error) {
 	logWhen(true, "accessing ... %s", url)
 
 	var (
-		Resp    *http.Response
-		Err     error
-		RetData []byte
+		Resp *http.Response
+		Err  error
+		Ret  []byte
 	)
 
 	switch fn {
@@ -120,7 +120,7 @@ func rest(fn, url string, args *Args, chStr chan string, chErr chan error) {
 	}
 	defer Resp.Body.Close()
 
-	if RetData, Err = ioutil.ReadAll(Resp.Body); Err != nil {
+	if Ret, Err = ioutil.ReadAll(Resp.Body); Err != nil {
 		goto ERR_RET
 	}
 
@@ -131,7 +131,7 @@ ERR_RET:
 		return
 	}
 
-	chStr <- string(RetData)
+	chStr <- string(Ret)
 	chErr <- n3err.NO_ERROR
 	return
 }

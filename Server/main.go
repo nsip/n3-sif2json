@@ -23,10 +23,10 @@ func main() {
 	// --- LOGGLY --- //
 	setLoggly(true, Cfg.Loggly.Token, service)
 
-	logBind(logger, loggly("info")).Do(fSf("[%s] Hosting on: [%v:%d], version [%v]", service, localIP(), ws.Port, Cfg.Version))
-
+	enableWarnDetail(false)
 	enableLog2F(true, Cfg.Log)
 	logBind(logger, loggly("info")).Do(fSf("local log file @ [%s]", Cfg.Log))
+	logBind(logger, loggly("info")).Do(fSf("[%s] Hosting on: [%v:%d], version [%v]", service, localIP(), ws.Port, Cfg.Version))
 
 	done := make(chan string)
 	c := make(chan os.Signal)

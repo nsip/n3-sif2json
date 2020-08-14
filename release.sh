@@ -25,12 +25,12 @@ mkdir -p $dir'/2JSON/'
 mkdir -p $dir'/2SIF/'
 
 cp ./Server/build/$os/* $dir
-cp -r ./2JSON/SpecCfg $dir
-cp ./2JSON/config.toml $dir'/2JSON/'
-cp ./2SIF/config.toml ./2SIF/replace.json $dir'/2SIF/'
+cp -r ./2JSON/SpecCfg ./2JSON/config.toml $dir'/2JSON/'
+cp -r ./SIFSpec ./2SIF/config.toml ./2SIF/replace.json $dir'/2SIF/'
 
 sed -i 's/\.\.\/\.\.\/\.//g' $dir'/config.toml'
-sed -i 's/\.\.\/\.\.\/\.\.\/2JSON/\./g' $dir'/2JSON/config.toml'
+sed -i 's/\.\.\/\.\.\/\.//g' $dir'/2JSON/config.toml'
 sed -i 's/\.\.\/\.\.\/\.//g' $dir'/2SIF/config.toml'
+sed -i 's/\.\/SIFSpec\//\.\/2SIF\/SIFSpec\//g' $dir'/2SIF/config.toml'
 
 echo "${G}Server Package $os Version is Dumped into $dir ${W}"

@@ -15,27 +15,29 @@ import (
 )
 
 var (
-	fPln          = fmt.Println
-	fSf           = fmt.Sprintf
-	fPf           = fmt.Printf
-	sReplaceAll   = strings.ReplaceAll
-	failOnErr     = fn.FailOnErr
-	failOnErrWhen = fn.FailOnErrWhen
-	enableLog2F   = fn.EnableLog2F
-	logWhen       = fn.LoggerWhen
-	logger        = fn.Logger
-	warnOnErr     = fn.WarnOnErr
-	localIP       = net.LocalIP
-	env2Struct    = rflx.Env2Struct
-	struct2Map    = rflx.Struct2Map
-	tryInvoke     = rflx.TryInvoke
-	loggly        = n3log.Loggly
-	logBind       = n3log.Bind
-	setLoggly     = n3log.SetLoggly
-	isXML         = judge.IsXML
-	isJSON        = judge.IsJSON
-	mustWriteFile = io.MustWriteFile
-	url1Value     = rest.URL1Value
+	fPln             = fmt.Println
+	fSf              = fmt.Sprintf
+	fPf              = fmt.Printf
+	sReplaceAll      = strings.ReplaceAll
+	failOnErr        = fn.FailOnErr
+	failOnErrWhen    = fn.FailOnErrWhen
+	enableLog2F      = fn.EnableLog2F
+	enableWarnDetail = fn.EnableWarnDetail
+	logWhen          = fn.LoggerWhen
+	logger           = fn.Logger
+	warnOnErr        = fn.WarnOnErr
+	warner           = fn.Warner
+	localIP          = net.LocalIP
+	env2Struct       = rflx.Env2Struct
+	struct2Map       = rflx.Struct2Map
+	tryInvoke        = rflx.TryInvoke
+	loggly           = n3log.Loggly
+	logBind          = n3log.Bind
+	setLoggly        = n3log.SetLoggly
+	isXML            = judge.IsXML
+	isJSON           = judge.IsJSON
+	mustWriteFile    = io.MustWriteFile
+	url1Value        = rest.URL1Value
 )
 
 func initMutex(route interface{}) map[string]*sync.Mutex {
@@ -44,10 +46,4 @@ func initMutex(route interface{}) map[string]*sync.Mutex {
 		mMtx[v.(string)] = &sync.Mutex{}
 	}
 	return mMtx
-}
-
-type result struct {
-	Data  string `json:"data"`
-	Info  string `json:"info"`
-	Error string `json:"error"`
 }

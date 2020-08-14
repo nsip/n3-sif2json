@@ -14,15 +14,14 @@ func TestLoad(t *testing.T) {
 }
 
 func TestInit(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "Cfg-Clt-S2J", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "CfgClt-S2J", "./config.toml")
 	spew.Dump(cfg)
 	fPln(" ------------------------------- ")
-	cfg1 := n3cfg.FromEnvN3sif2jsonGoclient("Cfg-Clt-S2J")
+	cfg1 := n3cfg.FromEnvN3sif2jsonGoclient("CfgClt-S2J")
 	spew.Dump(cfg1)
 }
 
 func TestDO(t *testing.T) {
-
 	str, err := DO(
 		"./config.toml",
 		"HELP",

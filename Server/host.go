@@ -62,7 +62,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	mMtx := initMutex(&Cfg.Route)
 
 	defer e.Start(fSf(":%d", port))
-	logBind(logger, loggly("info")).Do("Echo Service is Starting")
+	logBind(logger, loggly("info")).Do("Echo Service is Starting ...")
 
 	// *************************************** List all API, FILE *************************************** //
 
@@ -106,7 +106,8 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	// 	e.GET(rt, routeFun(rt, res))
 	// }
 
-	// ------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------------------------- //
+	// ------------------------------------------------------------------------------------------------------------- //
 
 	path = route.SIF2JSON
 	e.POST(path, func(c echo.Context) error {
@@ -115,144 +116,134 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 		var (
 			status  = http.StatusOK
-			errSvr  error
-			infoSvr string
-			jsonRet string
-
+			ret     string
 			results []reflect.Value
-			svUsed  string
 		)
 
-		pvalues := c.QueryParams()
-		sv, pub2nats := "", false
+		logBind(logger, loggly("info")).Do("Parsing Params")
+		pvalues, sv, tonats := c.QueryParams(), "", false
 		if ok, v := url1Value(pvalues, 0, "sv"); ok {
 			sv = v
 		}
 		if ok, n := url1Value(pvalues, 0, "nats"); ok && n != "" {
-			pub2nats = true
+			tonats = true
 		}
 
-		infoSvr = "Read Request Body"
-		bytes, errSvr := ioutil.ReadAll(c.Request().Body)
-		if errSvr != nil {
+		logBind(logger, loggly("info")).Do("Reading Body")
+		bytes, err := ioutil.ReadAll(c.Request().Body)
+		if err != nil {
 			status = http.StatusInternalServerError
-			goto ERR
+			ret = err.Error() + " @ Read Request Body"
+			goto RET
+		}
+		if len(bytes) == 0 {
+			status = http.StatusBadRequest
+			ret = n3err.HTTP_REQBODY_EMPTY.Error() + " @ Read Request Body"
+			goto RET
 		}
 		if !isXML(string(bytes)) {
-			errSvr = n3err.PARAM_INVALID_XML
 			status = http.StatusBadRequest
-			goto ERR
+			ret = n3err.PARAM_INVALID_XML.Error() + " @ Read Request Body"
+			goto RET
 		}
 
-		infoSvr = "[cvt2json.SIF2JSON]"
-		// jsonRet, svUsed, errSvr = cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
-
-		// Trace [cvt2json.SIF2JSON]
-		// [cvt2json.SIF2JSON] uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
+		logBind(logger, loggly("info")).Do("cvt2json.SIF2JSON")
+		// ret, svUsed, err = cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
+		// Trace [cvt2json.SIF2JSON], uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
 		results = jaegertracing.TraceFunction(c, func() (string, string, error) {
 			return cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
 		})
-		jsonRet = results[0].Interface().(string)
-		svUsed = results[1].Interface().(string)
+		ret = results[0].Interface().(string)
 		if !results[2].IsNil() {
-			errSvr = results[2].Interface().(error)
 			status = http.StatusInternalServerError
-			goto ERR
+			ret = results[2].Interface().(error).Error()
+			goto RET
 		}
+		logBind(logger, loggly("info")).Do(results[1].Interface().(string) + " applied")
 
-		// send a copy to NATS
-		if pub2nats {
+		// Send a copy to NATS
+		if tonats {
 			url, subj, timeout := Cfg.NATS.URL, Cfg.NATS.Subject, time.Duration(Cfg.NATS.Timeout)
-
-			infoSvr += fSf(" | To NATS@Subject: [%s@%s]", url, subj)
-			nc, errSvr := nats.Connect(url)
-			if errSvr != nil {
+			nc, err := nats.Connect(url)
+			if err != nil {
 				status = http.StatusInternalServerError
-				goto ERR
+				ret = err.Error() + fSf(" @NATS Connect @Subject: [%s@%s]", url, subj)
+				goto RET
 			}
-
-			msg, errSvr := nc.Request(subj, []byte(jsonRet), timeout*time.Millisecond)
-			if msg != nil {
-				infoSvr += fSf(" | NATS responded: [%s]", string(msg.Data))
-			}
-			if errSvr != nil {
+			msg, err := nc.Request(subj, []byte(ret), timeout*time.Millisecond)
+			if err != nil {
 				status = http.StatusInternalServerError
-				goto ERR
+				ret = err.Error() + fSf(" @NATS Request @Subject: [%s@%s]", url, subj)
+				goto RET
 			}
+			logBind(logger, loggly("info")).Do(string(msg.Data))
 		}
 
-	ERR:
-		if errSvr != nil {
-			return c.JSON(status, result{
-				Data:  "",
-				Info:  infoSvr,
-				Error: errSvr.Error(),
-			})
+	RET:
+		if status != http.StatusOK {
+			logBind(warner, loggly("warn")).Do(ret + " --> Failed")
+		} else {
+			logBind(logger, loggly("info")).Do("--> Finish SIF2JSON")
 		}
-
-		return c.JSON(status, result{
-			Data:  jsonRet,
-			Info:  infoSvr + fSf(" | SIF Ver: [%s]", svUsed),
-			Error: "",
-		})
-
-		// return c.String(http.StatusOK, jsonRet) // jsonRet is already JSON String, so return String
+		return c.String(status, ret) // ret is already JSON String, so return String
 	})
 
-	// ------------------------------------------------------------------------------------ //
+	// ------------------------------------------------------------------------------------------------------------- //
+	// ------------------------------------------------------------------------------------------------------------- //
 
 	path = route.JSON2SIF
 	e.POST(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
 
-		if bytes, err := ioutil.ReadAll(c.Request().Body); err == nil {
-			jsonstr := string(bytes)
-			// log("\n%s\n", jsonstr)
+		var (
+			status  = http.StatusOK
+			ret     string
+			results []reflect.Value
+		)
 
-			if len(bytes) == 0 {
-				warnOnErr("%v: \n%s", n3err.HTTP_REQBODY_EMPTY, jsonstr)
-			}
-			if !isJSON(jsonstr) {
-				warnOnErr("%v: \n%s", n3err.JSON_INVALID, jsonstr)
-				goto ERR
-			}
-
-			sv := ""
-			if ok, ver := url1Value(c.QueryParams(), 0, "sv"); ok {
-				sv = ver
-			}
-
-			// sif, svUsed, err := cvt2sif.JSON2SIF(Cfg.Cfg2SIF, jsonstr, sv)
-
-			// Trace [cvt2sif.JSON2SIF]
-			results := jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, Cfg.Cfg2SIF, jsonstr, sv)
-			sif := results[0].Interface().(string)
-			svUsed := results[1].Interface().(string)
-			if !results[2].IsNil() {
-				err = results[2].Interface().(error)
-			} else {
-				err = nil
-			}
-
-			if err != nil {
-				return c.JSON(http.StatusInternalServerError, result{
-					Data:  "",
-					Info:  "",
-					Error: err.Error(),
-				})
-			}
-			return c.JSON(http.StatusOK, result{
-				Data:  sif,
-				Info:  svUsed,
-				Error: "",
-			})
+		logBind(logger, loggly("info")).Do("Parsing Params")
+		pvalues, sv := c.QueryParams(), ""
+		if ok, v := url1Value(pvalues, 0, "sv"); ok {
+			sv = v
 		}
-	ERR:
-		return c.JSON(http.StatusBadRequest, result{
-			Data:  "",
-			Info:  "",
-			Error: "JSON Data must be provided via Request BODY as Valid JSON",
-		})
+
+		logBind(logger, loggly("info")).Do("Reading Body")
+		bytes, err := ioutil.ReadAll(c.Request().Body)
+		if err != nil {
+			status = http.StatusInternalServerError
+			ret = err.Error() + " @ Read Request Body"
+			goto RET
+		}
+		if len(bytes) == 0 {
+			status = http.StatusBadRequest
+			ret = n3err.HTTP_REQBODY_EMPTY.Error() + " @ Read Request Body"
+			goto RET
+		}
+		if !isJSON(string(bytes)) {
+			status = http.StatusBadRequest
+			ret = n3err.PARAM_INVALID_JSON.Error() + " @ Read Request Body"
+			goto RET
+		}
+
+		logBind(logger, loggly("info")).Do("cvt2json.JSON2SIF")
+		// ret, svUsed, err := cvt2sif.JSON2SIF(Cfg.Cfg2SIF, string(bytes), sv)
+		// Trace [cvt2sif.JSON2SIF]
+		results = jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, Cfg.Cfg2SIF, string(bytes), sv)
+		ret = results[0].Interface().(string)
+		if !results[2].IsNil() {
+			status = http.StatusInternalServerError
+			ret = results[2].Interface().(error).Error()
+			goto RET
+		}
+		logBind(logger, loggly("info")).Do(results[1].Interface().(string) + " applied")
+
+	RET:
+		if status != http.StatusOK {
+			logBind(warner, loggly("warn")).Do(ret + " --> Failed")
+		} else {
+			logBind(logger, loggly("info")).Do("--> Finish JSON2SIF")
+		}
+		return c.String(status, ret)
 	})
 }
