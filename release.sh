@@ -24,7 +24,7 @@ fi
 mkdir -p $dir'/2JSON/'
 mkdir -p $dir'/2SIF/'
 
-cp ./Server/build/$os/* $dir
+cp ./Server/build/$os/* ./Dockerfile $dir
 cp -r ./2JSON/SpecCfg ./2JSON/config.toml $dir'/2JSON/'
 cp -r ./SIFSpec ./2SIF/config.toml ./2SIF/replace.json $dir'/2SIF/'
 

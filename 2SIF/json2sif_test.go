@@ -51,7 +51,7 @@ func TestJSON2SIF(t *testing.T) {
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
 
-	Go(1, j2s, files, ver) // only dispatch 1 goroutine, otherwise, crash
+	Go(1, j2s, files, ver) // only dispatch 1 goroutine, otherwise, error
 
 	// for _, file := range files {
 	// 	ResetAll()

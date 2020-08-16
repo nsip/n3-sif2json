@@ -57,4 +57,3 @@ echo $sudopwd | sudo -S env "PATH=$PATH" go test -v -timeout 1s -count=1 $WORKPA
 ####
 
 cd Server && ./build.sh && cd $ORIGINALPATH && echo "${green}Server Built${reset}"
-cd Client && ./build.sh && cd $ORIGINALPATH && echo "${green}Client Built${reset}"

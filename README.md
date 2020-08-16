@@ -1,48 +1,47 @@
-# Web-Service & CLI for Converting SIF to JSON & Vice Versa
+# Web-Service for Converting SIF to JSON & Vice Versa
 
 ## Getting Started
 
-0. If no go.mod, Run `go mod init github.com/nsip/n3-sif2json`
+0. Run `go get -u ./...` to update this project's dependencies.
+   Ignore any `undefined: n3cfg.***` errors.
+
+1. Build.
+
+   In 'build.sh', change 'password' in line "sudopwd='password'" to your real sudo/admin password & save.
   
-    If no go.sum, Run `go get -u ./...`
-
-1. Create SIF JSON Configure, Server (Web-Service) and Client (CLI) executables.
+   Run `build.sh 'paths of sif-spec(txt)'`.  
   
-    Run `build.sh "sif-spec(txt) path"`.  
+   e.g. run `./build.sh ./SIFSpec/3.4.6.txt ./SIFSpec/3.4.7.txt` to build services with SIF 3.4.6 & 3.4.7
+
+2. Release.
+
+   Run `release.sh 'dest-platform' 'dest-path'`.
+
+   e.g. run `./release.sh [linux64|win64|mac] ~/Desktop/sif2json/linux64/`
   
-    e.g. run `./build.sh ./SIFSpec/3.4.6.txt ./SIFSpec/3.4.7.txt` to build a web service with SIF 3.4.6 & 3.4.7 AND its CLI Client.
+3. Docker Deploy (local, only for linux64 platform server).
 
-    SIF Config is under ./2JSON/SpecCfg/(version)
+   Make sure Docker installed.
 
-    Server executable is under ./Server/build/your-os/
+   Jump into your release dest-path in above step 2.
 
-    Client executable is under ./Client/build/your-os/
+   e.g. jump into `~/Desktop/sif2json/linux64/`
 
-2. Run Server (Web-Service) executable.
+   Run `docker build --tag=n3-sif2json .` to make docker image.
 
-    Goto `./Server/build/your-os/`, make sure 'config.toml' is in this directory.
+   Run `docker run --name sif2json --net host n3-sif2json:latest` to run docker image.
 
-    Make sure 'config.toml' has correct settings, especially [Cfg2JSON], [Cfg2SIF] and all [File].
+4. Test.
 
-    In [Cfg2JSON], make sure [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] are correct.
+   Simple curl test scripts in test.sh.
 
-    In [Cfg2SIF], make sure [SIFSpecDir], [ReplCfgPath] are correct.
-  
-3. Check Client (CLI) executable (optional).
+   Before running `./test.sh`, modify some params like URL (IP, PORT ...) if needed.
 
-    Goto `./Client/build/your-os/`, make sure 'config.toml' is in this directory.
-
-4. Fetch Client executable and its configure from `wget` when Web-Service is running. 
-
-    e.g. `wget ip:port/client-linux64`, `wget -O config.toml ip:port/client-config`
-
-    Client Usage: e.g. for SIF-3.4.6, get JSON from 'Activity.xml' SIF file.
-
-    Run `./client SIF2JSON -i=../data/examples/Activity.xml -v=3.4.6`
+   OR write your own curl test like 'test.sh'.
 
 ## Prerequisites
 
-SIF Specification Description File. Text readable format, and at least contains:
+SIF Specification Description File. It's text readable format, and at least contains:
 
 1. Spec VERSION.
 
@@ -50,24 +49,14 @@ SIF Specification Description File. Text readable format, and at least contains:
   
 3. Element TRAVERSE description.
 
-## Deployment
+## Remind for who plays with this source
 
-1. Copy `Dockerfile` to ../
+1. Make sure /config.toml [Cfg2JSON] [Cfg2SIF] are correct.
 
-2. Run `docker build --tag=n3-sif2json .`
+2. For UnitTest, Set /2JSON/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../`;
 
-## Others
+3. For UnitTest, Set /2SIF/config.toml [SIFSpecDir], [ReplCfgPath] to `../`.
 
-1. Make sure /Server/config.toml [Cfg2JSON] [Cfg2SIF] are correct.
+4. For Server, Set /2JSON/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../../../`;
 
-2. UnitTest Mode, Set /2JSON/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../`;
-
-3. UnitTest Mode, Set /2SIF/config.toml [SIFSpecDir], [ReplCfgPath] to `../`.
-
-4. Server Mode, Set /2JSON/config.toml [SIFCfgDir4LIST], [SIFCfgDir4NUM], [SIFCfgDir4BOOL] to `../../../`;
-
-5. Server Mode, Set /2SIF/config.toml [SIFSpecDir], [ReplCfgPath] to `../../../`.
-
-6. Server Mode, Make sure /Preprocess/genStruct_test.go `flag.Args()` is working.
-
-7. Using goclient, Make sure its config.toml [Route] is correct.
+5. For Server, Set /2SIF/config.toml [SIFSpecDir], [ReplCfgPath] to `../../../`.
