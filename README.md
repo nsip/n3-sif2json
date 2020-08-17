@@ -2,10 +2,13 @@
 
 ## Getting Started
 
-0. Run `go get -u ./...` to update this project's dependencies.
+0. Make sure golang dev package is available in your machine.
+
+1. Run `go get -u ./...` to update this project's dependencies.
+   
    Ignore any `undefined: n3cfg.***` errors.
 
-1. Build.
+2. Build.
 
    In 'build.sh', change 'password' in line "sudopwd='password'" to your real sudo/admin password & save.
   
@@ -13,15 +16,15 @@
   
    e.g. run `./build.sh ./SIFSpec/3.4.6.txt ./SIFSpec/3.4.7.txt` to build services with SIF 3.4.6 & 3.4.7
 
-2. Release.
+3. Release.
 
    Run `release.sh 'dest-platform' 'dest-path'`.
 
    e.g. run `./release.sh [linux64|win64|mac] ~/Desktop/sif2json/linux64/`
   
-3. Docker Deploy (local, only for linux64 platform server).
+4. Docker Deploy (local, only for linux64 platform server).
 
-   Make sure Docker installed.
+   Make sure `Docker` installed.
 
    Jump into your release dest-path in above step 2.
 
@@ -31,7 +34,9 @@
 
    Run `docker run --name sif2json --net host n3-sif2json:latest` to run docker image.
 
-4. Test.
+5. Test.
+
+   Make sure `curl` installed.
 
    Simple curl test scripts in test.sh.
 

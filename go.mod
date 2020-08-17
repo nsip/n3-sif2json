@@ -5,9 +5,9 @@ go 1.15
 require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/basgys/goxml2json v1.1.0
-	github.com/cdutwhu/debog v0.2.7
-	github.com/cdutwhu/gotil v0.0.10
-	github.com/cdutwhu/n3-util v0.2.41
+	github.com/cdutwhu/debog v0.2.9
+	github.com/cdutwhu/gotil v0.1.0
+	github.com/cdutwhu/n3-util v0.2.42
 	github.com/clbanning/mxj v1.8.4
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b
