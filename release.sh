@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -e
-ORIGINALPATH=`pwd`
 
 R=`tput setaf 1`
 G=`tput setaf 2`

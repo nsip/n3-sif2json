@@ -1,12 +1,13 @@
 #!/bin/bash
 
 set -e
-ORIGINALPATH=`pwd`
 
 red=`tput setaf 1`
 green=`tput setaf 2`
 yellow=`tput setaf 3`
 reset=`tput sgr0`
+
+ORIGINALPATH=`pwd`
 
 ####
 # if [ $# -ne 1 ]; then
@@ -39,7 +40,7 @@ done
 
 ####
 
-WORKPATH="github.com/nsip/n3-sif2json/Preprocess"
+WORKPATH="./Preprocess"
 
 # sudo password
 sudopwd="password"
@@ -56,4 +57,4 @@ echo $sudopwd | sudo -S env "PATH=$PATH" go test -v -timeout 1s -count=1 $WORKPA
 
 ####
 
-cd Server && ./build.sh && cd $ORIGINALPATH && echo "${green}Server Built${reset}"
+cd ./Server && ./build.sh && cd $ORIGINALPATH && echo "${green}Server Built${reset}"

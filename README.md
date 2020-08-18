@@ -5,7 +5,7 @@
 0. Make sure golang dev package is available in your machine.
 
 1. Run `go get -u ./...` to update this project's dependencies.
-   
+
    Ignore any `undefined: n3cfg.***` errors.
 
 2. Build.
@@ -26,11 +26,11 @@
 
    Make sure `Docker` installed.
 
-   Jump into your release dest-path in above step 2.
+   Jump into your release dest-path in above step.
 
    e.g. jump into `~/Desktop/sif2json/linux64/`
 
-   Run `docker build --tag=n3-sif2json .` to make docker image.
+   Run `docker build --tag n3-sif2json .` to make docker image.
 
    Run `docker run --name sif2json --net host n3-sif2json:latest` to run docker image.
 

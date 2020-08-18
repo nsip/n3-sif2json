@@ -2,17 +2,17 @@ package cfgreg
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"os/user"
 	"strings"
 	"testing"
 
+	"github.com/cdutwhu/debog/fn"
 	"github.com/cdutwhu/n3-util/n3cfg"
 )
 
 // Under n3-sif2json/Preprocess/CfgReg/
-// echo password | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegCfg -args `whoami`
+// echo password | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegCfg -args `whoami` server ...
 func TestRegCfg(t *testing.T) {
 	if !flag.Parsed() {
 		flag.Parse()
@@ -34,9 +34,11 @@ func TestRegCfg(t *testing.T) {
 
 	for _, pkg := range flag.Args()[1:] {
 		config := mPkgConfig[strings.ToLower(pkg)]
-		if _, err := os.Stat(config); err == nil {
-			ok, file := n3cfg.Register(osuser, config, project, pkg)
-			fmt.Println(ok, file)
+		_, err := os.Stat(config)
+		if fn.WarnOnErr("%v @ %s %s", err, pkg, config) != nil {
+			continue
 		}
+		ok, file := n3cfg.Register(osuser, config, project, pkg)
+		fn.Logger("%v %v", ok, file)
 	}
 }

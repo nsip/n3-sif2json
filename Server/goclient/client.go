@@ -16,7 +16,7 @@ import (
 // DOwithTrace :
 func DOwithTrace(ctx context.Context, config, fn string, args *Args) (string, error) {
 
-	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envVarName, config)
+	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envKey, config)
 	failOnErrWhen(Cfg == nil, "%v", n3err.CFG_INIT_ERR)
 
 	service := Cfg.Service
@@ -37,7 +37,7 @@ func DOwithTrace(ctx context.Context, config, fn string, args *Args) (string, er
 // DO : fn ["HELP", "SIF2JSON", "JSON2SIF"]
 func DO(config, fn string, args *Args) (string, error) {
 
-	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envVarName, config)
+	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envKey, config)
 	failOnErrWhen(Cfg == nil, "%v", n3err.CFG_INIT_ERR)
 
 	server := Cfg.Server

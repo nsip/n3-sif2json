@@ -55,7 +55,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	e.Logger.SetOutput(os.Stdout)
 	e.Logger.Infof(" ------------------------ e.Logger.Infof ------------------------ ")
 
-	Cfg := n3cfg.FromEnvN3sif2jsonServer("Cfg")
+	Cfg := n3cfg.FromEnvN3sif2jsonServer(envKey)
 	port := Cfg.WebService.Port
 	fullIP := localIP() + fSf(":%d", port)
 	route := Cfg.Route
@@ -121,15 +121,15 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		)
 
 		logBind(logger, loggly("info")).Do("Parsing Params")
-		pvalues, sv, tonats := c.QueryParams(), "", false
+		pvalues, sv, msg := c.QueryParams(), "", false
 		if ok, v := url1Value(pvalues, 0, "sv"); ok {
 			sv = v
 		}
-		if ok, n := url1Value(pvalues, 0, "nats"); ok && n != "" {
-			tonats = true
+		if ok, n := url1Value(pvalues, 0, "nats"); ok && n != "" && n != "false" {
+			msg = true
 		}
 
-		logBind(logger, loggly("info")).Do("Reading Body")
+		logBind(logger, loggly("info")).Do("Reading Request Body")
 		bytes, err := ioutil.ReadAll(c.Request().Body)
 		if err != nil {
 			status = http.StatusInternalServerError
@@ -162,7 +162,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		logBind(logger, loggly("info")).Do(results[1].Interface().(string) + " applied")
 
 		// Send a copy to NATS
-		if tonats {
+		if msg {
 			url, subj, timeout := Cfg.NATS.URL, Cfg.NATS.Subject, time.Duration(Cfg.NATS.Timeout)
 			nc, err := nats.Connect(url)
 			if err != nil {

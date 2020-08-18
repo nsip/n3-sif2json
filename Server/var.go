@@ -40,6 +40,10 @@ var (
 	url1Value        = rest.URL1Value
 )
 
+const (
+	envKey = "S2JSvr"
+)
+
 func initMutex(route interface{}) map[string]*sync.Mutex {
 	mMtx := make(map[string]*sync.Mutex)
 	for _, v := range struct2Map(route) {

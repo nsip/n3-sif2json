@@ -9,15 +9,15 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "Test1Goclient", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "TestKey", "./config.toml")
 	spew.Dump(cfg)
 }
 
 func TestInit(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "CfgClt-S2J", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "TestKey", "./config.toml")
 	spew.Dump(cfg)
 	fPln(" ------------------------------- ")
-	cfg1 := n3cfg.FromEnvN3sif2jsonGoclient("CfgClt-S2J")
+	cfg1 := n3cfg.FromEnvN3sif2jsonGoclient("TestKey")
 	spew.Dump(cfg1)
 }
 

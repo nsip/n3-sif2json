@@ -12,7 +12,7 @@ func main() {
 	Cfg := n3cfg.ToEnvN3sif2jsonServer(map[string]string{
 		"[s]": "Service",
 		"[v]": "Version",
-	}, "Cfg")
+	}, envKey)
 	failOnErrWhen(Cfg == nil, "%v: Config Init Error", n3err.CFG_INIT_ERR)
 
 	ws, service := Cfg.WebService, Cfg.Service.(string)

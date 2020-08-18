@@ -34,7 +34,7 @@ var (
 )
 
 const (
-	envVarName = "CfgClt-S2J"
+	envKey = "S2JGoClt"
 )
 
 // Args is arguments for "Route"

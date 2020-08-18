@@ -19,7 +19,7 @@ func TestMkCltCfg(t *testing.T) {
 			"[s]":    "Service",
 			"[port]": "WebService.Port",
 		},
-		"FakeKey",
+		"TestKey",
 		"../../Server/config.toml",
 	)
 	fn.FailOnErrWhen(cfg == nil, "%v", n3err.CFG_INIT_ERR)

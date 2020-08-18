@@ -13,14 +13,14 @@ func TestMain(t *testing.T) {
 }
 
 func TestLoad(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonServer(nil, "Test1Server", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonServer(nil, "TestKey", "./config.toml")
 	failOnErrWhen(cfg == nil, "%v", n3err.CFG_INIT_ERR)
 	spew.Dump(cfg)
 }
 
 func TestInit(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonServer(nil, "Test2Server", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonServer(nil, "TestKey", "./config.toml")
 	failOnErrWhen(cfg == nil, "%v", n3err.CFG_INIT_ERR)
-	cfg1 := n3cfg.FromEnvN3sif2jsonServer("Test2Server")
+	cfg1 := n3cfg.FromEnvN3sif2jsonServer("TestKey")
 	spew.Dump(cfg1)
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func TestConfig(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonCvt2json(nil, "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonCvt2json(nil, "TestKey")
 	spew.Dump(cfg)
 }
 
