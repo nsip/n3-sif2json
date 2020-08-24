@@ -34,6 +34,7 @@ var (
 	loggly           = n3log.Loggly
 	logBind          = n3log.Bind
 	setLoggly        = n3log.SetLoggly
+	syncBindLog      = n3log.SyncBindLog
 	isXML            = judge.IsXML
 	isJSON           = judge.IsJSON
 	mustWriteFile    = io.MustWriteFile
@@ -42,6 +43,11 @@ var (
 
 const (
 	envKey = "S2JSvr"
+)
+
+var (
+	logGrp  = logBind(logger) // logBind(logger, loggly("info"))
+	warnGrp = logBind(warner) // logBind(warner, loggly("warn"))
 )
 
 func initMutex(route interface{}) map[string]*sync.Mutex {

@@ -29,7 +29,7 @@ func shutdownAsync(e *echo.Echo, sig <-chan os.Signal, done chan<- string) {
 
 // HostHTTPAsync : Host a HTTP Server for SIF or JSON
 func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
-	defer func() { logBind(logger, loggly("info")).Do("HostHTTPAsync Exit") }()
+	defer func() { logGrp.Do("HostHTTPAsync Exit") }()
 
 	e := echo.New()
 	defer e.Close()
@@ -55,14 +55,16 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	e.Logger.SetOutput(os.Stdout)
 	e.Logger.Infof(" ------------------------ e.Logger.Infof ------------------------ ")
 
-	Cfg := n3cfg.FromEnvN3sif2jsonServer(envKey)
-	port := Cfg.WebService.Port
-	fullIP := localIP() + fSf(":%d", port)
-	route := Cfg.Route
-	mMtx := initMutex(&Cfg.Route)
+	var (
+		Cfg    = n3cfg.FromEnvN3sif2jsonServer(envKey)
+		port   = Cfg.WebService.Port
+		fullIP = localIP() + fSf(":%d", port)
+		route  = Cfg.Route
+		mMtx   = initMutex(&Cfg.Route)
+	)
 
 	defer e.Start(fSf(":%d", port))
-	logBind(logger, loggly("info")).Do("Echo Service is Starting ...")
+	logGrp.Do("Echo Service is Starting ...")
 
 	// *************************************** List all API, FILE *************************************** //
 
@@ -120,7 +122,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			results []reflect.Value
 		)
 
-		logBind(logger, loggly("info")).Do("Parsing Params")
+		logGrp.Do("Parsing Params")
 		pvalues, sv, msg := c.QueryParams(), "", false
 		if ok, v := url1Value(pvalues, 0, "sv"); ok {
 			sv = v
@@ -129,7 +131,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			msg = true
 		}
 
-		logBind(logger, loggly("info")).Do("Reading Request Body")
+		logGrp.Do("Reading Request Body")
 		bytes, err := ioutil.ReadAll(c.Request().Body)
 		if err != nil {
 			status = http.StatusInternalServerError
@@ -147,7 +149,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			goto RET
 		}
 
-		logBind(logger, loggly("info")).Do("cvt2json.SIF2JSON")
+		logGrp.Do("cvt2json.SIF2JSON")
 		// ret, svUsed, err = cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
 		// Trace [cvt2json.SIF2JSON], uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
 		results = jaegertracing.TraceFunction(c, func() (string, string, error) {
@@ -159,7 +161,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			ret = results[2].Interface().(error).Error()
 			goto RET
 		}
-		logBind(logger, loggly("info")).Do(results[1].Interface().(string) + " applied")
+		logGrp.Do(results[1].Interface().(string) + " applied")
 
 		// Send a copy to NATS
 		if msg {
@@ -176,14 +178,14 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 				ret = err.Error() + fSf(" @NATS Request @Subject: [%s@%s]", url, subj)
 				goto RET
 			}
-			logBind(logger, loggly("info")).Do(string(msg.Data))
+			logGrp.Do(string(msg.Data))
 		}
 
 	RET:
 		if status != http.StatusOK {
-			logBind(warner, loggly("warn")).Do(ret + " --> Failed")
+			warnGrp.Do(ret + " --> Failed")
 		} else {
-			logBind(logger, loggly("info")).Do("--> Finish SIF2JSON")
+			logGrp.Do("--> Finish SIF2JSON")
 		}
 		return c.String(status, ret) // ret is already JSON String, so return String
 	})
@@ -202,13 +204,13 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			results []reflect.Value
 		)
 
-		logBind(logger, loggly("info")).Do("Parsing Params")
+		logGrp.Do("Parsing Params")
 		pvalues, sv := c.QueryParams(), ""
 		if ok, v := url1Value(pvalues, 0, "sv"); ok {
 			sv = v
 		}
 
-		logBind(logger, loggly("info")).Do("Reading Body")
+		logGrp.Do("Reading Body")
 		bytes, err := ioutil.ReadAll(c.Request().Body)
 		if err != nil {
 			status = http.StatusInternalServerError
@@ -226,7 +228,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			goto RET
 		}
 
-		logBind(logger, loggly("info")).Do("cvt2json.JSON2SIF")
+		logGrp.Do("cvt2json.JSON2SIF")
 		// ret, svUsed, err := cvt2sif.JSON2SIF(Cfg.Cfg2SIF, string(bytes), sv)
 		// Trace [cvt2sif.JSON2SIF]
 		results = jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, Cfg.Cfg2SIF, string(bytes), sv)
@@ -236,13 +238,13 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			ret = results[2].Interface().(error).Error()
 			goto RET
 		}
-		logBind(logger, loggly("info")).Do(results[1].Interface().(string) + " applied")
+		logGrp.Do(results[1].Interface().(string) + " applied")
 
 	RET:
 		if status != http.StatusOK {
-			logBind(warner, loggly("warn")).Do(ret + " --> Failed")
+			warnGrp.Do(ret + " --> Failed")
 		} else {
-			logBind(logger, loggly("info")).Do("--> Finish JSON2SIF")
+			logGrp.Do("--> Finish JSON2SIF")
 		}
 		return c.String(status, ret)
 	})

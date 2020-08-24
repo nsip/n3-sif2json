@@ -32,4 +32,4 @@ sed -i 's/\.\.\/\.\.\/\.//g' $dir'/2JSON/config.toml'
 sed -i 's/\.\.\/\.\.\/\.//g' $dir'/2SIF/config.toml'
 sed -i 's/\.\/SIFSpec\//\.\/2SIF\/SIFSpec\//g' $dir'/2SIF/config.toml'
 
-echo "${G}Server Package $os Version is Dumped into $dir ${W}"
+echo "Server Package $os Version is Dumped into $dir"
