@@ -1,4 +1,4 @@
-Path = ""
+Path = "[PATH]"
 Sep = "/"
 CfgJSONOutDir = "../SpecCfg/#SIF-VER#/LIST/"
 CfgJSONValue = "[]"

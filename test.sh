@@ -10,7 +10,7 @@ W=`tput sgr0`
 printf "\n"
 
 ip="192.168.31.168:1324/"
-base=$ip"n3-sif2json/v0.3.5/"
+base=$ip"n3-sif2json/v0.3.6/"
 
 
 title='SIF2JSON all API Paths'
@@ -39,7 +39,6 @@ curl -X POST $url -d $file > $out
 cat $out
 printf "\n"
 
-
 title='JSON to SIF Test'
 url=$base"json2sif"
 file="@./Activity_0.json"
@@ -50,4 +49,5 @@ else
     echo "${G}${title}${W}"
 fi
 curl -X POST $url -d $file
+rm -f $out
 printf "\n"

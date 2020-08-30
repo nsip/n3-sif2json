@@ -170,23 +170,19 @@ func GenTomlAndGoSrc(SIFSpecPath, baseGO, baseToml4LIST, baseToml4NUM, baseToml4
 
 		toml := sReplace(tomlLIST, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4List, 1)
-		baseFile4LIST := rmHeadToLast(baseToml4LIST, "/") + ".toml"
-		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4LIST, []byte(toml), 0666))
+		mustWriteFile(outDir+rmHeadToLast(baseToml4LIST, "/")+".toml", []byte(toml))
 
 		toml = sReplace(tomlNUM, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4Num, 1)
-		baseFile4NUM := rmHeadToLast(baseToml4NUM, "/") + ".toml"
-		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4NUM, []byte(toml), 0666))
+		mustWriteFile(outDir+rmHeadToLast(baseToml4NUM, "/")+".toml", []byte(toml))
 
 		toml = sReplace(tomlBOOL, SignSIFVer, SIFVer, 1)
 		toml = sReplace(toml, SignTOML, toml4Bool, 1)
-		baseFile4BOOL := rmHeadToLast(baseToml4BOOL, "/") + ".toml"
-		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4BOOL, []byte(toml), 0666))
+		mustWriteFile(outDir+rmHeadToLast(baseToml4BOOL, "/")+".toml", []byte(toml))
 
 		goStruct = sReplace(goStruct, SignGO4LIST, goStruct4List, 1)
 		goStruct = sReplace(goStruct, SignGO4NUM, goStruct4Num, 1)
 		goStruct = sReplace(goStruct, SignGO4BOOL, goStruct4Bool, 1)
-		baseFile4GO := rmHeadToLast(baseGO, "/") + ".go"
-		failOnErr("%v", ioutil.WriteFile(outDir+baseFile4GO, []byte(goStruct), 0666))
+		mustWriteFile(outDir+rmHeadToLast(baseGO, "/")+".go", []byte(goStruct))
 	}
 }

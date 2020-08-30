@@ -44,5 +44,5 @@ func TestDO(t *testing.T) {
 	)
 	fPln(str)
 	fPln(err)
-	ioutil.WriteFile("./out.json", []byte(str), 0666)
+	mustWriteFile("./out.json", []byte(str))
 }

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/gotil/str"
 )
@@ -22,6 +23,7 @@ var (
 	rmHeadToFirst  = str.RmHeadToFirst
 	rmHeadToLast   = str.RmHeadToLast
 	rmTailFromLast = str.RmTailFromLast
+	mustWriteFile  = io.MustWriteFile
 	failOnErr      = fn.FailOnErr
 	failOnErrWhen  = fn.FailOnErrWhen
 )

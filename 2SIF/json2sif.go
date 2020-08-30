@@ -309,7 +309,7 @@ AGAIN:
 		xml = sReplace(xml, mark, subxml, 1)
 	}
 	if sContains(xml, "...") {
-		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xml), 0666)
+		// mustWriteFile(fSf("./%d.xml", nGoTo), []byte(xml))
 		nGoTo++
 		failOnErrWhen(nGoTo > maxGoTo, "%v: goto AGAIN", n3err.INTERNAL_DEADLOCK)
 		goto AGAIN

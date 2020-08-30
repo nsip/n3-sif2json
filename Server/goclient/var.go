@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/judge"
 	"github.com/cdutwhu/gotil/rflx"
 	"github.com/opentracing/opentracing-go"
@@ -31,6 +32,7 @@ var (
 	warnOnErrWhen = fn.WarnOnErrWhen
 	isXML         = judge.IsXML
 	isJSON        = judge.IsJSON
+	mustWriteFile = io.MustWriteFile
 )
 
 const (

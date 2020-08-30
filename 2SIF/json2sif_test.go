@@ -82,14 +82,14 @@ func TestJSON2SIF(t *testing.T) {
 	// 	// 	jsonWithCode, mCodeStr := JSON2SIF4LF(string(bytes))
 
 	// 	// 	xml := JSON2SIF3RD(jsonWithCode)
-	// 	// 	// ioutil.WriteFile(fSf("../data/sif/%s_0_out.xml", obj), []byte(xml), 0666)
+	// 	// 	// mustWriteFile(fSf("../data/sif/%s_0_out.xml", obj), []byte(xml))
 
 	// 	// 	xml1 := JSON2SIFSpec(xml, "../SIFSpec/out.txt") // sv is here
-	// 	// 	// ioutil.WriteFile(fSf("../data/sif/%s_1_out.xml", obj), []byte(xml1), 0666)
+	// 	// 	// mustWriteFile(fSf("../data/sif/%s_1_out.xml", obj), []byte(xml1))
 
 	// 	// 	mRepl := mapsMerge(getReplMap("./config/replace.json"), mCodeStr).(map[string]string)
 	// 	// 	xml2 := JSON2SIFRepl(xml1, mRepl)
-	// 	// 	ioutil.WriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(xml2), 0666)
+	// 	// 	mustWriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(xml2))
 	// 	// }
 	// }
 

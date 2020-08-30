@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
 	"reflect"
 	"sort"
@@ -88,8 +87,7 @@ func MakeBasicMap(field string, value interface{}) map[string]interface{} {
 // MakeOneMap :
 func MakeOneMap(path, sep, valsymbol string) map[string]interface{} {
 	var v interface{}
-	segs := sSplitRev(path, sep)
-	for i, seg := range segs {
+	for i, seg := range splitRev(path, sep) {
 		if i == 0 {
 			v = valsymbol
 		}
@@ -151,7 +149,7 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 				}
 				jsonstr := MakeJSON(mm)
 				jsonfmt := fmtJSON(jsonstr, 2)
-				ioutil.WriteFile(fSf("%s%d.json", path, lvl), []byte(jsonfmt), 0666)
+				mustWriteFile(fSf("%s%d.json", path, lvl), []byte(jsonfmt))
 			} else {
 				break
 			}
@@ -161,13 +159,13 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 		mm := MakeMap(paths, sep, jsonVal)
 		jsonstr := MakeJSON(mm)
 		jsonfmt := fmtJSON(jsonstr, 2)
-		ioutil.WriteFile(fSf("%s0.json", path), []byte(jsonfmt), 0666)
+		mustWriteFile(fSf("%s0.json", path), []byte(jsonfmt))
 
 		if extContent {
 			// extend jsonstr, such as xml->json '#content', "30" => { "#content": "30" }
 			jsonext := sReplaceAll(jsonstr, fSf(`"%s"`, jsonVal), fSf(`{"#content": "%s"}`, jsonVal))
 			jsonextfmt := fmtJSON(jsonext, 2)
-			ioutil.WriteFile(fSf("%s1.json", path), []byte(jsonextfmt), 0666)
+			mustWriteFile(fSf("%s1.json", path), []byte(jsonextfmt))
 		}
 	}
 }
