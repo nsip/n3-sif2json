@@ -2,7 +2,7 @@
 
 ## Getting Started
 
-0. Make sure golang dev package is available in your machine.
+0. Make sure golang dev package & git is available in your machine.
 
 1. Run `go get -u ./...` to update this project's dependencies.
 

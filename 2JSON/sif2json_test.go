@@ -5,26 +5,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
-	"github.com/davecgh/go-spew/spew"
+	sif346 "github.com/nsip/n3-sif2json/SIFSpec/3.4.6"
+	sif347 "github.com/nsip/n3-sif2json/SIFSpec/3.4.7"
 )
-
-func TestConfig(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonCvt2json(nil, "TestKey")
-	spew.Dump(cfg)
-}
-
-func TestJSONRoot(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/Activity.json")
-	failOnErr("%v", err)
-	fPln(jsonRoot(string(bytes)))
-}
 
 func TestXMLRoot(t *testing.T) {
 	bytes, err := ioutil.ReadFile("../data/examples347/Activity_0.xml")
 	failOnErr("%v", err)
-	// fPln(string(bytes))
 	fPln(xmlRoot(string(bytes)))
 }
 
@@ -43,9 +31,9 @@ func s2j(dim int, tid int, done chan int, params ...interface{}) {
 		// if exist(obj, "LearningStandardDocument", "StudentAttendanceTimeList") {
 		// 	continue
 		// }
-		bytes, err := ioutil.ReadFile(fSf("../data/examples347/%s.xml", obj))
+		bytes, err := ioutil.ReadFile(fSf("../data/examples/3.4.7/%s.xml", obj))
 		failOnErr("%v", err)
-		json, sv, err := SIF2JSON("./config.toml", string(bytes), "3.4.7", false)
+		json, sv, err := SIF2JSON(string(bytes), "3.4.7", false)
 		fPln("end:", obj, sv, err)
 		if json != "" {
 			mustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
@@ -57,18 +45,12 @@ func TestSIF2JSON(t *testing.T) {
 	enableLog2F(true, "./error.log")
 	defer enableLog2F(false, "")
 
-	// bytes, err := ioutil.ReadFile("/home/qmiao/Desktop/attribute_test.xml")
-	// failOnErr("%v", err)
-	// obj := "Activity"
-	// json, sv, err := SIF2JSON("./config.toml", string(bytes), "3.4.7", false)
-	// // fPln("end:", obj, sv, err)
-	// failOnErr("%v", err)
-	// if json != "" {
-	// 	mustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
-	// }
-	// return
+	// Test Resource
+	fPln(string(sif346.JSON346["BOOLEAN_Activity_4"]))
+	fPln(string(sif347.JSON347["BOOLEAN_Activity_4"]))
+	// Test End
 
-	dir := `../data/examples347/`
+	dir := `../data/examples/3.4.7/`
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)

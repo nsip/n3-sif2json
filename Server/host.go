@@ -153,7 +153,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		// ret, svUsed, err = cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
 		// Trace [cvt2json.SIF2JSON], uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
 		results = jaegertracing.TraceFunction(c, func() (string, string, error) {
-			return cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
+			return cvt2json.SIF2JSON(string(bytes), sv, false)
 		})
 		ret = results[0].Interface().(string)
 		if !results[2].IsNil() {
@@ -231,7 +231,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		logGrp.Do("cvt2json.JSON2SIF")
 		// ret, svUsed, err := cvt2sif.JSON2SIF(Cfg.Cfg2SIF, string(bytes), sv)
 		// Trace [cvt2sif.JSON2SIF]
-		results = jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, Cfg.Cfg2SIF, string(bytes), sv)
+		results = jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, string(bytes), sv)
 		ret = results[0].Interface().(string)
 		if !results[2].IsNil() {
 			status = http.StatusInternalServerError

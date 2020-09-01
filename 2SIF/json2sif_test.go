@@ -5,15 +5,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/go-xmlfmt/xmlfmt"
 )
 
-func TestConfig(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonCvt2sif(nil, "TestKey")
-	spew.Dump(cfg)
+func TestJSONRoot(t *testing.T) {
+	bytes, err := ioutil.ReadFile("../data/Activity.json")
+	failOnErr("%v", err)
+	fPln(jsonRoot(string(bytes)))
 }
 
 func j2s(dim int, tid int, done chan int, params ...interface{}) {
@@ -28,7 +27,7 @@ func j2s(dim int, tid int, done chan int, params ...interface{}) {
 		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
 		failOnErr("%v", err)
 
-		sif, sv, err := JSON2SIF("./config.toml", string(bytes), ver)
+		sif, sv, err := JSON2SIF(string(bytes), ver)
 		failOnErr("%v", err)
 
 		sif = xmlfmt.FormatXML(sif, "", "    ")
@@ -50,49 +49,7 @@ func TestJSON2SIF(t *testing.T) {
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
-
 	Go(1, j2s, files, ver) // only dispatch 1 goroutine, otherwise, error
-
-	// for _, file := range files {
-	// 	ResetAll()
-
-	// 	obj := rmTailFromLast(file.Name(), ".")
-
-	// 	// if obj == "Activity2" {
-	// 	// 	continue
-	// 	// }
-
-	// 	fPln("------------", obj)
-	// 	bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
-	// 	failOnErr("%v", err)
-
-	// 	sif, sv, err := JSON2SIF("./config/config.toml", string(bytes), ver)
-	// 	failOnErr("%v", err)
-
-	// 	sif = xmlfmt.FormatXML(sif, "", "    ")
-	// 	sif = sTrim(sif, " \t\n\r")
-
-	// 	fPln(sv + " is used")
-	// 	if sif != "" {
-	// 		mustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
-	// 	}
-
-	// 	// {
-	// 	// 	// JSON2SIF4LF : deal with XML multiple-line content
-	// 	// 	jsonWithCode, mCodeStr := JSON2SIF4LF(string(bytes))
-
-	// 	// 	xml := JSON2SIF3RD(jsonWithCode)
-	// 	// 	// mustWriteFile(fSf("../data/sif/%s_0_out.xml", obj), []byte(xml))
-
-	// 	// 	xml1 := JSON2SIFSpec(xml, "../SIFSpec/out.txt") // sv is here
-	// 	// 	// mustWriteFile(fSf("../data/sif/%s_1_out.xml", obj), []byte(xml1))
-
-	// 	// 	mRepl := mapsMerge(getReplMap("./config/replace.json"), mCodeStr).(map[string]string)
-	// 	// 	xml2 := JSON2SIFRepl(xml1, mRepl)
-	// 	// 	mustWriteFile(fSf("../data/sif/%s_out.xml", obj), []byte(xml2))
-	// 	// }
-	// }
-
 	fPln("OK")
 }
 

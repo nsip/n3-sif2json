@@ -7,8 +7,6 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
-	"github.com/cdutwhu/n3-util/n3cfg"
-	"github.com/cdutwhu/n3-util/n3err"
 )
 
 func eachFileContent(dir, ext string, indices ...int) (rt []string) {
@@ -52,25 +50,10 @@ func enforceConfig(json string, lsJSONCfg ...string) string {
 }
 
 // SIF2JSON : if [SIFVer] is "", DefaultSIFVer applies
-func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (string, string, error) {
-	const (
-		SignSIFVer = "#SIFVER#"
-	)
+func SIF2JSON(xml, SIFVer string, enforced bool, subobj ...string) (string, string, error) {
 
-	s2j := n3cfg.ToEnvN3sif2jsonCvt2json(nil, "2JSON", cfgPath)
-	failOnErrWhen(s2j == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
-
-	SIFCfgDir4LIST := s2j.SIFCfgDir4LIST
-	SIFCfgDir4NUM := s2j.SIFCfgDir4NUM
-	SIFCfgDir4BOOL := s2j.SIFCfgDir4BOOL
-
-	failOnErrWhen(sCount(SIFCfgDir4LIST, SignSIFVer) == 0, "%v: %s", n3err.CFG_SIGN_MISSING, cfgPath)
-	failOnErrWhen(sCount(SIFCfgDir4NUM, SignSIFVer) == 0, "%v: %s", n3err.CFG_SIGN_MISSING, cfgPath)
-	failOnErrWhen(sCount(SIFCfgDir4BOOL, SignSIFVer) == 0, "%v: %s", n3err.CFG_SIGN_MISSING, cfgPath)
-
-	xmlReader := sNewReader(xml)
 	jsonBuf, err := xj.Convert(
-		xmlReader,
+		sNewReader(xml),
 		// xj.WithTypeConverter(xj.Float, xj.Int, xj.Bool, xj.Null),
 		// xj.WithAttrPrefix("-"),
 		// xj.WithContentPrefix("#"),
@@ -101,15 +84,16 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 		obj = subobj[0]
 	}
 
-	ver, dft := s2j.DefaultSIFVer, "Default "
+	ver, dft := DftSIFVer, "Default "
 	if SIFVer != "" {
 		ver, dft = SIFVer, ""
 	}
 
-	// SIFCfgDir Version Set
-	SIFCfgDir4LIST = sReplaceAll(SIFCfgDir4LIST, SignSIFVer, ver)
-	SIFCfgDir4NUM = sReplaceAll(SIFCfgDir4NUM, SignSIFVer, ver)
-	SIFCfgDir4BOOL = sReplaceAll(SIFCfgDir4BOOL, SignSIFVer, ver)
+	// Convert to real path
+	old := "#V#"
+	SIFCfgDir4LIST = sReplaceAll(SIFCfgDir4LIST, old, ver)
+	SIFCfgDir4NUM = sReplaceAll(SIFCfgDir4NUM, old, ver)
+	SIFCfgDir4BOOL = sReplaceAll(SIFCfgDir4BOOL, old, ver)
 
 	// Check SIFCfg Version Directory
 	svDir := rmTailFromLastN(SIFCfgDir4LIST, "/", 2)
@@ -119,6 +103,10 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 		// failOnErr("%v", fmt.Errorf("No %sSIF Spec @Version %s", dft, ver))
 		return "", "", fmt.Errorf("No %sSIF Spec @Version %s", dft, ver)
 	}
+
+	/////////////////////////////
+
+	/////////////////////////////
 
 	// LIST
 	rules := eachFileContent(SIFCfgDir4LIST+obj, "json", iter2Slc(10)...)
@@ -132,13 +120,13 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 	rules = eachFileContent(SIFCfgDir4BOOL+obj, "json", iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
-	// Deal with 'LF', 'TB'  Part2 --------------------------------------------------------------------------
+	// Deal with 'LF', 'TB'  Part2 -------------------------------------------------------------
 	mRepl2 := map[string]string{"#LF#": "\\n", "#TB#": "\\t"}
 	for k, v := range mRepl2 {
 		json = sReplaceAll(json, k, v)
 	}
 
-	// XML empty element(empty text) with Attributes --------------------------------------------------------
+	// XML empty element(empty text) with Attributes -------------------------------------------
 	emptyPosPair := [][]int{}
 
 	re1 := regexp.MustCompile(`": \{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+\}`) // one empty object
@@ -161,6 +149,5 @@ func SIF2JSON(cfgPath, xml, SIFVer string, enforced bool, subobj ...string) (str
 	const mark = "value" // "#content"
 	json = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
 	json = fmtJSON(json, 2)
-
 	return json, sv, nil
 }

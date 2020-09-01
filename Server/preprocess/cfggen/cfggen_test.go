@@ -20,7 +20,7 @@ func TestMkCltCfg(t *testing.T) {
 			"[port]": "WebService.Port",
 		},
 		"TestKey",
-		"../../Server/config.toml",
+		"../../config.toml",
 	)
 	fn.FailOnErrWhen(cfg == nil, "%v", n3err.CFG_INIT_ERR)
 
@@ -29,11 +29,11 @@ func TestMkCltCfg(t *testing.T) {
 	n3cfg.Save(temp, cfg)
 
 	// A Copy for Server Executable
-	attrim.RmCfgAttrL1(temp, "../../Server/config_rel.toml")
+	attrim.RmCfgAttrL1(temp, "../../config_rel.toml")
 
 	// A Copy for Server's goclient
 	if !flag.Parsed() {
 		flag.Parse()
 	}
-	attrim.SelCfgAttrL1(temp, "../../Server/goclient/config.toml", flag.Args()...)
+	attrim.SelCfgAttrL1(temp, "../../goclient/config.toml", flag.Args()...)
 }

@@ -6,8 +6,8 @@ require (
 	github.com/BurntSushi/toml v0.3.1
 	github.com/basgys/goxml2json v1.1.0
 	github.com/cdutwhu/debog v0.2.10
-	github.com/cdutwhu/gotil v0.1.2
-	github.com/cdutwhu/n3-util v0.2.44
+	github.com/cdutwhu/gotil v0.1.4
+	github.com/cdutwhu/n3-util v0.2.47
 	github.com/clbanning/mxj v1.8.4
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b
@@ -19,5 +19,5 @@ require (
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/peterbourgon/mergemap v0.0.0-20130613134717-e21c03b7a721
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
-	golang.org/x/sys v0.0.0-20200828194041-157a740278f4 // indirect
+	golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a // indirect
 )

@@ -47,3 +47,10 @@ var (
 	fmtJSON         = n3json.Fmt
 	newJKV          = jkv.NewJKV
 )
+
+var (
+	DftSIFVer      = "3.4.7"
+	SIFCfgDir4LIST = "../SIFSpec/#V#/json/LIST"
+	SIFCfgDir4NUM  = "../SIFSpec/#V#/json/NUMERIC"
+	SIFCfgDir4BOOL = "../SIFSpec/#V#/json/BOOLEAN"
+)

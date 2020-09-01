@@ -1,6 +1,0 @@
-Path = "[PATH]"
-Sep = "/"
-CfgJSONOutDir = "../SpecCfg/#SIF-VER#/BOOLEAN/"
-CfgJSONValue = "(B)"
-
-#AUTO-GEN#

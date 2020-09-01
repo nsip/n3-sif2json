@@ -1,9 +1,7 @@
 package cvt2sif
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"regexp"
 	"strings"
 
@@ -15,6 +13,7 @@ import (
 	"github.com/cdutwhu/gotil/net"
 	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/gotil/str"
+	"github.com/cdutwhu/n3-util/n3json"
 	"github.com/cdutwhu/n3-util/n3xml"
 )
 
@@ -24,6 +23,7 @@ var (
 	fPt                = fmt.Print
 	fSp                = fmt.Sprint
 	fSf                = fmt.Sprintf
+	fEf                = fmt.Errorf
 	sHasPrefix         = strings.HasPrefix
 	sHasSuffix         = strings.HasSuffix
 	sReplaceAll        = strings.ReplaceAll
@@ -55,6 +55,7 @@ var (
 	mapsMerge          = rflx.MapMerge
 	mustWriteFile      = io.MustWriteFile
 	xmlRoot            = n3xml.XMLRoot
+	jsonRoot           = n3json.JSONRoot
 )
 
 var nGoTo = 0
@@ -103,10 +104,22 @@ var (
 		return
 	}
 
-	getReplMap = func(jsonPath string) (m map[string]string) {
-		bytes, err := ioutil.ReadFile(jsonPath)
-		failOnErr("%v", err)
-		failOnErr("%v", json.Unmarshal(bytes, &m))
-		return
+	// getReplMap = func(jsonpath string) (m map[string]string) {
+	// 	bytes, err := ioutil.ReadFile(jsonpath)
+	// 	failOnErr("%v", err)
+	// 	failOnErr("%v", json.Unmarshal(bytes, &m))
+	// 	return
+	// }
+)
+
+var (
+	DftSIFVer  = "3.4.7"
+	SIFSpecDir = "../SIFSpec/"
+	mOldNew    = map[string]string{
+		" lang=\"": " xml:lang=\"",
 	}
+	// replace.json
+	// {
+	// 	" lang=\"": " xml:lang=\""
+	// }
 )

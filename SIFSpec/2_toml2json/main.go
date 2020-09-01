@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"sort"
 
-	"github.com/cdutwhu/n3-util/n3err"
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/peterbourgon/mergemap"
 )
 
@@ -125,7 +125,7 @@ func MakeJSON(m map[string]interface{}) string {
 	return string(jsonbytes)
 }
 
-// ----------------------------------------------- //
+// ------------------------------------------------------------------------------- //
 
 // YieldJSON4OneCfg :
 func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bool) {
@@ -137,7 +137,7 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 	// delete all obsolete json files when new config-json files are coming
 	failOnErr("%v", os.RemoveAll(path))
 	fPf("%s is removed\n", path)
-	failOnErr("%v", os.MkdirAll(path, os.ModePerm))
+	failOnErr("%v", os.MkdirAll(path, 0700))
 	fPf("%s is created\n", path)
 
 	if levelized {
@@ -171,69 +171,61 @@ func YieldJSON4OneCfg(obj, sep, outDir, jsonVal string, levelized, extContent bo
 }
 
 // YieldJSONBySIFList :
-func YieldJSONBySIFList(cfgPath string) {
-
-	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: LIST, %s", n3err.CFG_INIT_ERR, cfgPath)
-
-	l2j := ICfg.(*List2JSON)
-	failOnErrWhen(l2j.Sep == "", "%v: LIST-[Sep]", n3err.CFG_INIT_ERR)
-
-	InitCfgBuf(*l2j, l2j.Sep) // Init Global Maps
-	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue, true, false)
+func YieldJSONBySIFList(cfgPath, ver string) {
+	JSONCfgOutDir := ""
+	switch ver {
+	case "3.4.6":
+		InitCfgBuf(*n3cfg.ToEnvN3sif2jsonSif346list(nil, "l346", cfgPath), "/") // Init Global Maps
+		JSONCfgOutDir = "../3.4.6/json/LIST/"
+	case "3.4.7":
+		InitCfgBuf(*n3cfg.ToEnvN3sif2jsonSif347list(nil, "l347", cfgPath), "/")
+		JSONCfgOutDir = "../3.4.7/json/LIST/"
 	}
-
-	// lsObj := GetLoadedObjects()
-	// wg := sync.WaitGroup{}
-	// wg.Add(len(lsObj))
-	// for _, obj := range lsObj {
-	// 	go func(obj, sep, outDir, l2j.CfgJSONValue string) {
-	// 		defer wg.Done()
-	// 		YieldJSON4OneCfg(obj, sep, outDir, l2j.CfgJSONValue, jqDir)
-	// 	}(obj, l2j.Sep, l2j.CfgJSONOutDir, l2j.CfgJSONValue)
-	// }
-	// wg.Wait()
+	for _, obj := range GetLoadedObjects() {
+		YieldJSON4OneCfg(obj, "/", JSONCfgOutDir, "[]", true, false)
+	}
 }
 
 // YieldJSONBySIFNum :
-func YieldJSONBySIFNum(cfgPath string) {
-
-	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: NUMERIC, %s", n3err.CFG_INIT_ERR, cfgPath)
-
-	n2j := ICfg.(*Num2JSON)
-	failOnErrWhen(n2j.Sep == "", "%v: NUMERIC-[Sep]", n3err.CFG_INIT_ERR)
-
-	InitCfgBuf(*n2j, n2j.Sep) // Init Global Maps
+func YieldJSONBySIFNum(cfgPath, ver string) {
+	JSONCfgOutDir := ""
+	switch ver {
+	case "3.4.6":
+		InitCfgBuf(*n3cfg.ToEnvN3sif2jsonSif346num(nil, "n346", cfgPath), "/") // Init Global Maps
+		JSONCfgOutDir = "../3.4.6/json/NUMERIC/"
+	case "3.4.7":
+		InitCfgBuf(*n3cfg.ToEnvN3sif2jsonSif347num(nil, "n347", cfgPath), "/")
+		JSONCfgOutDir = "../3.4.7/json/NUMERIC/"
+	}
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, n2j.Sep, n2j.CfgJSONOutDir, n2j.CfgJSONValue, false, true)
+		YieldJSON4OneCfg(obj, "/", JSONCfgOutDir, "(N)", true, false)
 	}
 }
 
 // YieldJSONBySIFBool :
-func YieldJSONBySIFBool(cfgPath string) {
-
-	ICfg := NewCfg(cfgPath)
-	failOnErrWhen(ICfg == nil, "%v: BOOLEAN, %s", n3err.CFG_INIT_ERR, cfgPath)
-
-	b2j := ICfg.(*Bool2JSON)
-	failOnErrWhen(b2j.Sep == "", "%v: BOOLEAN-[Sep]", n3err.CFG_INIT_ERR)
-
-	InitCfgBuf(*b2j, b2j.Sep) // Init Global Maps
+func YieldJSONBySIFBool(cfgPath, ver string) {
+	JSONCfgOutDir := ""
+	switch ver {
+	case "3.4.6":
+		InitCfgBuf(*n3cfg.ToEnvN3sif2jsonSif346bool(nil, "b346", cfgPath), "/") // Init Global Maps
+		JSONCfgOutDir = "../3.4.6/json/BOOLEAN/"
+	case "3.4.7":
+		InitCfgBuf(*n3cfg.ToEnvN3sif2jsonSif347bool(nil, "b347", cfgPath), "/")
+		JSONCfgOutDir = "../3.4.7/json/BOOLEAN/"
+	}
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, b2j.Sep, b2j.CfgJSONOutDir, b2j.CfgJSONValue, false, true)
+		YieldJSON4OneCfg(obj, "/", JSONCfgOutDir, "(B)", true, false)
 	}
 }
 
 // YieldJSONBySIF :
-func YieldJSONBySIF(listCfg, numCfg, boolCfg string) {
-	YieldJSONBySIFList(listCfg)
-	YieldJSONBySIFNum(numCfg)
-	YieldJSONBySIFBool(boolCfg)
+func YieldJSONBySIF(listCfg, numCfg, boolCfg, ver string) {
+	YieldJSONBySIFList(listCfg, ver)
+	YieldJSONBySIFNum(numCfg, ver)
+	YieldJSONBySIFBool(boolCfg, ver)
 }
 
 func main() {
-	YieldJSONBySIF(os.Args[2], os.Args[3], os.Args[4])
+	YieldJSONBySIF(os.Args[2], os.Args[3], os.Args[4], "3.4.6")
 	fPln("JSON Config files are created")
 }

@@ -3,14 +3,13 @@
 set -e
 shopt -s extglob
 
-ORIGINALPATH=`pwd`
+ORIPATH=`pwd`
 
-cd ./Server && ./clean.sh && cd $ORIGINALPATH && echo "Server clean"
-cd ./2JSON && rm -f *auto*.go *.json && cd $ORIGINALPATH && echo "2JSON clean"
-cd ./2JSON/SpecCfgMaker && ./clean.sh && cd $ORIGINALPATH && echo "SpecCfgMaker clean"
-cd ./2SIF && rm -f *auto*.go *.xml && cd $ORIGINALPATH && echo "2SIF clean"
+cd ./Server/ && ./clean.sh && cd $ORIPATH && echo "Server clean"
+cd ./2JSON/ && rm -f *auto*.go *.json && cd $ORIPATH && echo "2JSON clean"
+cd ./2SIF/ && rm -f *auto*.go *.xml && cd $ORIPATH && echo "2SIF clean"
+cd ./SIFSpec/ && ./clean.sh && cd $ORIPATH && echo "SIFSpec clean"
 
-rm -rf ./2JSON/SpecCfg/*
 rm -rf ./data/json/ ./data/sif/
 rm -f ./*.log ./*.json ./*.xml
 

@@ -7,7 +7,6 @@ import (
 	"os"
 	"regexp"
 
-	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/clbanning/mxj"
 )
@@ -405,21 +404,19 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 // -------------------------------------------------------- //
 
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
-func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
-
-	j2s := n3cfg.ToEnvN3sif2jsonCvt2sif(nil, "2SIF", cfgPath)
-	failP1OnErrWhen(j2s == nil, "%v: %s", n3err.CFG_INIT_ERR, cfgPath)
-
-	SIFSpecDir := j2s.SIFSpecDir
-	DefaultSIFVer := j2s.DefaultSIFVer
-	ReplCfgPath := j2s.ReplCfgPath
+func JSON2SIF(json, SIFVer string) (sif, sv string, err error) {
 
 	// looking for suitable SIFSpec txt
 	SIFSpec := ""
 	files, err := ioutil.ReadDir(SIFSpecDir)
 	failOnErr("%v", err)
 	if SIFVer != "" {
+
 		for _, file := range files {
+			if file.IsDir() || !sHasSuffix(file.Name(), ".txt") {
+				continue
+			}
+
 			fullname := SIFSpecDir + file.Name()
 			f, err := os.Open(fullname)
 			failOnErr("%v", err)
@@ -434,15 +431,19 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 			f.Close()
 		}
 
-	} else { // SIFVer == "", user Default-SIFVer from Config
+	} else { // SIFVer == "", Default SIFVer applies
 		for _, file := range files {
+			if file.IsDir() || !sHasSuffix(file.Name(), ".txt") {
+				continue
+			}
+
 			fullname := SIFSpecDir + file.Name()
 			f, err := os.Open(fullname)
 			failOnErr("%v", err)
 			line := ""
 			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
-				if _, err = fmt.Fscan(f, &line); err == nil && line == DefaultSIFVer {
-					SIFSpec, SIFVer = fullname, DefaultSIFVer
+				if _, err = fmt.Fscan(f, &line); err == nil && line == DftSIFVer {
+					SIFSpec, SIFVer = fullname, DftSIFVer
 					f.Close()
 					break
 				}
@@ -452,17 +453,16 @@ func JSON2SIF(cfgPath, json, SIFVer string) (sif, sv string, err error) {
 	}
 
 	// couldn't find SIFSpec
-	// failOnErrWhen(SIFSpec == "" && SIFVer != "", "%v", fmt.Errorf("No SIF Spec @Version %s", SIFVer))
-	// failOnErrWhen(SIFSpec == "" && SIFVer == "", "%v", fmt.Errorf("No Default SIF Spec @Version %s", DefaultSIFVer))
 	if SIFSpec == "" && SIFVer != "" {
-		return "", "", fmt.Errorf("No SIF Spec @Version %s", SIFVer)
+		return "", "", fEf("No SIF Spec @Version %s", SIFVer)
 	} else if SIFSpec == "" && SIFVer == "" {
-		return "", "", fmt.Errorf("No Default SIF Spec @Version %s", DefaultSIFVer)
+		return "", "", fEf("No Default SIF Spec @Version %s", DftSIFVer)
 	}
 	// end looking
 
 	ResetAll()
 	jsonWithCode, mCodeStr := JSON2SIF4LF(json)
-	mRepl := mapsMerge(getReplMap(ReplCfgPath), mCodeStr).(map[string]string)
+	// mRepl := mapsMerge(getReplMap(ReplCfgPath), mCodeStr).(map[string]string)
+	mRepl := mapsMerge(mOldNew, mCodeStr).(map[string]string)
 	return JSON2SIFRepl(JSON2SIFSpec(JSON2SIF3RD(jsonWithCode), SIFSpec), mRepl), SIFVer, nil
 }

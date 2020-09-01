@@ -1,5 +1,0 @@
-Path = "[PATH]"
-LogFile = "./[DATE].log"
-DefaultSIFVer = "3.4.7"
-SIFSpecDir = "../../../SIFSpec/"
-ReplCfgPath = "../../../2SIF/replace.json"

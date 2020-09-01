@@ -26,10 +26,8 @@ func TestRegCfg(t *testing.T) {
 	// fmt.Println(osuser, project)
 
 	mPkgConfig := map[string]string{
-		"server":   "../../Server/config.toml",
-		"goclient": "../../Server/goclient/config.toml",
-		"cvt2json": "../../2JSON/config.toml",
-		"cvt2sif":  "../../2SIF/config.toml",
+		"server":   "../../config.toml",
+		"goclient": "../../goclient/config.toml",
 	}
 
 	for _, pkg := range flag.Args()[1:] {
