@@ -98,14 +98,14 @@ func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, stri
 	// Check SIFCfg Version Directory
 	svDir := rmTailFromLastN(Dir2SIFLIST, "/", 2)
 	if _, err := os.Stat(svDir); err == nil {
-		sv = rmHeadToLast(svDir, "/")
+		sv = ver
 	} else {
 		// failOnErr("%v", fmt.Errorf("No %sSIF Spec @Version %s", dft, ver))
 		return "", "", fmt.Errorf("No %sSIF Spec @Version %s", dft, ver)
 	}
 
 	/////////////////////////////
-
+	// "../SIFSpec/3.4.7/json/LIST/" + "Activity"
 	/////////////////////////////
 
 	// LIST
