@@ -49,8 +49,8 @@ func enforceConfig(json string, lsJSONCfg ...string) string {
 	return json
 }
 
-// SIF2JSON : if [SIFVer] is "", DefaultSIFVer applies
-func SIF2JSON(xml, SIFVer string, enforced bool, subobj ...string) (string, string, error) {
+// SIF2JSON : if [sifver] is "", DefaultSIFVer applies
+func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, string, error) {
 
 	jsonBuf, err := xj.Convert(
 		sNewReader(xml),
@@ -65,7 +65,7 @@ func SIF2JSON(xml, SIFVer string, enforced bool, subobj ...string) (string, stri
 
 	json, sv := fmtJSON(jsonBuf.String(), 2), ""
 
-	// Deal with 'LF', 'TB', Part1 --------------------------------------------------------------------------
+	// Deal with 'LF', 'TB', Part1 -------------------------------------------------------- //
 	mRepl1 := map[string]string{"\n": "#LF#", "\t": "#TB#"}
 	for k, v := range mRepl1 {
 		posGrp, values := [][]int{}, []string{}
@@ -78,25 +78,25 @@ func SIF2JSON(xml, SIFVer string, enforced bool, subobj ...string) (string, stri
 		json = replByPosGrp(json, posGrp, values)
 	}
 
-	// Attributes Modification according to Config ----------------------------------------------------------
+	// Attributes Modification according to Config ---------------------------------------- //
 	obj := xmlRoot(xml)              // infer object from xml root by default, use this object to search config json
 	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
 		obj = subobj[0]
 	}
 
 	ver, dft := DftSIFVer, "Default "
-	if SIFVer != "" {
-		ver, dft = SIFVer, ""
+	if sifver != "" {
+		ver, dft = sifver, ""
 	}
 
 	// Convert to real path
 	old := "#V#"
-	SIFCfgDir4LIST = sReplaceAll(SIFCfgDir4LIST, old, ver)
-	SIFCfgDir4NUM = sReplaceAll(SIFCfgDir4NUM, old, ver)
-	SIFCfgDir4BOOL = sReplaceAll(SIFCfgDir4BOOL, old, ver)
+	Dir2SIFLIST = sReplaceAll(Dir2SIFLIST, old, ver)
+	Dir2SIFNUM = sReplaceAll(Dir2SIFNUM, old, ver)
+	Dir2SIFBOOL = sReplaceAll(Dir2SIFBOOL, old, ver)
 
 	// Check SIFCfg Version Directory
-	svDir := rmTailFromLastN(SIFCfgDir4LIST, "/", 2)
+	svDir := rmTailFromLastN(Dir2SIFLIST, "/", 2)
 	if _, err := os.Stat(svDir); err == nil {
 		sv = rmHeadToLast(svDir, "/")
 	} else {
@@ -109,15 +109,15 @@ func SIF2JSON(xml, SIFVer string, enforced bool, subobj ...string) (string, stri
 	/////////////////////////////
 
 	// LIST
-	rules := eachFileContent(SIFCfgDir4LIST+obj, "json", iter2Slc(10)...)
+	rules := eachFileContent(Dir2SIFLIST+obj, "json", iter2Slc(10)...)
 	json = enforceConfig(json, rules...)
 
 	// NUMERIC
-	rules = eachFileContent(SIFCfgDir4NUM+obj, "json", iter2Slc(2)...)
+	rules = eachFileContent(Dir2SIFNUM+obj, "json", iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
 	// BOOLEAN
-	rules = eachFileContent(SIFCfgDir4BOOL+obj, "json", iter2Slc(2)...)
+	rules = eachFileContent(Dir2SIFBOOL+obj, "json", iter2Slc(2)...)
 	json = enforceConfig(json, rules...)
 
 	// Deal with 'LF', 'TB'  Part2 -------------------------------------------------------------

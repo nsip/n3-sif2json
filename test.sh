@@ -48,6 +48,5 @@ if [ $scode -ne 200 ]; then
 else
     echo "${G}${title}${W}"
 fi
-curl -X POST $url -d $file
-rm -f $out
+curl -X POST $url -d $file && rm -f $out
 printf "\n"

@@ -31,8 +31,8 @@ func TestMakeJSON(t *testing.T) {
 
 // ***
 func TestBinariseRes(t *testing.T) {
-	printFileBytes("sif346", "TXT346", "../3.4.6/res_txt.go", false, "../3.4.6.txt")
-	printFileBytes("sif347", "TXT347", "../3.4.7/res_txt.go", false, "../3.4.7.txt")
-	createDirBytes("sif346", "JSON346", "../3.4.6/json", "../3.4.6/res_json.go", false, "json", "346")
-	createDirBytes("sif347", "JSON347", "../3.4.7/json", "../3.4.7/res_json.go", false, "json", "347")
+	printFileBytes("sif346", "TXT", "../3.4.6/res_txt.go", false, "../3.4.6.txt")
+	createDirBytes("sif346", "JSON", "../3.4.6/json", "../3.4.6/res_json.go", false, "json", "346")	
+	printFileBytes("sif347", "TXT", "../3.4.7/res_txt.go", false, "../3.4.7.txt")	
+	createDirBytes("sif347", "JSON", "../3.4.7/json", "../3.4.7/res_json.go", false, "json", "347")
 }

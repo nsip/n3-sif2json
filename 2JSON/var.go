@@ -49,8 +49,8 @@ var (
 )
 
 var (
-	DftSIFVer      = "3.4.7"
-	SIFCfgDir4LIST = "../SIFSpec/#V#/json/LIST"
-	SIFCfgDir4NUM  = "../SIFSpec/#V#/json/NUMERIC"
-	SIFCfgDir4BOOL = "../SIFSpec/#V#/json/BOOLEAN"
+	DftSIFVer   = "3.4.7"
+	Dir2SIFLIST = "../SIFSpec/#V#/json/LIST"
+	Dir2SIFNUM  = "../SIFSpec/#V#/json/NUMERIC"
+	Dir2SIFBOOL = "../SIFSpec/#V#/json/BOOLEAN"
 )

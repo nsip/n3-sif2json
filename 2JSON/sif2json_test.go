@@ -25,8 +25,7 @@ func s2j(dim int, tid int, done chan int, params ...interface{}) {
 	files := params[0].([]os.FileInfo)
 	L := len(files)
 	for i := tid; i < L; i += dim {
-		file := files[i]
-		obj := rmTailFromLast(file.Name(), ".")
+		obj := rmTailFromLast(files[i].Name(), ".")
 		fPln("start:", obj)
 		// if exist(obj, "LearningStandardDocument", "StudentAttendanceTimeList") {
 		// 	continue
@@ -46,8 +45,8 @@ func TestSIF2JSON(t *testing.T) {
 	defer enableLog2F(false, "")
 
 	// Test Resource
-	fPln(string(sif346.JSON346["BOOLEAN_Activity_4"]))
-	fPln(string(sif347.JSON347["BOOLEAN_Activity_4"]))
+	fPln(string(sif346.JSON["BOOLEAN_Activity_4"]))
+	fPln(string(sif347.JSON["BOOLEAN_Activity_4"]))
 	// Test End
 
 	dir := `../data/examples/3.4.7/`
@@ -56,6 +55,5 @@ func TestSIF2JSON(t *testing.T) {
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
 
 	Go(1, s2j, files)
-	// Go(len(files), s2j, files) // only dispatch 1 goroutine, otherwise, error
 	fPln("OK")
 }
