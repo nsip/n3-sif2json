@@ -50,7 +50,7 @@ var (
 
 var (
 	DftSIFVer   = "3.4.7"
-	Dir2SIFLIST = "../SIFSpec/#V#/json/LIST"
-	Dir2SIFNUM  = "../SIFSpec/#V#/json/NUMERIC"
-	Dir2SIFBOOL = "../SIFSpec/#V#/json/BOOLEAN"
+	Dir2SIFLIST = "../SIFSpec/#V#/json/LIST/"
+	Dir2SIFNUM  = "../SIFSpec/#V#/json/NUMERIC/"
+	Dir2SIFBOOL = "../SIFSpec/#V#/json/BOOLEAN/"
 )

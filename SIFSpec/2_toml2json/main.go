@@ -198,7 +198,7 @@ func YieldJSONBySIFNum(cfgPath, ver string) {
 		JSONCfgOutDir = "../3.4.7/json/NUMERIC/"
 	}
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, "/", JSONCfgOutDir, "(N)", true, false)
+		YieldJSON4OneCfg(obj, "/", JSONCfgOutDir, "(N)", false, true)
 	}
 }
 
@@ -214,7 +214,7 @@ func YieldJSONBySIFBool(cfgPath, ver string) {
 		JSONCfgOutDir = "../3.4.7/json/BOOLEAN/"
 	}
 	for _, obj := range GetLoadedObjects() {
-		YieldJSON4OneCfg(obj, "/", JSONCfgOutDir, "(B)", true, false)
+		YieldJSON4OneCfg(obj, "/", JSONCfgOutDir, "(B)", false, true)
 	}
 }
 
