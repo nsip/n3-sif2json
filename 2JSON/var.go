@@ -17,40 +17,42 @@ import (
 )
 
 var (
-	fPf             = fmt.Printf
-	fPln            = fmt.Println
-	fSp             = fmt.Sprint
-	fSf             = fmt.Sprintf
-	sHasPrefix      = strings.HasPrefix
-	sHasSuffix      = strings.HasSuffix
-	sReplaceAll     = strings.ReplaceAll
-	failOnErr       = fn.FailOnErr
-	enableLog2F     = fn.EnableLog2F
-	failOnErrWhen   = fn.FailOnErrWhen
-	localIP         = net.LocalIP
-	sTrim           = strings.Trim
-	sCount          = strings.Count
-	sSplit          = strings.Split
-	sNewReader      = strings.NewReader
-	sJoin           = strings.Join
-	splitRev        = str.SplitRev
-	replByPosGrp    = str.ReplByPosGrp
-	rmTailFromLastN = str.RmTailFromLastN
-	rmTailFromLast  = str.RmTailFromLast
-	rmHeadToLast    = str.RmHeadToLast
-	iter2Slc        = iter.Iter2Slc
-	mustWriteFile   = io.MustWriteFile
-	exist           = judge.Exist
-	Go              = misc.Go
-	xmlRoot         = n3xml.XMLRoot
-	jsonRoot        = n3json.JSONRoot
-	fmtJSON         = n3json.Fmt
-	newJKV          = jkv.NewJKV
+	fPf              = fmt.Printf
+	fPln             = fmt.Println
+	fSp              = fmt.Sprint
+	fSf              = fmt.Sprintf
+	sHasPrefix       = strings.HasPrefix
+	sHasSuffix       = strings.HasSuffix
+	sReplaceAll      = strings.ReplaceAll
+	sToLower         = strings.ToLower
+	sTrim            = strings.Trim
+	sCount           = strings.Count
+	sSplit           = strings.Split
+	sNewReader       = strings.NewReader
+	sJoin            = strings.Join
+	failOnErr        = fn.FailOnErr
+	enableLog2F      = fn.EnableLog2F
+	failOnErrWhen    = fn.FailOnErrWhen
+	enableWarnDetail = fn.EnableWarnDetail
+	warnOnErr        = fn.WarnOnErr
+	warner           = fn.Warner
+	localIP          = net.LocalIP
+	splitRev         = str.SplitRev
+	replByPosGrp     = str.ReplByPosGrp
+	rmTailFromLastN  = str.RmTailFromLastN
+	rmTailFromLast   = str.RmTailFromLast
+	rmHeadToLast     = str.RmHeadToLast
+	iter2Slc         = iter.Iter2Slc
+	mustWriteFile    = io.MustWriteFile
+	exist            = judge.Exist
+	Go               = misc.Go
+	trackTime        = misc.TrackTime
+	xmlRoot          = n3xml.XMLRoot
+	jsonRoot         = n3json.JSONRoot
+	fmtJSON          = n3json.Fmt
+	newJKV           = jkv.NewJKV
 )
 
 var (
-	DftSIFVer   = "3.4.7"
-	Dir2SIFLIST = "../SIFSpec/#V#/json/LIST/"
-	Dir2SIFNUM  = "../SIFSpec/#V#/json/NUMERIC/"
-	Dir2SIFBOOL = "../SIFSpec/#V#/json/BOOLEAN/"
+	DftSIFVer = "3.4.7"
 )

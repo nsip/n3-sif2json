@@ -32,6 +32,7 @@ var (
 	failP1OnErrWhen    = fn.FailP1OnErrWhen
 	failP1OnErr        = fn.FailP1OnErr
 	enableLog2F        = fn.EnableLog2F
+	warner             = fn.Warner
 	localIP            = net.LocalIP
 	sSplit             = strings.Split
 	sReplace           = strings.Replace
@@ -50,6 +51,7 @@ var (
 	replByPosGrp       = str.ReplByPosGrp
 	indent             = str.IndentTxt
 	Go                 = misc.Go
+	trackTime          = misc.TrackTime
 	isJSON             = judge.IsJSON
 	md5Str             = endec.MD5Str
 	mapsMerge          = rflx.MapMerge
@@ -113,13 +115,8 @@ var (
 )
 
 var (
-	DftSIFVer  = "3.4.7"
-	SIFSpecDir = "../SIFSpec/"
+	DftSIFVer  = "3.4.7"	
 	mOldNew    = map[string]string{
 		" lang=\"": " xml:lang=\"",
 	}
-	// replace.json
-	// {
-	// 	" lang=\"": " xml:lang=\""
-	// }
 )

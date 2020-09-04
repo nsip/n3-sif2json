@@ -3,7 +3,9 @@ package cvt2sif
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/go-xmlfmt/xmlfmt"
@@ -17,14 +19,15 @@ func TestJSONRoot(t *testing.T) {
 
 func j2s(dim int, tid int, done chan int, params ...interface{}) {
 	defer func() { done <- tid }()
-	files := params[0].([]os.FileInfo)
-	ver := params[1].(string)
-	L := len(files)
-	for i := tid; i < L; i += dim {
+	ver := params[0].(string)
+	files := params[1].([]os.FileInfo)
+	dir := params[2].(string)
+
+	for i := tid; i < len(files); i += dim {
 		ResetAll()
 
 		obj := rmTailFromLast(files[i].Name(), ".")
-		bytes, err := ioutil.ReadFile(fSf("../data/json/%s/%s.json", ver, obj))
+		bytes, err := ioutil.ReadFile(filepath.Join(dir, files[i].Name()))
 		failOnErr("%v", err)
 
 		sif, sv, err := JSON2SIF(string(bytes), ver)
@@ -41,38 +44,15 @@ func j2s(dim int, tid int, done chan int, params ...interface{}) {
 }
 
 func TestJSON2SIF(t *testing.T) {
-	enableLog2F(true, "./error.log")
-	defer enableLog2F(false, "")
+	defer trackTime(time.Now())
+	// enableLog2F(true, "./error.log")
+	// defer enableLog2F(false, "")
 
 	ver := "3.4.7"
 	dir := `../data/json/` + ver
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
-	Go(1, j2s, files, ver) // only dispatch 1 goroutine, otherwise, error
+	Go(1, j2s, ver, files, dir) // only dispatch 1 goroutine, otherwise, error
 	fPln("OK")
-}
-
-func TestSortSimpleObject(t *testing.T) {
-	// Init Spec Maps
-	InitOAs("../SIFSpec/out.txt", "\t", "/")
-
-	// fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
-	// fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
-	// fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
-	// fPln(NextAttr("ParentName", "AGAddressCollectionSubmission/AddressCollectionReportingList/AddressCollectionReporting/AddressCollectionStudentList/AddressCollectionStudent/Parent1/"))
-
-	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
-	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
-	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
-	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
-	// fPln(NextAttr("Name", "FinancialQuestionnaireSubmission/FQReportingList/FQReporting/EntityContact/"))
-
-	jsonBytes, err := ioutil.ReadFile("../data/sif/AGStatusReport_0_out.xml")
-	failOnErr("%v", err)
-	sifCont := string(jsonBytes)
-
-	fPln(SortSimpleObject(sifCont, "AGRule", 4, "AGStatusReport/AGReportingObjectResponseList/AGReportingObjectResponse/AGRuleList/"))
-
-	// ExtractOA(sifCont, "NAPStudentResponseSet", "", 0)
 }

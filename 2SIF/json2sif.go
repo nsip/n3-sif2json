@@ -2,13 +2,12 @@ package cvt2sif
 
 import (
 	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"os"
 	"regexp"
 
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/clbanning/mxj"
+	sif346 "github.com/nsip/n3-sif2json/SIFSpec/3.4.6"
+	sif347 "github.com/nsip/n3-sif2json/SIFSpec/3.4.7"
 )
 
 // ----------------------------------------- //
@@ -244,16 +243,13 @@ func JSON2SIF3RD(jsonstr string) string {
 }
 
 // InitOAs : fill [TrvsGrpViaSpec] & [mPathAttrs] & [mPathAttrIdx]
-func InitOAs(SIFSpecPath string, tblSep, pathSep string) {
+func InitOAs(SIFSpecStr, tblSep, pathSep string) {
 	if len(mPathAttrs) > 0 {
 		return
 	}
 
 	const TRAVERSE = "TRAVERSE ALL, DEPTH ALL"
-	bytes, err := ioutil.ReadFile(SIFSpecPath)
-	failOnErr("%v", err)
-	spec := string(bytes)
-	for _, line := range sSplit(spec, "\n") {
+	for _, line := range sSplit(SIFSpecStr, "\n") {
 		switch {
 		case sHasPrefix(line, TRAVERSE):
 			l := sTrim(line[len(TRAVERSE):], " \t\r")
@@ -270,8 +266,8 @@ func InitOAs(SIFSpecPath string, tblSep, pathSep string) {
 }
 
 // JSON2SIFSpec : Ordered, Some pieces are different
-func JSON2SIFSpec(xml, SIFSpecPath string) string {
-	InitOAs(SIFSpecPath, "\t", "/")
+func JSON2SIFSpec(xml, SIFSpecStr string) string {
+	InitOAs(SIFSpecStr, "\t", "/")
 
 	// adjusting attributes order
 	posGrp, pathGrp, mAttrGrp, root := SearchTagWithAttr(xml)
@@ -404,65 +400,25 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 // -------------------------------------------------------- //
 
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
-func JSON2SIF(json, SIFVer string) (sif, sv string, err error) {
+func JSON2SIF(json, sifver string) (sif, sv string, err error) {
 
-	// looking for suitable SIFSpec txt
-	SIFSpec := ""
-	files, err := ioutil.ReadDir(SIFSpecDir)
-	failOnErr("%v", err)
-	if SIFVer != "" {
-
-		for _, file := range files {
-			if file.IsDir() || !sHasSuffix(file.Name(), ".txt") {
-				continue
-			}
-
-			fullname := SIFSpecDir + file.Name()
-			f, err := os.Open(fullname)
-			failOnErr("%v", err)
-			line := ""
-			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
-				if _, err = fmt.Fscan(f, &line); err == nil && line == SIFVer {
-					SIFSpec = fullname
-					f.Close()
-					break
-				}
-			}
-			f.Close()
-		}
-
-	} else { // SIFVer == "", Default SIFVer applies
-		for _, file := range files {
-			if file.IsDir() || !sHasSuffix(file.Name(), ".txt") {
-				continue
-			}
-
-			fullname := SIFSpecDir + file.Name()
-			f, err := os.Open(fullname)
-			failOnErr("%v", err)
-			line := ""
-			if _, err = fmt.Fscan(f, &line); err == nil && line == "VERSION:" {
-				if _, err = fmt.Fscan(f, &line); err == nil && line == DftSIFVer {
-					SIFSpec, SIFVer = fullname, DftSIFVer
-					f.Close()
-					break
-				}
-			}
-			f.Close()
-		}
+	ver := DftSIFVer
+	if sifver != "" {
+		ver = sifver
 	}
 
-	// couldn't find SIFSpec
-	if SIFSpec == "" && SIFVer != "" {
-		return "", "", fEf("No SIF Spec @Version %s", SIFVer)
-	} else if SIFSpec == "" && SIFVer == "" {
-		return "", "", fEf("No Default SIF Spec @Version %s", DftSIFVer)
+	var bytes []byte
+	switch ver {
+	case "3.4.6":
+		bytes = sif346.TXT["346"]
+	case "3.4.7":
+		bytes = sif347.TXT["347"]
+	default:
+		warner("No SIF Spec Version @ %s", ver)
 	}
-	// end looking
 
 	ResetAll()
 	jsonWithCode, mCodeStr := JSON2SIF4LF(json)
-	// mRepl := mapsMerge(getReplMap(ReplCfgPath), mCodeStr).(map[string]string)
 	mRepl := mapsMerge(mOldNew, mCodeStr).(map[string]string)
-	return JSON2SIFRepl(JSON2SIFSpec(JSON2SIF3RD(jsonWithCode), SIFSpec), mRepl), SIFVer, nil
+	return JSON2SIFRepl(JSON2SIFSpec(JSON2SIF3RD(jsonWithCode), string(bytes)), mRepl), ver, nil
 }

@@ -1,38 +1,50 @@
 package cvt2json
 
 import (
-	"fmt"
-	"io/ioutil"
-	"os"
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
+	sif346 "github.com/nsip/n3-sif2json/SIFSpec/3.4.6"
+	sif347 "github.com/nsip/n3-sif2json/SIFSpec/3.4.7"
 )
 
-func eachFileContent(dir, ext string, indices ...int) (rt []string) {
-	if dir[len(dir)-1] != '/' {
-		dir += "/"
-	}
-	if ext[0] == '.' {
-		ext = ext[1:]
-	}
-	files := []string{}
-	for _, index := range indices {
-		file := fSf("%s%d.%s", dir, index, ext)
-		if _, err := os.Stat(file); err == nil {
-			files = append(files, file)
+func selBytesOfJSON(ver, ruleType, object string, indices ...int) (rt []string) {
+
+	var mBytes map[string][]byte
+	switch ver {
+	case "3.4.6":
+		switch sToLower(ruleType) {
+		case "bool", "boolean":
+			mBytes = sif346.JSON_BOOL
+		case "list":
+			mBytes = sif346.JSON_LIST
+		case "num", "number", "numeric":
+			mBytes = sif346.JSON_NUM
 		}
+	case "3.4.7":
+		switch sToLower(ruleType) {
+		case "bool", "boolean":
+			mBytes = sif347.JSON_BOOL
+		case "list":
+			mBytes = sif347.JSON_LIST
+		case "num", "number", "numeric":
+			mBytes = sif347.JSON_NUM
+		}
+	default:
+		warner("No SIF Spec Version @ %s", ver)
 	}
-	for _, f := range files {
-		bytes, err := ioutil.ReadFile(f)
-		failOnErr("%v", err)
-		rt = append(rt, string(bytes))
+
+	for _, idx := range indices {
+		key := fSf("%s_%d", object, idx)
+		if bytes, ok := mBytes[key]; ok {
+			rt = append(rt, string(bytes))
+		}
 	}
 	return
 }
 
-// enforceConfig : LIST config must be from low Level to high level
-func enforceConfig(json string, lsJSONCfg ...string) string {
+// enforceCfg : LIST config must be from low Level to high level
+func enforceCfg(json string, lsJSONCfg ...string) string {
 
 	rLB := regexp.MustCompile(`\[[ \t\r\n]*\[`)
 	rRB := regexp.MustCompile(`\][ \t\r\n]*\]`)
@@ -60,10 +72,10 @@ func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, stri
 	)
 	failOnErr("That's embarrassing... %v", err)
 
-	// json, sv := jsonBuf.String(), ""
+	// json := jsonBuf.String()
 	// return // --------------------------- test 3rd party lib --------------------------- //
 
-	json, sv := fmtJSON(jsonBuf.String(), 2), ""
+	json := fmtJSON(jsonBuf.String(), 2)
 
 	// Deal with 'LF', 'TB', Part1 -------------------------------------------------------- //
 	mRepl1 := map[string]string{"\n": "#LF#", "\t": "#TB#"}
@@ -79,46 +91,19 @@ func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, stri
 	}
 
 	// Attributes Modification according to Config ---------------------------------------- //
-	obj := xmlRoot(xml)              // infer object from xml root by default, use this object to search config json
-	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st provided object to search
+	obj := xmlRoot(xml)              // infer object from xml root, use this object to find config json by default
+	if enforced && len(subobj) > 0 { // if object is provided, ignore default, use 1st given object to search
 		obj = subobj[0]
 	}
 
-	ver, dft := DftSIFVer, "Default "
+	ver := DftSIFVer
 	if sifver != "" {
-		ver, dft = sifver, ""
+		ver = sifver
 	}
 
-	// Convert to real path
-	old := "#V#"
-	Dir2SIFLIST = sReplaceAll(Dir2SIFLIST, old, ver)
-	Dir2SIFNUM = sReplaceAll(Dir2SIFNUM, old, ver)
-	Dir2SIFBOOL = sReplaceAll(Dir2SIFBOOL, old, ver)
-
-	// Check SIFCfg Version Directory
-	svDir := rmTailFromLastN(Dir2SIFLIST, "/", 2)
-	if _, err := os.Stat(svDir); err == nil {
-		sv = ver
-	} else {
-		// failOnErr("%v", fmt.Errorf("No %sSIF Spec @Version %s", dft, ver))
-		return "", "", fmt.Errorf("No %sSIF Spec @Version %s", dft, ver)
-	}
-
-	/////////////////////////////
-	// "../SIFSpec/3.4.7/json/LIST/" + "Activity"
-	/////////////////////////////
-
-	// LIST
-	rules := eachFileContent(Dir2SIFLIST+obj, "json", iter2Slc(10)...)
-	json = enforceConfig(json, rules...)
-
-	// NUMERIC
-	rules = eachFileContent(Dir2SIFNUM+obj, "json", iter2Slc(2)...)
-	json = enforceConfig(json, rules...)
-
-	// BOOLEAN
-	rules = eachFileContent(Dir2SIFBOOL+obj, "json", iter2Slc(2)...)
-	json = enforceConfig(json, rules...)
+	json = enforceCfg(json, selBytesOfJSON(ver, "list", obj, iter2Slc(10)...)...)
+	json = enforceCfg(json, selBytesOfJSON(ver, "num", obj, iter2Slc(2)...)...)
+	json = enforceCfg(json, selBytesOfJSON(ver, "bool", obj, iter2Slc(2)...)...)
 
 	// Deal with 'LF', 'TB'  Part2 -------------------------------------------------------------
 	mRepl2 := map[string]string{"#LF#": "\\n", "#TB#": "\\t"}
@@ -149,5 +134,5 @@ func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, stri
 	const mark = "value" // "#content"
 	json = replByPosGrp(json, emptyPosPair, []string{fSf("\"%s\": \"\",\n", mark)})
 	json = fmtJSON(json, 2)
-	return json, sv, nil
+	return json, ver, nil
 }

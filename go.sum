@@ -12,10 +12,10 @@ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6r
 github.com/casbin/casbin/v2 v2.0.0/go.mod h1:YcPU1XXisHhLzuxH9coDNf2FbKpjGlbCg3n9yuLkIJQ=
 github.com/cdutwhu/debog v0.2.10 h1:c8KfU09aU+6IcxtFs5mvTVkoF4WW24pTMqBjnQqyWbs=
 github.com/cdutwhu/debog v0.2.10/go.mod h1:1aTerK2VgeCIvf3Ss4J+zUzhEivYSwJyGWUSu3m6+OU=
-github.com/cdutwhu/gotil v0.1.4 h1:+57bHt8irubykfI5VJTE99wDfQg6mx6pe95dsIuHyYk=
-github.com/cdutwhu/gotil v0.1.4/go.mod h1:yI4md0Ig5cY/bT2AHq4n/XnSl3fo2eYYvFSGAv31QHQ=
-github.com/cdutwhu/n3-util v0.3.0 h1:/cDeyXYEooN24XQMhTM46dm5WkCTuQUZBk/J/Wc1rA8=
-github.com/cdutwhu/n3-util v0.3.0/go.mod h1:nwTaFj+367I9dn+5QRxDraQdlshgKJlfaCiWdjezEGU=
+github.com/cdutwhu/gotil v0.1.5 h1:veWA3GylFUbgHW5IHNtBMwF+nNDoO6i6VoI/BvHLuCw=
+github.com/cdutwhu/gotil v0.1.5/go.mod h1:yI4md0Ig5cY/bT2AHq4n/XnSl3fo2eYYvFSGAv31QHQ=
+github.com/cdutwhu/n3-util v0.3.1 h1:8ukwyQ2vT2g+OfwFUVWnc9/0WS56L9Nv0EZeex673pc=
+github.com/cdutwhu/n3-util v0.3.1/go.mod h1:OM/TD9XXy66zJw/Pr9pgolChdAUTJGnDAajhSrlt3rQ=
 github.com/clbanning/mxj v1.8.4 h1:HuhwZtbyvyOw+3Z1AowPkU87JkJUSv751ELWaiTpj8I=
 github.com/clbanning/mxj v1.8.4/go.mod h1:BVjHeAH+rl9rs6f+QIpeRl0tfu10SXn1pUSa5PVGJng=
 github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd/go.mod h1:sE/e/2PUdi/liOCUjSTXgM1o87ZssimdTWN964YiIeI=
@@ -35,7 +35,6 @@ github.com/golang/protobuf v1.3.1/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5y
 github.com/golang/protobuf v1.3.2/go.mod h1:6lQm79b+lXiMfvg/cZm0SGofjICqVBUtrP5yJMmIC1U=
 github.com/google/go-cmp v0.3.0/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMywk6iLU=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
-github.com/gookit/color v1.2.8 h1:9wExr3qoZN7h81JecfXkynnlAWLPlvDmVMqLw9Sr6Cw=
 github.com/gookit/color v1.2.8/go.mod h1:AhIE+pS6D4Ql0SQWbBeXPHw7gY0/sjHoA4s/n1KB7xg=
 github.com/gookit/color v1.2.9 h1:1gwRqF/u6wZrxzn+thlROF7D4Toi9eVGUidZNAxAZHE=
 github.com/gookit/color v1.2.9/go.mod h1:AhIE+pS6D4Ql0SQWbBeXPHw7gY0/sjHoA4s/n1KB7xg=

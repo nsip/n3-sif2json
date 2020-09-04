@@ -1,10 +1,10 @@
-Path = "/home/qmiao/Desktop/n3-sif2json/Server/config.toml"
 Service = "n3-sif2json"
+Path = "/home/qmiao/Desktop/n3-sif2json/Server/config.toml"
 
 [Route]
-  JSON2SIF = "/n3-sif2json/v0.3.6/json2sif"
   HELP = "/"
-  SIF2JSON = "/n3-sif2json/v0.3.6/sif2json"
+  SIF2JSON = "/n3-sif2json//sif2json"
+  JSON2SIF = "/n3-sif2json//json2sif"
 
 [Server]
   Port = 1324

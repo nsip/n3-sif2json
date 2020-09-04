@@ -8,7 +8,7 @@ y=`tput setaf 3`
 w=`tput sgr0`
 
 # sudo password
-sudopwd="password"
+sudopwd="cppcli"
 
 gotestdir="./1_txt2toml/"
 
