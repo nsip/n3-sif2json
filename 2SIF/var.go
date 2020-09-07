@@ -57,11 +57,11 @@ var (
 	xmlRoot            = n3xml.XMLRoot
 )
 
-var nGoTo = 0
-
-const maxGoTo = 100
+const MaxGoTo = 100
 
 var (
+	nGoTo = 0
+
 	re1 = regexp.MustCompile("\n[ ]*<#content>")
 	re2 = regexp.MustCompile("</#content>\n[ ]*")
 
@@ -93,6 +93,7 @@ var (
 		mIPathSubXML = make(map[string]string)
 		mIPathSubMark = make(map[string]string)
 		mPathIdx = make(map[string]int)
+		nGoTo = 0
 	}
 
 	mkIndent = func(n int) (indent string) {

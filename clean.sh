@@ -11,7 +11,7 @@ cd ./2JSON/SpecCfgMaker && ./clean.sh && cd $ORIGINALPATH && echo "SpecCfgMaker 
 cd ./2SIF && rm -f *auto*.go *.xml && cd $ORIGINALPATH && echo "2SIF clean"
 
 rm -rf ./2JSON/SpecCfg/*
-rm -rf ./data/json/ ./data/sif/
+rm -rf ./data/json/ ./data/sif/ ./data/output/
 rm -f ./*.log ./*.json ./*.xml
 
 # delete all binary files

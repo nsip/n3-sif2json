@@ -311,7 +311,7 @@ AGAIN:
 	if sContains(xml, "...") {
 		// ioutil.WriteFile(fSf("./%d.xml", nGoTo), []byte(xml), 0666)
 		nGoTo++
-		failOnErrWhen(nGoTo > maxGoTo, "%v: goto AGAIN", n3err.INTERNAL_DEADLOCK)
+		failOnErrWhen(nGoTo > MaxGoTo, "%v: goto AGAIN", n3err.INTERNAL_DEADLOCK)
 		goto AGAIN
 	}
 
