@@ -10,8 +10,7 @@ W=`tput sgr0`
 printf "\n"
 
 ip="192.168.31.168:1324/"
-base=$ip"n3-sif2json/v0.3.6/"
-
+base=$ip"n3-sif2json/v0.4.1/"
 
 title='SIF2JSON all API Paths'
 url=$ip
@@ -24,29 +23,48 @@ fi
 curl -i $url
 printf "\n"
 
+sv=3.4.7
 
-title='SIF to JSON Test'
-url=$base"sif2json"
-file="@./data/examples347/Activity_0.xml"
-scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
-if [ $scode -ne 200 ]; then
-    echo "${Y}${title}${W}"
-else
-    echo "${G}${title}${W}"
-fi
-out=Activity_0.json
-curl -X POST $url -d $file > $out
-cat $out
-printf "\n"
+SIFFiles=./data/examples/$sv/*
+for f in $SIFFiles
+do    
+    title='SIF to JSON Test @ '$f
+    url=$base"sif2json?sv=$sv"    
+    file="@"$f
+    scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
+    if [ $scode -ne 200 ]; then
+        echo "${Y}${title}${W}"
+    else
+        echo "${G}${title}${W}"
+    fi
 
-title='JSON to SIF Test'
-url=$base"json2sif"
-file="@./Activity_0.json"
-scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
-if [ $scode -ne 200 ]; then
-    echo "${Y}${title}${W}"
-else
-    echo "${G}${title}${W}"
-fi
-curl -X POST $url -d $file && rm -f $out
-printf "\n"
+    jsonname=`basename $f .xml`.json
+    outdir=./data/output/$sv/json/
+    mkdir -p $outdir
+    outfile=$outdir"$jsonname"
+    curl -X POST $url -d $file > $outfile
+    cat $outfile
+    printf "\n"
+done
+
+JSONFiles=./data/output/$sv/json/*
+for f in $JSONFiles
+do  
+    title='JSON to SIF Test @ '$f
+    url=$base"json2sif?sv=$sv"
+    file="@"$f
+    scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
+    if [ $scode -ne 200 ]; then
+        echo "${Y}${title}${W}"
+    else
+        echo "${G}${title}${W}"
+    fi
+
+    sifname=`basename $f .json`.xml
+    outdir=./data/output/$sv/sif/
+    mkdir -p $outdir
+    outfile=$outdir"$sifname"
+    curl -X POST $url -d $file > $outfile
+    cat $outfile
+    printf "\n"
+done

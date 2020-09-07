@@ -60,11 +60,11 @@ var (
 	jsonRoot           = n3json.JSONRoot
 )
 
-var nGoTo = 0
-
-const maxGoTo = 100
+const MaxGoTo = 100
 
 var (
+	nGoTo = 0
+
 	re1 = regexp.MustCompile("\n[ ]*<#content>")
 	re2 = regexp.MustCompile("</#content>\n[ ]*")
 
@@ -96,6 +96,7 @@ var (
 		mIPathSubXML = make(map[string]string)
 		mIPathSubMark = make(map[string]string)
 		mPathIdx = make(map[string]int)
+		nGoTo = 0
 	}
 
 	mkIndent = func(n int) (indent string) {
@@ -105,18 +106,10 @@ var (
 		}
 		return
 	}
-
-	// getReplMap = func(jsonpath string) (m map[string]string) {
-	// 	bytes, err := ioutil.ReadFile(jsonpath)
-	// 	failOnErr("%v", err)
-	// 	failOnErr("%v", json.Unmarshal(bytes, &m))
-	// 	return
-	// }
 )
 
 var (
-	DftSIFVer  = "3.4.7"	
-	mOldNew    = map[string]string{
+	mOldNew = map[string]string{
 		" lang=\"": " xml:lang=\"",
 	}
 )

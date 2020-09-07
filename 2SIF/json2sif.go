@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"regexp"
 
+	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/clbanning/mxj"
 	sif346 "github.com/nsip/n3-sif2json/SIFSpec/3.4.6"
@@ -306,7 +307,7 @@ AGAIN:
 	if sContains(xml, "...") {
 		// mustWriteFile(fSf("./%d.xml", nGoTo), []byte(xml))
 		nGoTo++
-		failOnErrWhen(nGoTo > maxGoTo, "%v: goto AGAIN", n3err.INTERNAL_DEADLOCK)
+		failOnErrWhen(nGoTo > MaxGoTo, "%v: goto AGAIN", n3err.INTERNAL_DEADLOCK)
 		goto AGAIN
 	}
 
@@ -401,8 +402,9 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(json, sifver string) (sif, sv string, err error) {
+	cfgAll := n3cfg.ToEnvN3sif2jsonAll(nil, "envkey", "../Config/config.toml")
 
-	ver := DftSIFVer
+	ver := cfgAll.SIF.DefaultVer
 	if sifver != "" {
 		ver = sifver
 	}

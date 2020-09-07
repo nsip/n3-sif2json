@@ -36,9 +36,9 @@ func j2s(dim int, tid int, done chan int, params ...interface{}) {
 		sif = xmlfmt.FormatXML(sif, "", "    ")
 		sif = sTrim(sif, " \t\n\r")
 
-		fPln(obj, sv, " applied")
+		fPf("%-40s%-10sapplied\n", obj, sv)
 		if sif != "" {
-			mustWriteFile(fSf("../data/sif/%s/%s_out.xml", sv, obj), []byte(sif))
+			mustWriteFile(fSf("../data/output/%s/sif/%s.xml", sv, obj), []byte(sif))
 		}
 	}
 }
@@ -48,8 +48,8 @@ func TestJSON2SIF(t *testing.T) {
 	// enableLog2F(true, "./error.log")
 	// defer enableLog2F(false, "")
 
-	ver := "3.4.7"
-	dir := `../data/json/` + ver
+	ver := "3.4.6"
+	dir := `../data/output/` + ver + `/json`
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)

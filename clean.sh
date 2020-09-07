@@ -8,8 +8,8 @@ ORIPATH=`pwd`
 cd ./Server/ && ./clean.sh && cd $ORIPATH && echo "Server clean"
 cd ./SIFSpec/ && ./clean.sh && cd $ORIPATH && echo "SIFSpec clean"
 
-rm -rf ./data/json/ ./data/sif/
-rm -f ./*.log ./*.json ./*.xml
+rm -rf ./data/output/
+rm -f ./*.json ./*.xml
 
 # delete all binary files
 find . -type f -executable -exec sh -c "file -i '{}' | grep -q 'x-executable; charset=binary'" \; -print | xargs rm -f

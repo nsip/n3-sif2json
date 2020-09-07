@@ -12,7 +12,7 @@ func TestGenTomlAndStruct(t *testing.T) {
 	GenTomlAndGoSrc("../3.4.7.txt", "../3.4.7/")
 }
 
-// *** echo cppcli | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegister
+// *** echo password | sudo -S env "PATH=$PATH" go test -v -count=1 ./ -run TestRegister
 func TestRegister(t *testing.T) {
 	user := "qmiao"
 	prj := n3cfg.PrjName()

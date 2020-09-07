@@ -9,12 +9,12 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "TestKey", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "TestKey", "./config/config.toml")
 	spew.Dump(cfg)
 }
 
 func TestInit(t *testing.T) {
-	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "TestKey", "./config.toml")
+	cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, "TestKey", "./config/config.toml")
 	spew.Dump(cfg)
 	fPln(" ------------------------------- ")
 	cfg1 := n3cfg.FromEnvN3sif2jsonGoclient("TestKey")
@@ -22,8 +22,11 @@ func TestInit(t *testing.T) {
 }
 
 func TestDO(t *testing.T) {
+
+	config := "./config/config.toml"
+
 	str, err := DO(
-		"./config.toml",
+		config,
 		"HELP",
 		nil,
 	)
@@ -31,10 +34,10 @@ func TestDO(t *testing.T) {
 	fPln(err)
 	fPln(" ------------------------------------ ")
 
-	bytes, err := ioutil.ReadFile("../../data/examples347/NAPTest_0.xml")
+	bytes, err := ioutil.ReadFile("../../data/examples/3.4.7/NAPCodeFrame_0.xml")
 	failOnErr("%v", err)
 	str, err = DO(
-		"./config.toml",
+		config,
 		"SIF2JSON",
 		&Args{
 			Data:   bytes,

@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 set -e
 
@@ -7,22 +7,9 @@ g=`tput setaf 2`
 y=`tput setaf 3`
 w=`tput sgr0`
 
-# sudo password
-sudopwd="cppcli"
-
-workpath="./preprocess"
-
-# generate config.go for [Server]
-echo $sudopwd | sudo -S env "PATH=$PATH" go test -v -timeout 1s -count=1 $workpath/cfgreg -run TestRegCfg -args `whoami` "server"
-
-# Trim Server config.toml for [goclient]
-go test -v -timeout 1s -count=1 $workpath/cfggen -run TestMkCltCfg -args "Path" "Service" "Route" "Server" "Access"
-echo "${g}goclient Config.toml Generated${w}"
-
-# generate config.go fo [goclient]
-echo $sudopwd | sudo -S env "PATH=$PATH" go test -v -timeout 1s -count=1 $workpath/cfgreg -run TestRegCfg -args `whoami` "goclient"
-
-######################
+# Copy config_rel.toml for [build] && Trim Server config.toml for [goclient]
+go test -v -timeout 1s -count=1 ./config/ -run TestMkCfg4Clt -args "Path" "Service" "Route" "Server" "Access"
+echo "${g}goclient config.toml Generated${w}"
 
 rm -rf ./build
 
@@ -54,3 +41,5 @@ cp ./config_rel.toml $OUTPATH'config.toml'
 # CGO_ENABLED=0 GOOS="linux" GOARCH="$GOARCH" GOARM=7 go build -ldflags="$LDFLAGS" -o $OUT
 # mv $OUT $OUTPATH
 # cp ./config_rel.toml $OUTPATH
+
+rm config_rel.toml

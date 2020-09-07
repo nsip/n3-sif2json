@@ -52,7 +52,3 @@ var (
 	fmtJSON          = n3json.Fmt
 	newJKV           = jkv.NewJKV
 )
-
-var (
-	DftSIFVer = "3.4.7"
-)

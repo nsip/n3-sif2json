@@ -20,10 +20,5 @@ if [ $os != 'linux64' ] && [ $os != 'mac' ] && [ $os != 'win64' ]; then
     exit 1
 fi
 
-mkdir -p $dir'/2JSON/'
-mkdir -p $dir'/2SIF/'
-
 cp ./Server/build/$os/* ./Dockerfile $dir
-sed -i 's/\.\.\/\.\.\/\.//g' $dir'/config.toml'
-
 echo "Server Package $os Version is Dumped into $dir"

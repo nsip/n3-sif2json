@@ -34,7 +34,7 @@ func s2j(dim int, tid int, done chan int, params ...interface{}) {
 		json, sv, err := SIF2JSON(string(bytes), ver, false)
 		fPln("end:", obj, sv, err)
 		if json != "" {
-			mustWriteFile(fSf("../data/json/%s/%s.json", sv, obj), []byte(json))
+			mustWriteFile(fSf("../data/output/%s/json/%s.json", sv, obj), []byte(json))
 		}
 	}
 }
@@ -46,7 +46,7 @@ func TestSIF2JSON(t *testing.T) {
 	// defer enableWarnDetail(true)
 	enableWarnDetail(false)
 
-	ver := "3.4.7"
+	ver := "3.4.6"
 	dir := `../data/examples/` + ver
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
