@@ -2,4 +2,4 @@
 
 rm -rf ./build
 rm -f ./*_rel.toml
-rm ./client/*.json
+rm -f ./client/*.json
