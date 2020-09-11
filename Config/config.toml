@@ -13,9 +13,9 @@ Version = "[VER]"
   Port = 1324
 
 [Route]
-  HELP = "/"
-  SIF2JSON = "/[s]/[v]/sif2json"
-  JSON2SIF = "/[s]/[v]/json2sif"
+  Help = "/"
+  ToJSON = "/[s]/[v]/2json"
+  ToSIF = "/[s]/[v]/2sif"
 
 [NATS]
   Timeout = 500

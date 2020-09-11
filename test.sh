@@ -30,7 +30,7 @@ SIFFiles=./data/examples/$sv/*
 for f in $SIFFiles
 do    
     title='SIF to JSON Test @ '$f
-    url=$base"sif2json?sv=$sv"    
+    url=$base"2json?sv=$sv"    
     file="@"$f
     scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
     if [ $scode -ne 200 ]; then
@@ -53,7 +53,7 @@ JSONFiles=./data/output/$sv/json/*
 for f in $JSONFiles
 do  
     title='JSON to SIF Test @ '$f
-    url=$base"json2sif?sv=$sv"
+    url=$base"2sif?sv=$sv"
     file="@"$f
     scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
     if [ $scode -ne 200 ]; then

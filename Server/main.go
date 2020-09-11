@@ -9,7 +9,10 @@ import (
 	"reflect"
 	"time"
 
+	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/n3-util/n3cfg"
+	"github.com/cdutwhu/n3-util/n3cfg/attrim"
+	"github.com/cdutwhu/n3-util/n3cfg/strugen"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/labstack/echo-contrib/jaegertracing"
 	"github.com/labstack/echo/v4"
@@ -17,29 +20,61 @@ import (
 	"github.com/nats-io/nats.go"
 	cvt2json "github.com/nsip/n3-sif2json/2JSON"
 	cvt2sif "github.com/nsip/n3-sif2json/2SIF"
+	cfg "github.com/nsip/n3-sif2json/Config/cfg"
 )
 
+func mkCfg4Clt(cfg interface{}) {
+	forel := "./config_rel.toml"
+	n3cfg.Save(forel, cfg)
+	outoml := "./client/config.toml"
+	outsrc := "./client/config.go"
+	os.Remove(outoml)
+	os.Remove(outsrc)
+	attrim.SelCfgAttrL1(forel, outoml, "Path", "Service", "Route", "Server", "Access")
+	strugen.GenStruct(outoml, "Config", "goclient", outsrc)
+	strugen.GenNewCfg(outsrc)
+}
+
 func main() {
-	Cfg := n3cfg.ToEnvN3sif2jsonAll(map[string]string{
-		"[s]": "Service",
-		"[v]": "Version",
-	}, envKey)
-	failOnErrWhen(Cfg == nil, "%v: Config Init Error", n3err.CFG_INIT_ERR)
+	// Load global config.toml file from Config/
+	pCfg := cfg.NewCfg(
+		"Config",
+		map[string]string{
+			"[s]":    "Service",
+			"[v]":    "Version",
+			"[port]": "WebService.Port",
+		},
+		"./Config/config.toml",
+		"../Config/config.toml",
+	)
+	failOnErrWhen(pCfg == nil, "%v: Config Init Error", n3err.CFG_INIT_ERR)
+	Cfg := pCfg.(*cfg.Config)
+
+	// Trim a shorter config toml file for client package
+	if len(os.Args) > 2 && os.Args[2] == "trial" {
+		mkCfg4Clt(Cfg)
+		return
+	}
 
 	ws, service := Cfg.WebService, Cfg.Service.(string)
+
+	// Set Jaeger Env for tracing
 	os.Setenv("JAEGER_SERVICE_NAME", service)
 	os.Setenv("JAEGER_SAMPLER_TYPE", "const")
 	os.Setenv("JAEGER_SAMPLER_PARAM", "1")
 
-	// --- LOGGLY --- //
+	// Set LOGGLY
 	setLoggly(true, Cfg.Loggly.Token, service)
-	syncBindLog(true)
 
+	// Set Log Options
+	syncBindLog(true)
 	enableWarnDetail(false)
 	enableLog2F(true, Cfg.Log)
+
 	logGrp.Do(fSf("local log file @ [%s]", Cfg.Log))
 	logGrp.Do(fSf("[%s] Hosting on: [%v:%d], version [%v]", service, localIP(), ws.Port, Cfg.Version))
 
+	// Start Service
 	done := make(chan string)
 	c := make(chan os.Signal)
 	signal.Notify(c, os.Kill, os.Interrupt)
@@ -85,7 +120,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	e.Logger.Infof(" ------------------------ e.Logger.Infof ------------------------ ")
 
 	var (
-		Cfg    = n3cfg.FromEnvN3sif2jsonAll(envKey)
+		Cfg    = rflx.Env2Struct("Config", &cfg.Config{}).(*cfg.Config)
 		port   = Cfg.WebService.Port
 		fullIP = localIP() + fSf(":%d", port)
 		route  = Cfg.Route
@@ -97,7 +132,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 	// *************************************** List all API, FILE *************************************** //
 
-	path := route.HELP
+	path := route.Help
 	e.GET(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
@@ -110,8 +145,8 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			// 	fSf("\n")+
 			fSf("POST %-40s-> %s\n"+
 				"POST %-40s-> %s\n",
-				fullIP+route.SIF2JSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
-				fullIP+route.JSON2SIF, "Upload JSON, return SIF(XML). [sv]: SIF Spec. Version"))
+				fullIP+route.ToJSON, "Upload SIF(XML), return JSON. [sv]: SIF Spec. Version",
+				fullIP+route.ToSIF, "Upload JSON, return SIF(XML). [sv]: SIF Spec. Version"))
 	})
 
 	// ------------------------------------------------------------------------------------ //
@@ -140,7 +175,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	// ------------------------------------------------------------------------------------------------------------- //
 	// ------------------------------------------------------------------------------------------------------------- //
 
-	path = route.SIF2JSON
+	path = route.ToJSON
 	e.POST(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
@@ -222,7 +257,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 	// ------------------------------------------------------------------------------------------------------------- //
 	// ------------------------------------------------------------------------------------------------------------- //
 
-	path = route.JSON2SIF
+	path = route.ToSIF
 	e.POST(path, func(c echo.Context) error {
 		defer func() { mMtx[path].Unlock() }()
 		mMtx[path].Lock()
