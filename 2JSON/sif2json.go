@@ -4,7 +4,7 @@ import (
 	"regexp"
 
 	xj "github.com/basgys/goxml2json"
-	"github.com/cdutwhu/n3-util/n3cfg"
+	cfg "github.com/nsip/n3-sif2json/Config/cfg"
 	sif346 "github.com/nsip/n3-sif2json/SIFSpec/3.4.6"
 	sif347 "github.com/nsip/n3-sif2json/SIFSpec/3.4.7"
 )
@@ -64,7 +64,7 @@ func enforceCfg(json string, lsJSONCfg ...string) string {
 
 // SIF2JSON : if [sifver] is "", DefaultSIFVer applies
 func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, string, error) {
-	cfgAll := n3cfg.ToEnvN3sif2jsonAll(nil, "envkey", "../Config/config.toml")
+	cfgAll := cfg.NewCfg("Config", nil, "./Config/config.toml", "../Config/config.toml").(*cfg.Config)
 
 	jsonBuf, err := xj.Convert(
 		sNewReader(xml),

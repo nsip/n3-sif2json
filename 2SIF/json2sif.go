@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"regexp"
 
-	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/clbanning/mxj"
+	cfg "github.com/nsip/n3-sif2json/Config/cfg"
 	sif346 "github.com/nsip/n3-sif2json/SIFSpec/3.4.6"
 	sif347 "github.com/nsip/n3-sif2json/SIFSpec/3.4.7"
 )
@@ -402,7 +402,7 @@ func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 
 // JSON2SIF : JSON2SIF4LF -> JSON2SIF3RD -> JSON2SIFSpec -> JSON2SIFRepl
 func JSON2SIF(json, sifver string) (sif, sv string, err error) {
-	cfgAll := n3cfg.ToEnvN3sif2jsonAll(nil, "envkey", "../Config/config.toml")
+	cfgAll := cfg.NewCfg("Config", nil, "./Config/config.toml", "../Config/config.toml").(*cfg.Config)
 
 	ver := cfgAll.SIF.DefaultVer
 	if sifver != "" {

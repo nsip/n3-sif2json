@@ -4,7 +4,31 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
+	"strings"
+
+	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/io"
+	"github.com/cdutwhu/gotil/rflx"
+	"github.com/cdutwhu/gotil/str"
+	"github.com/cdutwhu/n3-util/n3cfg/strugen"
+)
+
+var (
+	fPln           = fmt.Println
+	fPf            = fmt.Printf
+	fSf            = fmt.Sprintf
+	sHasPrefix     = strings.HasPrefix
+	sSplit         = strings.Split
+	sReplace       = strings.Replace
+	sCount         = strings.Count
+	sTrim          = strings.Trim
+	mapKeys        = rflx.MapKeys
+	rmHeadToFirst  = str.RmHeadToFirst
+	rmHeadToLast   = str.RmHeadToLast
+	rmTailFromLast = str.RmTailFromLast
+	mustWriteFile  = io.MustWriteFile
+	failOnErr      = fn.FailOnErr
+	failOnErrWhen  = fn.FailOnErrWhen
 )
 
 // Println :
@@ -118,8 +142,21 @@ func GenTomlAndGoSrc(SIFSpecPath, outDir string) {
 }
 
 func main() {
-	GenTomlAndGoSrc(os.Args[2], os.Args[3])
-	abs, err := filepath.Abs(os.Args[3])
-	failOnErr("%v", err)
-	fPf("Dumped [Bool2JSON.toml] [List2JSON.toml] [Num2JSON.toml] into %s\n", abs)
+
+	cfgsrc, pkgname := "./2_toml2json/config.go", "main"
+	os.Remove(cfgsrc)
+
+	GenTomlAndGoSrc("./3.4.6.txt", "./3.4.6/")
+	toml346 := "./3.4.6/toml/"
+	strugen.GenStruct(toml346+"List2JSON.toml", "CfgL2J346", pkgname, cfgsrc)
+	strugen.GenStruct(toml346+"Bool2JSON.toml", "CfgB2J346", pkgname, cfgsrc)
+	strugen.GenStruct(toml346+"Num2JSON.toml", "CfgN2J346", pkgname, cfgsrc)
+
+	GenTomlAndGoSrc("./3.4.7.txt", "./3.4.7/")
+	toml347 := "./3.4.7/toml/"
+	strugen.GenStruct(toml347+"List2JSON.toml", "CfgL2J347", pkgname, cfgsrc)
+	strugen.GenStruct(toml347+"Bool2JSON.toml", "CfgB2J347", pkgname, cfgsrc)
+	strugen.GenStruct(toml347+"Num2JSON.toml", "CfgN2J347", pkgname, cfgsrc)
+
+	strugen.GenNewCfg(cfgsrc)
 }

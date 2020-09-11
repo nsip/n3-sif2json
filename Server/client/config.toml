@@ -1,0 +1,14 @@
+Service = "n3-sif2json"
+
+[Route]
+  Help = "/"
+  ToJSON = "/n3-sif2json/v0.4.2/2json"
+  ToSIF = "/n3-sif2json/v0.4.2/2sif"
+
+[Server]
+  Port = 1324
+  Protocol = "http"
+  IP = "192.168.31.168"
+
+[Access]
+  Timeout = 10

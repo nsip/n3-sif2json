@@ -7,9 +7,7 @@ g=`tput setaf 2`
 y=`tput setaf 3`
 w=`tput sgr0`
 
-# Copy config_rel.toml for [build] && Trim Server config.toml for [goclient]
-go test -v -timeout 1s -count=1 ./config/ -run TestMkCfg4Clt -args "Path" "Service" "Route" "Server" "Access"
-echo "${g}goclient config.toml Generated${w}"
+CGO_ENABLED=0 go run ./main.go ./var.go -- trial
 
 rm -rf ./build
 
@@ -40,6 +38,6 @@ cp ./config_rel.toml $OUTPATH'config.toml'
 # mkdir -p $OUTPATH
 # CGO_ENABLED=0 GOOS="linux" GOARCH="$GOARCH" GOARM=7 go build -ldflags="$LDFLAGS" -o $OUT
 # mv $OUT $OUTPATH
-# cp ./config_rel.toml $OUTPATH
+# cp ./config_rel.toml $OUTPATH'config.toml'
 
 rm config_rel.toml

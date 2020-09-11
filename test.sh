@@ -10,13 +10,14 @@ W=`tput sgr0`
 printf "\n"
 
 ip="192.168.31.168:1324/"
-base=$ip"n3-sif2json/v0.4.1/"
+base=$ip"n3-sif2json/v0.4.2/"
 
 title='SIF2JSON all API Paths'
 url=$ip
 scode=`curl --write-out "%{http_code}" --silent --output /dev/null $url`
 if [ $scode -ne 200 ]; then
     echo "${Y}${title}${W}"
+    exit 1
 else
     echo "${G}${title}${W}"
 fi
@@ -29,11 +30,12 @@ SIFFiles=./data/examples/$sv/*
 for f in $SIFFiles
 do    
     title='SIF to JSON Test @ '$f
-    url=$base"sif2json?sv=$sv"    
+    url=$base"2json?sv=$sv"    
     file="@"$f
     scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
     if [ $scode -ne 200 ]; then
         echo "${Y}${title}${W}"
+        exit 1
     else
         echo "${G}${title}${W}"
     fi
@@ -51,11 +53,12 @@ JSONFiles=./data/output/$sv/json/*
 for f in $JSONFiles
 do  
     title='JSON to SIF Test @ '$f
-    url=$base"json2sif?sv=$sv"
+    url=$base"2sif?sv=$sv"
     file="@"$f
     scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
     if [ $scode -ne 200 ]; then
         echo "${Y}${title}${W}"
+        exit 1
     else
         echo "${G}${title}${W}"
     fi
@@ -68,3 +71,5 @@ do
     cat $outfile
     printf "\n"
 done
+
+echo "${G}All Done${W}"

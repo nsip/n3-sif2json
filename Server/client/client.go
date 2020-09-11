@@ -7,17 +7,17 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3err"
 	"github.com/opentracing/opentracing-go"
 	tags "github.com/opentracing/opentracing-go/ext"
 )
 
-// DOwithTrace :
-func DOwithTrace(ctx context.Context, config, fn string, args *Args) (string, error) {
+// DoWithTrace :
+func DoWithTrace(ctx context.Context, config, fn string, args *Args) (string, error) {
 
-	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envKey, config)
-	failOnErrWhen(Cfg == nil, "%v", n3err.CFG_INIT_ERR)
+	pCfg := NewCfg("Config", nil)
+	failOnErrWhen(pCfg == nil, "%v", n3err.CFG_INIT_ERR)
+	Cfg := pCfg.(*Config)
 
 	service := Cfg.Service
 	if span := opentracing.SpanFromContext(ctx); span != nil {
@@ -34,11 +34,12 @@ func DOwithTrace(ctx context.Context, config, fn string, args *Args) (string, er
 	return DO(config, fn, args)
 }
 
-// DO : fn ["HELP", "SIF2JSON", "JSON2SIF"]
+// DO : fn ["Help", "ToJSON", "ToSIF"]
 func DO(config, fn string, args *Args) (string, error) {
 
-	Cfg := n3cfg.ToEnvN3sif2jsonGoclient(nil, envKey, config)
-	failOnErrWhen(Cfg == nil, "%v", n3err.CFG_INIT_ERR)
+	pCfg := NewCfg("Config", nil)
+	failOnErrWhen(pCfg == nil, "%v", n3err.CFG_INIT_ERR)
+	Cfg := pCfg.(*Config)
 
 	server := Cfg.Server
 	protocol, ip, port := server.Protocol, server.IP, server.Port
@@ -89,23 +90,23 @@ func rest(fn, url string, args *Args, chStr chan string, chErr chan error) {
 	)
 
 	switch fn {
-	case "HELP":
+	case "Help":
 		if Resp, Err = http.Get(url); Err != nil {
 			goto ERR_RET
 		}
 
-	case "SIF2JSON", "JSON2SIF":
+	case "ToJSON", "ToSIF":
 		if args == nil {
 			Err = n3err.PARAM_INVALID
 			goto ERR_RET
 		}
 
 		str := string(args.Data)
-		if fn == "SIF2JSON" && !isXML(str) {
+		if fn == "ToJSON" && !isXML(str) {
 			Err = n3err.PARAM_INVALID_XML
 			goto ERR_RET
 
-		} else if fn == "JSON2SIF" && !isJSON(str) {
+		} else if fn == "ToSIF" && !isJSON(str) {
 			Err = n3err.PARAM_INVALID_JSON
 			goto ERR_RET
 		}
