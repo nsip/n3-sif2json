@@ -1,3 +1,6 @@
+## docker image prune
+## docker rmi $(docker images -a -q)
+
 # FROM alpine
 # RUN mkdir /n3-sif2json
 # COPY . / /n3-sif2json/
@@ -49,21 +52,20 @@
 # STEP 1 build executable binary (go.mod version)
 ############################
 FROM golang:1.15.2-alpine3.12 as builder
-RUN apk --no-cache add ca-certificates
-RUN apk update && apk add git
-RUN apk add gcc g++
-RUN mkdir -p /build
-COPY . / /build/
-WORKDIR /build/
-RUN ls ./
-# unfinished !
+RUN apk add --no-cache ca-certificates
+RUN apk update && apk add --no-cache git bash
+RUN mkdir -p /n3-sif2json
+COPY . / /n3-sif2json/
+WORKDIR /n3-sif2json/
+RUN ["/bin/bash", "-c", "./build_d.sh"]
+RUN ["/bin/bash", "-c", "./release_d.sh"]
 
 ############################
 # STEP 2 build a small image
 ############################
-#FROM debian:stretch
-# FROM alpine
-# COPY --from=builder /build/app /app
-# # NOTE - make sure it is the last build that still copies the files
-# COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-# CMD ["./app"]
+FROM alpine
+COPY --from=builder /n3-sif2json/app/ /
+# NOTE - make sure it is the last build that still copies the files
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+WORKDIR /
+CMD ["./server"]

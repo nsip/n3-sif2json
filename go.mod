@@ -13,8 +13,7 @@ require (
 	github.com/cdutwhu/gotil v0.1.5
 	github.com/cdutwhu/n3-util v0.3.5
 	github.com/clbanning/mxj v1.8.4
-	github.com/davecgh/go-spew v1.1.1
-	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b
+	github.com/gookit/color v1.3.0 // indirect
 	github.com/labstack/echo-contrib v0.9.0
 	github.com/labstack/echo/v4 v4.1.17
 	github.com/nats-io/jwt v1.0.1 // indirect

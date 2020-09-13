@@ -1,12 +1,13 @@
 #!/bin/bash
+go get -u ./...
 
-set -e
+R=`tput setaf 1`
+G=`tput setaf 2`
+Y=`tput setaf 3`
+W=`tput sgr0`
 
-r=`tput setaf 1`
-g=`tput setaf 2`
-y=`tput setaf 3`
-w=`tput sgr0`
+oripath=`pwd`
 
-cd ./SIFSpec && ./build.sh && cd - && echo "${g}SIF Spec Ready${w}"
-cd ./Config && ./build.sh && cd - && echo "${g}Config Prepared${w}"
-cd ./Server && ./build.sh && cd - && echo "${g}Server Built${w}"
+cd ./SIFSpec && ./build.sh && cd $oripath && echo "${G}SIF Spec Ready${W}"
+cd ./Config && ./build.sh && cd $oripath && echo "${G}Config Prepared${W}"
+cd ./Server && ./build.sh && cd $oripath && echo "${G}Server Built${W}"

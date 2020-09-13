@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -e
 
 R=`tput setaf 1`
@@ -20,5 +19,6 @@ if [ $os != 'linux64' ] && [ $os != 'mac' ] && [ $os != 'win64' ]; then
     exit 1
 fi
 
-cp ./Server/build/$os/* ./Dockerfile $dir
+mkdir -p $dir
+cp ./Server/build/$os/* $dir
 echo "Server Package $os Version is Dumped into $dir"
