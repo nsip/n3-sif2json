@@ -1,4 +1,4 @@
-package goclient
+package client
 
 import (
 	"fmt"
@@ -33,10 +33,6 @@ var (
 	isXML         = judge.IsXML
 	isJSON        = judge.IsJSON
 	mustWriteFile = io.MustWriteFile
-)
-
-const (
-	envKey = "S2JGoClt"
 )
 
 // Args is arguments for "Route"

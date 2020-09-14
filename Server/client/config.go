@@ -1,4 +1,4 @@
-package goclient
+package client
 
 import "github.com/cdutwhu/n3-util/n3cfg"
 

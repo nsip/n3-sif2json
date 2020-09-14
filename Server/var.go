@@ -41,10 +41,6 @@ var (
 	url1Value        = rest.URL1Value
 )
 
-const (
-	envKey = "S2JSvr"
-)
-
 var (
 	logGrp  = logBind(logger) // logBind(logger, loggly("info"))
 	warnGrp = logBind(warner) // logBind(warner, loggly("warn"))

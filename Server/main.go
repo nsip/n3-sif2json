@@ -30,7 +30,7 @@ func mkCfg4Clt(cfg interface{}) {
 	outsrc := "./client/config.go"
 	os.Remove(outoml)
 	os.Remove(outsrc)
-	attrim.SelCfgAttrL1(forel, outoml, "Path", "Service", "Route", "Server", "Access")
+	attrim.SelCfgAttrL1(forel, outoml, "Service", "Route", "Server", "Access")
 	strugen.GenStruct(outoml, "Config", "goclient", outsrc)
 	strugen.GenNewCfg(outsrc)
 }

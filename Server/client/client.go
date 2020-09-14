@@ -1,4 +1,4 @@
-package goclient
+package client
 
 import (
 	"bytes"
@@ -14,7 +14,6 @@ import (
 
 // DoWithTrace :
 func DoWithTrace(ctx context.Context, config, fn string, args *Args) (string, error) {
-
 	pCfg := NewCfg("Config", nil)
 	failOnErrWhen(pCfg == nil, "%v", n3err.CFG_INIT_ERR)
 	Cfg := pCfg.(*Config)
@@ -36,7 +35,6 @@ func DoWithTrace(ctx context.Context, config, fn string, args *Args) (string, er
 
 // DO : fn ["Help", "ToJSON", "ToSIF"]
 func DO(config, fn string, args *Args) (string, error) {
-
 	pCfg := NewCfg("Config", nil)
 	failOnErrWhen(pCfg == nil, "%v", n3err.CFG_INIT_ERR)
 	Cfg := pCfg.(*Config)
