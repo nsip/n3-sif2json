@@ -17,9 +17,9 @@ type Config struct {
 		Port int
 	}
 	Route struct {
-		Help string
 		ToJSON string
 		ToSIF string
+		Help string
 	}
 	NATS struct {
 		Timeout int
