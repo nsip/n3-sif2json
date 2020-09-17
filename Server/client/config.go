@@ -6,9 +6,9 @@ import "github.com/cdutwhu/n3-util/n3cfg"
 type Config struct {
 	Service string
 	Route struct {
+		Help string
 		ToJSON string
 		ToSIF string
-		Help string
 	}
 	Server struct {
 		Port int
