@@ -2,8 +2,8 @@ Service = "n3-sif2json"
 
 [Route]
   Help = "/"
-  ToJSON = "/n3-sif2json/v0.4.7/2json"
-  ToSIF = "/n3-sif2json/v0.4.7/2sif"
+  ToJSON = "/n3-sif2json/v0.4.8/2json"
+  ToSIF = "/n3-sif2json/v0.4.8/2sif"
 
 [Server]
   Port = 1324

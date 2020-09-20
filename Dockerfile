@@ -42,6 +42,10 @@
 # DOCUMENTATION
 ############################
 
+
+
+# docker build --rm -t nsip/n3-sif2json:latest -t nsip/n3-sif2json:v0.1.0 .
+
 ###########################
 # STEP 0 Get them certificates
 ############################
@@ -69,3 +73,5 @@ COPY --from=builder /n3-sif2json/app/ /
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 WORKDIR /
 CMD ["./server"]
+
+# docker run --rm --mount type=bind,source=$(pwd)/config.toml,target=/config.toml -p 0.0.0.0:1324:1324 nsip/n3-sif2json

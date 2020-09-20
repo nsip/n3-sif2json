@@ -10,7 +10,7 @@ W=`tput sgr0`
 printf "\n"
 
 ip="192.168.31.168:1324/"
-base=$ip"n3-sif2json/v0.4.4/"
+base=$ip"n3-sif2json/v0.4.8/"
 
 title='SIF2JSON all API Paths'
 url=$ip
@@ -21,8 +21,11 @@ if [ $scode -ne 200 ]; then
 else
     echo "${G}${title}${W}"
 fi
+echo "curl $url"
 curl -i $url
 printf "\n"
+
+# exit 0
 
 sv=3.4.7
 
@@ -44,10 +47,13 @@ do
     outdir=./data/output/$sv/json/
     mkdir -p $outdir
     outfile=$outdir"$jsonname"
+    echo "curl -X POST $url -d $file"
     curl -X POST $url -d $file > $outfile
     cat $outfile
     printf "\n"
 done
+
+# exit 0
 
 JSONFiles=./data/output/$sv/json/*
 for f in $JSONFiles
@@ -67,6 +73,7 @@ do
     outdir=./data/output/$sv/sif/
     mkdir -p $outdir
     outfile=$outdir"$sifname"
+    echo "curl -X POST $url -d $file"
     curl -X POST $url -d $file > $outfile
     cat $outfile
     printf "\n"

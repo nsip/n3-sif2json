@@ -1,5 +1,5 @@
 Service = "[PRJ]"
-Log = "~/.[PRJ]/log/[DATE].log"
+Log = "~/.[s]/log/[DATE].log"
 Version = "[VER]"
 
 [SIF]

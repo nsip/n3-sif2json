@@ -1,47 +1,64 @@
 # Web-Service for Converting SIF to JSON & Vice Versa
 
-## Getting Started
+## Build Prerequisite
 
-1. Make sure `GOLANG` dev package & `GIT` are available in your machine.
+0. Except 'config.toml' content, Do NOT change any project structure & file name & content.
 
-2. Build.
+1. Make sure current working directory of your command line environment is identical to the directory of this README.md file.
+   i.e. under "/n3-sif2json/"
+
+## Native Build
+
+0. It is NOT supported to make building on Windows OS. If you are using Windows OS, please choose 'Docker Build'.
+
+1. Make sure `Golang` dev package & `Git` are available on your machine.
+
+2. Run `./build.sh` to build service which embedded with SIF Spec 3.4.6 & 3.4.7.
+
+3. Run `./release.sh [linux64|win64|mac] 'dest-path'` to extract minimal executable package on different.
+   e.g. `./release.sh win64 ~/Desktop/sif2json/` extracts windows version bin package into "~/Desktop/sif2json/".
+   then 'server' executable is available under "~/Desktop/sif2json/".
+
+4. Jump into "~/Desktop/sif2json/", modify 'config.toml' if needed.
+   Please set [Service] & [Version] to your own value.
+
+5. Run `server`.
+   Default port is 1324, can be set from config.toml.
+
+## Docker Build
   
-   Run `./build.sh` to build service with SIF 3.4.6 & 3.4.7
+0. Make sure `Docker` is available and running on your machine.
 
-3. Release.
+1. Run `docker build --rm -t nsip/n3-sif2json:latest .` to make docker image.
 
-   Run `release.sh 'dest-platform' 'dest-path'`.
+2. Fetch a copy of configuration from '/n3-sif2json/Config/config.toml' to your current directory, modify it if needed.
+   Please set [Service] & [Version] to your own value.
 
-   e.g. run `./release.sh [linux64|win64|mac] ~/Desktop/sif2json/linux64/`
-  
-4. Docker Deploy (local, only for linux64 platform server).
+3. Run `docker run --rm --mount type=bind,source=$(pwd)/your-config.toml,target=/config.toml -p 0.0.0.0:1324:1324 nsip/n3-sif2json`.
+   Default port is 1324, can be set from config.toml. If it is not 1324, change above command's '1324' to your own number.
 
-   Make sure `Docker` is installed.
+## Test
 
-   Jump into your release dest-path in above step.
+0. Make sure `curl` is available on your machine.
 
-   e.g. jump into `~/Desktop/sif2json/linux64/`
+1. Run `curl IP:Port` to get the list of all available API path of n3-sif2json.
+   `IP` : your n3-sif2json server running machine ip.
+   `Port`: set in 'config.toml' file, default is 1324, can be changed in 'config.toml'.
 
-   Run `docker build --tag n3-sif2json .` to make docker image.
+2. Run `curl -X POST IP:Port/Service/Version/2json?sv=3.4.7 -d @path/to/your/sif.xml`
+   to convert a XML SIF to JSON.
 
-   Run `docker run --name sif2json --net host n3-sif2json:latest` to run docker image.
+   `IP` : your n3-sif2json server running machine ip.
+   `Port`: Get from server's 'config.toml'-[WebService]-[Port], default is 1324.
+   `Service`: service name. Get from server's 'config.toml'-[Service].
+   `Version`: service version. Get from server's 'config.toml'-[Version].
+   `sv`: SIF Spec Version, available 3.4.6 & 3.4.7
 
-5. Test.
+3. Run `curl -X POST IP:Port/Service/Version/2sif?sv=3.4.7 -d @path/to/your/sif.json`
+   to convert a JSON to XML SIF.
 
-   Make sure `curl` is installed.
-
-   curl test script in "test.sh", which goes through all examples in `./data/`.
-
-   Before running `./test.sh`, modify some params like URL (IP, PORT ...) if needed (especially service version number in URL).
-
-   Refer to 'test.sh', write more your own curl test.
-
-## Prerequisites
-
-SIF Specification Description File (txt file). It's text readable format, and at least contains:
-
-1. Spec VERSION.
-
-2. LIST, NUMERIC, BOOLEAN attribute type description.
-  
-3. Element TRAVERSE description.
+   `IP` : your n3-sif2json server running machine ip.
+   `Port`: Get from server's 'config.toml'-[WebService]-[Port], default is 1324.
+   `Service`: service name. Get from server's 'config.toml'-[Service].
+   `Version`: service version. Get from server's 'config.toml'-[Version].
+   `sv`: SIF Spec Version, available 3.4.6 & 3.4.7

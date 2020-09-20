@@ -22,9 +22,9 @@ type Config struct {
 		ToSIF string
 	}
 	NATS struct {
+		Timeout int
 		URL string
 		Subject string
-		Timeout int
 	}
 	Server struct {
 		Port interface{}
