@@ -17,9 +17,9 @@ type Config struct {
 		Port int
 	}
 	Route struct {
-		Help string
 		ToJSON string
 		ToSIF string
+		Help string
 	}
 	NATS struct {
 		Timeout int
@@ -27,9 +27,9 @@ type Config struct {
 		Subject string
 	}
 	Server struct {
-		Port interface{}
 		Protocol string
 		IP interface{}
+		Port interface{}
 	}
 	Access struct {
 		Timeout int

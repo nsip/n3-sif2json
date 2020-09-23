@@ -10,7 +10,7 @@ W=`tput sgr0`
 printf "\n"
 
 ip="192.168.31.168:1324/"
-base=$ip"n3-sif2json/v0.4.8/"
+base=$ip"n3-sif2json/v0.4.9/"
 
 title='SIF2JSON all API Paths'
 url=$ip
