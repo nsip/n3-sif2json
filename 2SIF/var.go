@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/dispatcher"
 	"github.com/cdutwhu/gotil/endec"
 	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/judge"
@@ -50,7 +51,7 @@ var (
 	rmTailFromFirstAny = str.RmTailFromFirstAny
 	replByPosGrp       = str.ReplByPosGrp
 	indent             = str.IndentTxt
-	Go                 = misc.Go
+	syncParallel       = dispatcher.SyncParallel
 	trackTime          = misc.TrackTime
 	isJSON             = judge.IsJSON
 	md5Str             = endec.MD5Str
@@ -65,8 +66,12 @@ const MaxGoTo = 100
 var (
 	nGoTo = 0
 
-	re1 = regexp.MustCompile("\n[ ]*<#content>")
-	re2 = regexp.MustCompile("</#content>\n[ ]*")
+	rx1       = regexp.MustCompile("\n[ ]*<#content>")
+	rx2       = regexp.MustCompile("</#content>\n[ ]*")
+	rx3       = regexp.MustCompile(`".+": ".*(\\n)+.*"`)
+	rxTag     = regexp.MustCompile(`<.+[> ]`)
+	rxAttr    = regexp.MustCompile(`.+="`)
+	rxReplNum = regexp.MustCompile(`@\d+#`)
 
 	TrvsGrpViaSpec []string                    // from SIF Spec
 	mPathAttrs     = make(map[string][]string) // key: spec path, value: attribute-value

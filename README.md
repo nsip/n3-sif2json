@@ -23,7 +23,7 @@
    Please set [Service] & [Version] to your own value.
 
 5. Run `server`.
-   Default port is 1324, can be set from config.toml.
+   Default port is 1324, can be set at config.toml.
 
 ## Docker Build
   
@@ -31,7 +31,7 @@
 
 1. Run `docker build --rm -t nsip/n3-sif2json:latest .` to make docker image.
 
-2. Fetch a copy of configuration from '/n3-sif2json/Config/config.toml' to your current directory, modify it if needed.
+2. Copy a configuration file from '/n3-sif2json/Config/config.toml' to current directory, modify if needed.
    Please set [Service] & [Version] to your own value.
 
 3. Run `docker run --rm --mount type=bind,source=$(pwd)/your-config.toml,target=/config.toml -p 0.0.0.0:1324:1324 nsip/n3-sif2json`.

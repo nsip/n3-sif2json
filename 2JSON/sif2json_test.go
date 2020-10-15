@@ -46,11 +46,11 @@ func TestSIF2JSON(t *testing.T) {
 	// defer enableWarnDetail(true)
 	enableWarnDetail(false)
 
-	ver := "3.4.6"
+	ver := "3.4.7"
 	dir := `../data/examples/` + ver
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
-	Go(4, s2j, files, dir, ver)
+	syncParallel(4, s2j, files, dir, ver)
 	fPln("OK")
 }

@@ -9,7 +9,7 @@ import (
 	sif347 "github.com/nsip/n3-sif2json/SIFSpec/3.4.7"
 )
 
-func selBytesOfJSON(ver, ruleType, object string, indices ...int) (rt []string) {
+func selBytesOfJSON(ver, ruleType, object string, indices ...int) (rt []string, err error) {
 
 	var mBytes map[string][]byte
 	switch ver {
@@ -32,7 +32,9 @@ func selBytesOfJSON(ver, ruleType, object string, indices ...int) (rt []string) 
 			mBytes = sif347.JSON_NUM
 		}
 	default:
-		warner("No SIF Spec Version @ %s", ver)
+		err = fEf("Error: No SIF Spec @ Version [%s]", ver)
+		warner("%v", err)
+		return
 	}
 
 	for _, idx := range indices {
@@ -47,16 +49,13 @@ func selBytesOfJSON(ver, ruleType, object string, indices ...int) (rt []string) 
 // enforceCfg : LIST config must be from low Level to high level
 func enforceCfg(json string, lsJSONCfg ...string) string {
 
-	rLB := regexp.MustCompile(`\[[ \t\r\n]*\[`)
-	rRB := regexp.MustCompile(`\][ \t\r\n]*\]`)
-
 	for _, jsoncfg := range lsJSONCfg {
 		// make sure [jsoncfg] is formatted; Otherwise, do Fmt firstly
 		// jsoncfg = fmtJSON(jsoncfg, 2)
 
 		json, _ = newJKV(json, "", false).Unfold(0, newJKV(jsoncfg, "", false))
 		// make sure there is no double "[" OR "]"
-		bytes := rRB.ReplaceAll(rLB.ReplaceAll([]byte(json), []byte("[")), []byte("]"))
+		bytes := rxRB.ReplaceAll(rxLB.ReplaceAll([]byte(json), []byte("[")), []byte("]"))
 		json = fmtJSON(string(bytes), 2)
 	}
 	return json
@@ -103,9 +102,21 @@ func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, stri
 		ver = sifver
 	}
 
-	json = enforceCfg(json, selBytesOfJSON(ver, "list", obj, iter2Slc(10)...)...)
-	json = enforceCfg(json, selBytesOfJSON(ver, "num", obj, iter2Slc(2)...)...)
-	json = enforceCfg(json, selBytesOfJSON(ver, "bool", obj, iter2Slc(2)...)...)
+	if rt, err := selBytesOfJSON(ver, "list", obj, iter2Slc(10)...); err == nil {
+		json = enforceCfg(json, rt...)
+	} else {
+		return "", "", err
+	}
+	if rt, err := selBytesOfJSON(ver, "num", obj, iter2Slc(2)...); err == nil {
+		json = enforceCfg(json, rt...)
+	} else {
+		return "", "", err
+	}
+	if rt, err := selBytesOfJSON(ver, "bool", obj, iter2Slc(2)...); err == nil {
+		json = enforceCfg(json, rt...)
+	} else {
+		return "", "", err
+	}
 
 	// Deal with 'LF', 'TB'  Part2 -------------------------------------------------------------
 	mRepl2 := map[string]string{"#LF#": "\\n", "#TB#": "\\t"}
@@ -116,13 +127,11 @@ func SIF2JSON(xml, sifver string, enforced bool, subobj ...string) (string, stri
 	// XML empty element(empty text) with Attributes -------------------------------------------
 	emptyPosPair := [][]int{}
 
-	re1 := regexp.MustCompile(`": \{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+\}`) // one empty object
-	for _, pos := range re1.FindAllStringIndex(json, -1) {
+	for _, pos := range rxOneEmpty.FindAllStringIndex(json, -1) {
 		emptyPosPair = append(emptyPosPair, []int{pos[0] + 6, pos[0] + 6})
 	}
 
-	re2 := regexp.MustCompile(`[\[,]\n[ ]+\{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+\}`) // empty object in array
-	for _, pos := range re2.FindAllStringIndex(json, -1) {
+	for _, pos := range rxEmptyInArr.FindAllStringIndex(json, -1) {
 		remain, offset := json[pos[0]:], 0
 		for i, c := range remain {
 			if c == '{' {

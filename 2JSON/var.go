@@ -2,9 +2,11 @@ package cvt2json
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/cdutwhu/debog/fn"
+	"github.com/cdutwhu/gotil/dispatcher"
 	"github.com/cdutwhu/gotil/io"
 	"github.com/cdutwhu/gotil/iter"
 	"github.com/cdutwhu/gotil/judge"
@@ -21,6 +23,7 @@ var (
 	fPln             = fmt.Println
 	fSp              = fmt.Sprint
 	fSf              = fmt.Sprintf
+	fEf              = fmt.Errorf
 	sHasPrefix       = strings.HasPrefix
 	sHasSuffix       = strings.HasSuffix
 	sReplaceAll      = strings.ReplaceAll
@@ -42,13 +45,20 @@ var (
 	rmTailFromLastN  = str.RmTailFromLastN
 	rmTailFromLast   = str.RmTailFromLast
 	rmHeadToLast     = str.RmHeadToLast
+	syncParallel     = dispatcher.SyncParallel
 	iter2Slc         = iter.Iter2Slc
 	mustWriteFile    = io.MustWriteFile
 	exist            = judge.Exist
-	Go               = misc.Go
 	trackTime        = misc.TrackTime
 	xmlRoot          = n3xml.XMLRoot
 	jsonRoot         = n3json.JSONRoot
 	fmtJSON          = n3json.Fmt
 	newJKV           = jkv.NewJKV
+)
+
+var (
+	rxLB         = regexp.MustCompile(`\[[ \t\r\n]*\[`)
+	rxRB         = regexp.MustCompile(`\][ \t\r\n]*\]`)
+	rxOneEmpty   = regexp.MustCompile(`": \{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+\}`)         // one empty object
+	rxEmptyInArr = regexp.MustCompile(`[\[,]\n[ ]+\{\n([ ]+"-.+": .+,\n)*([ ]+"-.+": .+\n)[ ]+\}`) // empty object in array
 )

@@ -200,27 +200,32 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 		logGrp.Do("Reading Request Body")
 		bytes, err := ioutil.ReadAll(c.Request().Body)
+		sifstr := ""
 		if err != nil {
 			status = http.StatusInternalServerError
 			ret = err.Error() + " @ Read Request Body"
 			goto RET
 		}
-		if len(bytes) == 0 {
+		if sifstr = string(bytes); len(sifstr) == 0 {
 			status = http.StatusBadRequest
 			ret = n3err.HTTP_REQBODY_EMPTY.Error() + " @ Read Request Body"
 			goto RET
 		}
-		if !isXML(string(bytes)) {
+		if !isXML(sifstr) {
 			status = http.StatusBadRequest
 			ret = n3err.PARAM_INVALID_XML.Error() + " @ Read Request Body"
 			goto RET
 		}
 
+		///
+		// TODO :
+		///
+
 		logGrp.Do("cvt2json.SIF2JSON")
-		// ret, svUsed, err = cvt2json.SIF2JSON(Cfg.Cfg2JSON, string(bytes), sv, false)
+		// ret, svUsed, err = cvt2json.SIF2JSON(Cfg.Cfg2JSON, sifstr, sv, false)
 		// Trace [cvt2json.SIF2JSON], uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
 		results = jaegertracing.TraceFunction(c, func() (string, string, error) {
-			return cvt2json.SIF2JSON(string(bytes), sv, false)
+			return cvt2json.SIF2JSON(sifstr, sv, false)
 		})
 		ret = results[0].Interface().(string)
 		if !results[2].IsNil() {
@@ -254,7 +259,8 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		} else {
 			logGrp.Do("--> Finish SIF2JSON")
 		}
-		return c.String(status, ret) // ret is already JSON String, so return String
+
+		return c.String(status, sTrimRight(ret, "\n")+"\n") // ret is already JSON String, so return String
 	})
 
 	// ------------------------------------------------------------------------------------------------------------- //
@@ -279,26 +285,31 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 		logGrp.Do("Reading Body")
 		bytes, err := ioutil.ReadAll(c.Request().Body)
+		jsonstr := ""
 		if err != nil {
 			status = http.StatusInternalServerError
 			ret = err.Error() + " @ Read Request Body"
 			goto RET
 		}
-		if len(bytes) == 0 {
+		if jsonstr = string(bytes); len(jsonstr) == 0 {
 			status = http.StatusBadRequest
 			ret = n3err.HTTP_REQBODY_EMPTY.Error() + " @ Read Request Body"
 			goto RET
 		}
-		if !isJSON(string(bytes)) {
+		if !isJSON(jsonstr) {
 			status = http.StatusBadRequest
 			ret = n3err.PARAM_INVALID_JSON.Error() + " @ Read Request Body"
 			goto RET
 		}
 
+		///
+		// TODO :
+		///
+
 		logGrp.Do("cvt2json.JSON2SIF")
-		// ret, svUsed, err := cvt2sif.JSON2SIF(Cfg.Cfg2SIF, string(bytes), sv)
+		// ret, svUsed, err := cvt2sif.JSON2SIF(Cfg.Cfg2SIF, jsonstr, sv)
 		// Trace [cvt2sif.JSON2SIF]
-		results = jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, string(bytes), sv)
+		results = jaegertracing.TraceFunction(c, cvt2sif.JSON2SIF, jsonstr, sv)
 		ret = results[0].Interface().(string)
 		if !results[2].IsNil() {
 			status = http.StatusInternalServerError
@@ -313,6 +324,6 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		} else {
 			logGrp.Do("--> Finish JSON2SIF")
 		}
-		return c.String(status, ret)
+		return c.String(status, sTrimRight(ret, "\n")+"\n")
 	})
 }

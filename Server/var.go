@@ -19,6 +19,7 @@ var (
 	fSf              = fmt.Sprintf
 	fPf              = fmt.Printf
 	sReplaceAll      = strings.ReplaceAll
+	sTrimRight       = strings.TrimRight
 	failOnErr        = fn.FailOnErr
 	failOnErrWhen    = fn.FailOnErrWhen
 	enableLog2F      = fn.EnableLog2F

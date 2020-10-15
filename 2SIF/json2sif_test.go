@@ -53,6 +53,6 @@ func TestJSON2SIF(t *testing.T) {
 	files, err := ioutil.ReadDir(dir)
 	failOnErr("%v", err)
 	failOnErrWhen(len(files) == 0, "%v", n3err.FILE_NOT_FOUND)
-	Go(1, j2s, ver, files, dir) // only dispatch 1 goroutine, otherwise, error
+	syncParallel(1, j2s, ver, files, dir) // only dispatch 1 goroutine, otherwise, error
 	fPln("OK")
 }

@@ -9,14 +9,14 @@ W=`tput sgr0`
 
 printf "\n"
 
-ip="192.168.31.168:1324/"
-base=$ip"n3-sif2json/v0.4.9/"
+ip="192.168.31.168:1324/"    ### 
+base=$ip"n3-sif2json/v0.4.10/"    ###
 
 title='SIF2JSON all API Paths'
 url=$ip
 scode=`curl --write-out "%{http_code}" --silent --output /dev/null $url`
 if [ $scode -ne 200 ]; then
-    echo "${Y}${title}${W}"
+    echo "${R}${title}${W}"
     exit 1
 else
     echo "${G}${title}${W}"
@@ -32,12 +32,12 @@ sv=3.4.7
 SIFFiles=./data/examples/$sv/*
 for f in $SIFFiles
 do    
-    title='SIF to JSON Test @ '$f
+    title='2JSON Test @ '$f
     url=$base"2json?sv=$sv"    
     file="@"$f
     scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
     if [ $scode -ne 200 ]; then
-        echo "${Y}${title}${W}"
+        echo "${R}${title}${W}"
         exit 1
     else
         echo "${G}${title}${W}"
@@ -58,12 +58,12 @@ done
 JSONFiles=./data/output/$sv/json/*
 for f in $JSONFiles
 do  
-    title='JSON to SIF Test @ '$f
+    title='2SIF Test @ '$f
     url=$base"2sif?sv=$sv"
     file="@"$f
     scode=`curl -X POST $url -d $file -w "%{http_code}" -s -o /dev/null`
     if [ $scode -ne 200 ]; then
-        echo "${Y}${title}${W}"
+        echo "${R}${title}${W}"
         exit 1
     else
         echo "${G}${title}${W}"

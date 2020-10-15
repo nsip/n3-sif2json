@@ -143,20 +143,20 @@ func GenTomlAndGoSrc(SIFSpecPath, outDir string) {
 
 func main() {
 
-	cfgsrc, pkgname := "./2_toml2json/config.go", "main"
-	os.Remove(cfgsrc)
+	cfgSrc, pkgName := "./2_toml2json/config.go", "main"
+	os.Remove(cfgSrc)
 
 	GenTomlAndGoSrc("./3.4.6.txt", "./3.4.6/")
 	toml346 := "./3.4.6/toml/"
-	strugen.GenStruct(toml346+"List2JSON.toml", "CfgL2J346", pkgname, cfgsrc)
-	strugen.GenStruct(toml346+"Bool2JSON.toml", "CfgB2J346", pkgname, cfgsrc)
-	strugen.GenStruct(toml346+"Num2JSON.toml", "CfgN2J346", pkgname, cfgsrc)
+	strugen.GenStruct(toml346+"List2JSON.toml", "CfgL2J346", pkgName, cfgSrc)
+	strugen.GenStruct(toml346+"Bool2JSON.toml", "CfgB2J346", pkgName, cfgSrc)
+	strugen.GenStruct(toml346+"Num2JSON.toml", "CfgN2J346", pkgName, cfgSrc)
 
 	GenTomlAndGoSrc("./3.4.7.txt", "./3.4.7/")
 	toml347 := "./3.4.7/toml/"
-	strugen.GenStruct(toml347+"List2JSON.toml", "CfgL2J347", pkgname, cfgsrc)
-	strugen.GenStruct(toml347+"Bool2JSON.toml", "CfgB2J347", pkgname, cfgsrc)
-	strugen.GenStruct(toml347+"Num2JSON.toml", "CfgN2J347", pkgname, cfgsrc)
+	strugen.GenStruct(toml347+"List2JSON.toml", "CfgL2J347", pkgName, cfgSrc)
+	strugen.GenStruct(toml347+"Bool2JSON.toml", "CfgB2J347", pkgName, cfgSrc)
+	strugen.GenStruct(toml347+"Num2JSON.toml", "CfgN2J347", pkgName, cfgSrc)
 
-	strugen.GenNewCfg(cfgsrc)
+	strugen.GenNewCfg(cfgSrc)
 }

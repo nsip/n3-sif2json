@@ -212,7 +212,7 @@ func ExtractOA(xml, obj, path string, lvl int) string {
 func JSON2SIF4LF(json string) (string, map[string]string) {
 	failOnErrWhen(!isJSON(json), "%v", n3err.PARAM_INVALID_JSON)
 	mCodeStr := make(map[string]string)
-	strGrpWithLF := regexp.MustCompile(`".+": ".*(\\n)+.*"`).FindAllString(json, -1)
+	strGrpWithLF := rx3.FindAllString(json, -1)
 	for _, s := range strGrpWithLF {
 		vLiteral := sSpl(s, `": "`)[1]
 		vLiteral = vLiteral[:len(vLiteral)-1]                              // literal \n \t
@@ -236,8 +236,8 @@ func JSON2SIF3RD(jsonstr string) string {
 	xmlstr := string(b)
 	xmlstr = sReplaceAll(xmlstr, "<>", "")
 	xmlstr = sReplaceAll(xmlstr, "</>", "")
-	xmlstr = re1.ReplaceAllString(xmlstr, "")
-	xmlstr = re2.ReplaceAllString(xmlstr, "")
+	xmlstr = rx1.ReplaceAllString(xmlstr, "")
+	xmlstr = rx2.ReplaceAllString(xmlstr, "")
 	xmlstr = indent(xmlstr, -4, false)
 	xmlstr = sTrim(xmlstr, " \t\n")
 	return xmlstr
@@ -331,12 +331,12 @@ func CountHeadSpace(s string, nGrp int) int {
 func TagFromXMLLine(line string) (tag string, mKeyAttr map[string]string) {
 	line = sTrim(line, " \t\n\r")
 	failOnErrWhen(line[0] != '<' || line[len(line)-1] != '>', "%v: %s", n3err.PARAM_INVALID_FMT, line)
-	if tag := regexp.MustCompile(`<.+[> ]`).FindString(line); tag != "" {
+	if tag := rxTag.FindString(line); tag != "" {
 		tag = tag[1 : len(tag)-1] // remove '<' '>'
 		ss := sSplit(tag, " ")    // cut fields
 		mKeyAttr = make(map[string]string)
 		for _, attr := range ss[1:] {
-			if ak := regexp.MustCompile(`.+="`).FindString(attr); ak != "" {
+			if ak := rxAttr.FindString(attr); ak != "" {
 				mKeyAttr[ak[:len(ak)-2]] = attr // remove '="'
 			}
 		}
@@ -387,8 +387,7 @@ func SearchTagWithAttr(xml string) (posGrp [][2]int, pathGrp []string, mAttrGrp 
 func JSON2SIFRepl(xml string, mRepl map[string]string) string {
 
 	// remove @Number#
-	r := regexp.MustCompile("@([0-9]+)#")
-	xml = string(r.ReplaceAll([]byte(xml), []byte("")))
+	xml = string(rxReplNum.ReplaceAll([]byte(xml), []byte("")))
 
 	// others from cfg
 	for old, new := range mRepl {
@@ -416,7 +415,9 @@ func JSON2SIF(json, sifver string) (sif, sv string, err error) {
 	case "3.4.7":
 		bytes = sif347.TXT["347"]
 	default:
-		warner("No SIF Spec Version @ %s", ver)
+		err = fEf("Error: No SIF Spec @ Version [%s]", ver)
+		warner("%v", err)
+		return
 	}
 
 	ResetAll()
