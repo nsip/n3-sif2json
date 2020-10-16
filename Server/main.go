@@ -7,8 +7,11 @@ import (
 	"os"
 	"os/signal"
 	"reflect"
+	"strings"
 	"time"
 
+	// xj "github.com/basgys/goxml2json"
+	"github.com/cdutwhu/gotil/misc"
 	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/n3-util/n3cfg"
 	"github.com/cdutwhu/n3-util/n3cfg/attrim"
@@ -96,7 +99,7 @@ func shutdownAsync(e *echo.Echo, sig <-chan os.Signal, done chan<- string) {
 
 // HostHTTPAsync : Host a HTTP Server for SIF or JSON
 func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
-	defer func() { logGrp.Do("HostHTTPAsync Exit") }()
+	defer logGrp.Do("HostHTTPAsync Exit")
 
 	e := echo.New()
 	defer e.Close()
@@ -137,7 +140,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 	path := route.Help
 	e.GET(path, func(c echo.Context) error {
-		defer func() { mMtx[path].Unlock() }()
+		defer mMtx[path].Unlock()
 		mMtx[path].Lock()
 
 		return c.String(http.StatusOK,
@@ -180,87 +183,133 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 	path = route.ToJSON
 	e.POST(path, func(c echo.Context) error {
-		defer func() { mMtx[path].Unlock() }()
+		defer misc.TrackTime(time.Now())
+		defer mMtx[path].Unlock()
 		mMtx[path].Lock()
 
 		var (
 			status  = http.StatusOK
-			ret     string
+			Ret     = ""
+			RetSB   strings.Builder
 			results []reflect.Value
 		)
 
 		logGrp.Do("Parsing Params")
-		pvalues, sv, msg := c.QueryParams(), "", false
+		pvalues, sv, msg, wrap := c.QueryParams(), "", false, false
 		if ok, v := url1Value(pvalues, 0, "sv"); ok {
 			sv = v
 		}
-		if ok, n := url1Value(pvalues, 0, "nats"); ok && n != "" && n != "false" {
+		if ok, n := url1Value(pvalues, 0, "nats"); ok && n != "false" {
 			msg = true
+		}
+		if ok, w := url1Value(pvalues, 0, "wrap"); ok && w != "false" {
+			wrap = true
 		}
 
 		logGrp.Do("Reading Request Body")
 		bytes, err := ioutil.ReadAll(c.Request().Body)
-		sifstr := ""
+		sifstr, root, cont, _ := "", "", "", "" // _ lvl0
+		sifObjGrp, sifObjNames := []string{}, []string{}
+
 		if err != nil {
 			status = http.StatusInternalServerError
-			ret = err.Error() + " @ Read Request Body"
+			RetSB.WriteString(err.Error() + " @Read Request Body")
 			goto RET
 		}
 		if sifstr = string(bytes); len(sifstr) == 0 {
 			status = http.StatusBadRequest
-			ret = n3err.HTTP_REQBODY_EMPTY.Error() + " @ Read Request Body"
+			RetSB.WriteString(n3err.HTTP_REQBODY_EMPTY.Error() + " @Read Request Body")
 			goto RET
 		}
 		if !isXML(sifstr) {
 			status = http.StatusBadRequest
-			ret = n3err.PARAM_INVALID_XML.Error() + " @ Read Request Body"
+			RetSB.WriteString(n3err.PARAM_INVALID_XML.Error() + " @Read Request Body")
 			goto RET
 		}
 
 		///
-		// TODO :
+		// ** if wrapped, break and handle each SIF object ** //
+		///
+		root, _, cont = XMLLvl0(sifstr)
+		sifObjNames, sifObjGrp = []string{root}, []string{sifstr}
+		if wrap {
+			sifObjNames, sifObjGrp = XMLBreakCont(cont)
+			// jsonBuf, err := xj.Convert(sNewReader(lvl0))
+			// failOnErr("%v", err)
+			// lvl0json := jsonBuf.String()
+
+			// lvl0json = sReplaceAll(lvl0json, `""}`, `{`) // wrapper root without attributes
+			// lvl0json = sReplaceAll(lvl0json, `}}`, `,`)  // wrapper root with attributes
+			// RetSB.WriteString(lvl0json)
+		}
 		///
 
-		logGrp.Do("cvt2json.SIF2JSON")
-		// ret, svUsed, err = cvt2json.SIF2JSON(Cfg.Cfg2JSON, sifstr, sv, false)
-		// Trace [cvt2json.SIF2JSON], uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
-		results = jaegertracing.TraceFunction(c, func() (string, string, error) {
-			return cvt2json.SIF2JSON(sifstr, sv, false)
-		})
-		ret = results[0].Interface().(string)
-		if !results[2].IsNil() {
-			status = http.StatusInternalServerError
-			ret = results[2].Interface().(error).Error()
-			goto RET
-		}
-		logGrp.Do(results[1].Interface().(string) + " applied")
+		for i, objsif := range sifObjGrp {
 
-		// Send a copy to NATS
-		if msg {
-			url, subj, timeout := Cfg.NATS.URL, Cfg.NATS.Subject, time.Duration(Cfg.NATS.Timeout)
-			nc, err := nats.Connect(url)
-			if err != nil {
+			// logGrp.Do("cvt2json.SIF2JSON")
+
+			// ret, svUsed, err = cvt2json.SIF2JSON(Cfg.Cfg2JSON, objsif, sv, false)
+			// Trace [cvt2json.SIF2JSON], uses (variadic parameter), must wrap it to [jaegertracing.TraceFunction]
+			results = jaegertracing.TraceFunction(c, func() (string, string, error) {
+				return cvt2json.SIF2JSON(objsif, sv, false)
+			})
+			objson := results[0].Interface().(string)
+			if !results[2].IsNil() {
 				status = http.StatusInternalServerError
-				ret = err.Error() + fSf(" @NATS Connect @Subject: [%s@%s]", url, subj)
+				RetSB.WriteString(results[2].Interface().(error).Error())
 				goto RET
 			}
-			msg, err := nc.Request(subj, []byte(ret), timeout*time.Millisecond)
-			if err != nil {
-				status = http.StatusInternalServerError
-				ret = err.Error() + fSf(" @NATS Request @Subject: [%s@%s]", url, subj)
-				goto RET
+
+			logGrp.Do(sifObjNames[i] + ": " + results[1].Interface().(string) + " applied")
+
+			// if wrap {
+			// 	objson = sTrimRight(objson, "}")
+			// 	objson = sTrimRight(objson, "\n ")
+			// 	objson = sTrimLeft(objson, "{")
+			// 	objson = sTrimLeft(objson, "\n")
+			// 	RetSB.WriteString(objson)
+			// 	RetSB.WriteString(",\n")
+			// } else {
+			// 	RetSB.WriteString(objson)
+			// }
+
+			RetSB.WriteString(objson)
+			RetSB.WriteString("\n")
+
+			// Send a copy to NATS
+			if msg {
+				url, subj, timeout := Cfg.NATS.URL, Cfg.NATS.Subject, time.Duration(Cfg.NATS.Timeout)
+				nc, err := nats.Connect(url)
+				if err != nil {
+					status = http.StatusInternalServerError
+					RetSB.WriteString(err.Error() + fSf(" @NATS Connect @Subject: [%s@%s]", url, subj))
+					goto RET
+				}
+				msg, err := nc.Request(subj, []byte(objson), timeout*time.Millisecond)
+				if err != nil {
+					status = http.StatusInternalServerError
+					RetSB.WriteString(err.Error() + fSf(" @NATS Request @Subject: [%s@%s]", url, subj))
+					goto RET
+				}
+				logGrp.Do(string(msg.Data))
 			}
-			logGrp.Do(string(msg.Data))
 		}
 
 	RET:
 		if status != http.StatusOK {
-			warnGrp.Do(ret + " --> Failed")
+			Ret = RetSB.String()
+			warnGrp.Do(Ret + " --> Failed")
 		} else {
+			// if wrap {
+			// 	Ret = sTrimRight(RetSB.String(), ", \n") + "\n}\n}"
+			// } else {
+			// 	Ret = RetSB.String()
+			// }
+			Ret = RetSB.String()
 			logGrp.Do("--> Finish SIF2JSON")
 		}
 
-		return c.String(status, sTrimRight(ret, "\n")+"\n") // ret is already JSON String, so return String
+		return c.String(status, sTrimRight(Ret, "\n")+"\n") // If already JSON String, so return String
 	})
 
 	// ------------------------------------------------------------------------------------------------------------- //
@@ -268,7 +317,7 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 	path = route.ToSIF
 	e.POST(path, func(c echo.Context) error {
-		defer func() { mMtx[path].Unlock() }()
+		defer mMtx[path].Unlock()
 		mMtx[path].Lock()
 
 		var (

@@ -2,10 +2,10 @@ module github.com/nsip/n3-sif2json
 
 go 1.15
 
-replace (
-	github.com/nsip/n3-sif2json/SIFSpec/3.4.6 => ../SIFSpec/3.4.6
-	github.com/nsip/n3-sif2json/SIFSpec/3.4.7 => ../SIFSpec/3.4.7
-)
+// replace (
+// 	github.com/nsip/n3-sif2json/SIFSpec/3.4.6 => ../SIFSpec/3.4.6
+// 	github.com/nsip/n3-sif2json/SIFSpec/3.4.7 => ../SIFSpec/3.4.7
+// )
 
 require (
 	github.com/basgys/goxml2json v1.1.0
@@ -13,6 +13,7 @@ require (
 	github.com/cdutwhu/gotil v0.1.8
 	github.com/cdutwhu/n3-util v0.3.11
 	github.com/clbanning/mxj v1.8.4
+	github.com/davecgh/go-spew v1.1.1
 	github.com/go-xmlfmt/xmlfmt v0.0.0-20191208150333-d5b6f63a941b
 	github.com/gookit/color v1.3.1 // indirect
 	github.com/labstack/echo-contrib v0.9.0

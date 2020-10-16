@@ -6,14 +6,14 @@ import "github.com/cdutwhu/n3-util/n3cfg"
 type Config struct {
 	Service string
 	Route struct {
+		ToSIF string
 		Help string
 		ToJSON string
-		ToSIF string
 	}
 	Server struct {
-		IP string
 		Port int
 		Protocol string
+		IP string
 	}
 	Access struct {
 		Timeout int
