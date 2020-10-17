@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	// xj "github.com/basgys/goxml2json"
+	xj "github.com/basgys/goxml2json"
 	"github.com/cdutwhu/gotil/misc"
 	"github.com/cdutwhu/gotil/rflx"
 	"github.com/cdutwhu/n3-util/n3cfg"
@@ -208,39 +208,43 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 
 		logGrp.Do("Reading Request Body")
 		bytes, err := ioutil.ReadAll(c.Request().Body)
-		sifstr, root, cont, _ := "", "", "", "" // _ lvl0
-		sifObjGrp, sifObjNames := []string{}, []string{}
+		sifstr, root, cont, lvl0 := "", "", "", ""
+		sifObjGrp, sifObjNames, mObjContGrp := []string{}, []string{}, make(map[string][]string)
 
 		if err != nil {
 			status = http.StatusInternalServerError
-			RetSB.WriteString(err.Error() + " @Read Request Body")
+			RetSB.Reset()
+			RetSB.WriteString(err.Error() + " @Request Body")
 			goto RET
 		}
 		if sifstr = string(bytes); len(sifstr) == 0 {
 			status = http.StatusBadRequest
-			RetSB.WriteString(n3err.HTTP_REQBODY_EMPTY.Error() + " @Read Request Body")
+			RetSB.Reset()
+			RetSB.WriteString(n3err.HTTP_REQBODY_EMPTY.Error() + " @Request Body")
 			goto RET
 		}
 		if !isXML(sifstr) {
 			status = http.StatusBadRequest
-			RetSB.WriteString(n3err.PARAM_INVALID_XML.Error() + " @Read Request Body")
+			RetSB.Reset()
+			RetSB.WriteString(n3err.PARAM_INVALID_XML.Error() + " @Request Body")
 			goto RET
 		}
 
 		///
 		// ** if wrapped, break and handle each SIF object ** //
 		///
-		root, _, cont = XMLLvl0(sifstr)
+		root, lvl0, cont = XMLLvl0(sifstr)
 		sifObjNames, sifObjGrp = []string{root}, []string{sifstr}
+
 		if wrap {
 			sifObjNames, sifObjGrp = XMLBreakCont(cont)
-			// jsonBuf, err := xj.Convert(sNewReader(lvl0))
-			// failOnErr("%v", err)
-			// lvl0json := jsonBuf.String()
-
-			// lvl0json = sReplaceAll(lvl0json, `""}`, `{`) // wrapper root without attributes
-			// lvl0json = sReplaceAll(lvl0json, `}}`, `,`)  // wrapper root with attributes
-			// RetSB.WriteString(lvl0json)
+			jsonBuf, err := xj.Convert(sNewReader(lvl0))
+			failOnErr("%v", err)
+			lvl0json := jsonBuf.String()
+			lvl0json = sReplaceAll(lvl0json, `""}`, `{`) // wrapper root without attributes
+			lvl0json = sReplaceAll(lvl0json, `}}`, `,`)  // wrapper root with attributes
+			RetSB.WriteString(lvl0json)
+			RetSB.WriteString("\n")
 		}
 		///
 
@@ -253,28 +257,26 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			results = jaegertracing.TraceFunction(c, func() (string, string, error) {
 				return cvt2json.SIF2JSON(objsif, sv, false)
 			})
+
 			objson := results[0].Interface().(string)
+
 			if !results[2].IsNil() {
 				status = http.StatusInternalServerError
+				RetSB.Reset()
 				RetSB.WriteString(results[2].Interface().(error).Error())
 				goto RET
 			}
 
-			logGrp.Do(sifObjNames[i] + ": " + results[1].Interface().(string) + " applied")
+			obj := sifObjNames[i]
+			logGrp.Do(obj + ": " + results[1].Interface().(string) + " applied")
 
-			// if wrap {
-			// 	objson = sTrimRight(objson, "}")
-			// 	objson = sTrimRight(objson, "\n ")
-			// 	objson = sTrimLeft(objson, "{")
-			// 	objson = sTrimLeft(objson, "\n")
-			// 	RetSB.WriteString(objson)
-			// 	RetSB.WriteString(",\n")
-			// } else {
-			// 	RetSB.WriteString(objson)
-			// }
-
-			RetSB.WriteString(objson)
-			RetSB.WriteString("\n")
+			if wrap {
+				_, jc := JSONBlkCont(objson)
+				mObjContGrp[obj] = append(mObjContGrp[obj], jc)
+			} else {
+				RetSB.WriteString(objson)
+				RetSB.WriteString("\n")
+			}
 
 			// Send a copy to NATS
 			if msg {
@@ -282,12 +284,14 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 				nc, err := nats.Connect(url)
 				if err != nil {
 					status = http.StatusInternalServerError
+					RetSB.Reset()
 					RetSB.WriteString(err.Error() + fSf(" @NATS Connect @Subject: [%s@%s]", url, subj))
 					goto RET
 				}
 				msg, err := nc.Request(subj, []byte(objson), timeout*time.Millisecond)
 				if err != nil {
 					status = http.StatusInternalServerError
+					RetSB.Reset()
 					RetSB.WriteString(err.Error() + fSf(" @NATS Request @Subject: [%s@%s]", url, subj))
 					goto RET
 				}
@@ -300,12 +304,20 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 			Ret = RetSB.String()
 			warnGrp.Do(Ret + " --> Failed")
 		} else {
-			// if wrap {
-			// 	Ret = sTrimRight(RetSB.String(), ", \n") + "\n}\n}"
-			// } else {
-			// 	Ret = RetSB.String()
-			// }
-			Ret = RetSB.String()
+			if wrap {
+				for obj, conts := range mObjContGrp {
+					if len(conts) == 1 {
+						RetSB.WriteString(fSf(`"%s": %s,`, obj, conts[0]))
+					} else {
+						RetSB.WriteString(fSf(`"%s": [%s],`, obj, sJoin(conts, ",")))
+					}
+				}
+				Ret = RetSB.String()
+				Ret = sTrimRight(Ret, ",") + "}}"
+				Ret = JSONBlkFmt(Ret, "  ")
+			} else {
+				Ret = RetSB.String()
+			}
 			logGrp.Do("--> Finish SIF2JSON")
 		}
 
@@ -337,17 +349,17 @@ func HostHTTPAsync(sig <-chan os.Signal, done chan<- string) {
 		jsonstr := ""
 		if err != nil {
 			status = http.StatusInternalServerError
-			ret = err.Error() + " @ Read Request Body"
+			ret = err.Error() + " @Request Body"
 			goto RET
 		}
 		if jsonstr = string(bytes); len(jsonstr) == 0 {
 			status = http.StatusBadRequest
-			ret = n3err.HTTP_REQBODY_EMPTY.Error() + " @ Read Request Body"
+			ret = n3err.HTTP_REQBODY_EMPTY.Error() + " @Request Body"
 			goto RET
 		}
 		if !isJSON(jsonstr) {
 			status = http.StatusBadRequest
-			ret = n3err.PARAM_INVALID_JSON.Error() + " @ Read Request Body"
+			ret = n3err.PARAM_INVALID_JSON.Error() + " @Request Body"
 			goto RET
 		}
 

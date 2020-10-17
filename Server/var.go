@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strings"
@@ -19,6 +20,7 @@ var (
 	fPln             = fmt.Println
 	fSf              = fmt.Sprintf
 	fPf              = fmt.Printf
+	fEf              = fmt.Errorf
 	sReplaceAll      = strings.ReplaceAll
 	sTrimRight       = strings.TrimRight
 	sTrimLeft        = strings.TrimLeft
@@ -137,4 +139,32 @@ func XMLLvl0(xml string) (string, string, string) {
 		}
 	}
 	return name, sJoin([]string{sTag, eTag}, "\n"), xml[end1:end2]
+}
+
+// JSONBlkCont :
+func JSONBlkCont(jstr string) (string, string) {
+	qtidx1, qtidx2 := -1, -1
+	for i := 0; i < len(jstr); i++ {
+		if qtidx1 == -1 && jstr[i] == '"' {
+			qtidx1 = i
+			continue
+		}
+		if qtidx1 != -1 && jstr[i] == '"' {
+			qtidx2 = i
+			break
+		}
+	}
+	fn.FailOnErrWhen(jstr[qtidx2+1] != ':', "%v", fEf("error (format) json"))
+	fn.FailOnErrWhen(jstr[qtidx2+2] != ' ', "%v", fEf("error (format) json"))
+	ebidx := sLastIndex(jstr, "}")
+	return jstr[qtidx1+1 : qtidx2], sTrimRight(jstr[qtidx2+3:ebidx], " \t\n\r")
+}
+
+// JSONBlkFmt :
+func JSONBlkFmt(jstr, indent string) string {
+	jsonMap := make(map[string]interface{})
+	failOnErr("%v", json.Unmarshal([]byte(jstr), &jsonMap))
+	bytes, err := json.MarshalIndent(&jsonMap, "", indent)
+	failOnErr("%v", err)
+	return string(bytes)
 }
